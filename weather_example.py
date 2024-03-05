@@ -6,6 +6,7 @@ from termcolor import colored
 GPT_MODEL = "gpt-3.5-turbo-0125"
 client = OpenAI()
 
+# define the chat completion request
 @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
 def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MODEL):
     try:
@@ -21,7 +22,8 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MO
         print(f"Exception: {e}")
         return e
 
-def pretty_print_conversation(messages):
+# Define the pretty print conversation
+def pretty_print_conversation( messages ):
     role_to_color = {
         "system": "red",
         "user": "green",
@@ -30,6 +32,8 @@ def pretty_print_conversation(messages):
     }
     
     for message in messages:
+        # if it is A ChatCompletionMessage type
+        
         if message["role"] == "system":
             print(colored(f"system: {message['content']}\n", role_to_color[message["role"]]))
         elif message["role"] == "user":
@@ -107,19 +111,16 @@ chat_response = chat_completion_request(
 )
 assistant_message = chat_response.choices[0].message
 messages.append(assistant_message)
-print ( "\n" )
-print ( assistant_message.content )
-print ( '\n' )
 
 while ( True ):
     user_input = input( "user: " )
-    messages.append({"role": "user", "content": "What's the weather like today"})
+    messages.append({"role": "user", "content": user_input })
     chat_response = chat_completion_request(
         messages, tools=tools
     )
     assistant_message = chat_response.choices[0].message
     messages.append(assistant_message)
     print( "\n" )
-    print ( assistant_message.content )
+    pretty_print_conversation( messages )
     print( "\n" )
 

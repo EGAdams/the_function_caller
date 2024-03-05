@@ -77,4 +77,4 @@ def run_conversation():
             messages=messages,
         )  # get a new response from the model where it can see the function response
         return second_response
-print(run_conversation())
+print( run_conversation())

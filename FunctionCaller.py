@@ -73,7 +73,7 @@ def read_file(filename):
     with open(filename, 'r') as file:
         return file.read()
 
-def execute_function(function_json):
+def execute_function( function_json ):
     """Parses a JSON object to execute a function based on the name and parameters.
     
     Args:
@@ -82,6 +82,7 @@ def execute_function(function_json):
     Returns:
         str: The result of the function execution.
     """
+    
     # Parse the JSON string into a Python dictionary
     function_data = json.loads(function_json)
     
