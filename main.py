@@ -122,10 +122,14 @@ if __name__ == "__main__":
                 function_name = tool_call.function.name
                 function_to_call = available_functions[function_name]
                 function_args = json.loads(tool_call.function.arguments)
-                function_response = function_to_call(
-                    filename=function_args.get("filename"),
-                    content=function_args.get("content"),
-                )
+                function_response = ""
+                if ( function_name == "write_file" ):
+                    function_response = function_to_call(
+                        filename=function_args.get("filename"),
+                        content=function_args.get("content"))
+                if( function_name == "read_file" ):
+                    function_response = function_to_call( filename=function_args.get( "filename" ))
+                
                 messages.append(
                     {
                         "tool_call_id": tool_call.id,
@@ -149,9 +153,9 @@ if __name__ == "__main__":
         if ( user_input == "q" ):
             break
         messages.append({ "role": "user",   "content": user_input  })
-        some_object = run_conversation()
+        conversation_run = run_conversation()
         print ( "\n" )
-        print( some_object.content )
+        print( conversation_run.content )
     
     
     
