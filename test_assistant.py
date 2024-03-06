@@ -12,6 +12,35 @@ def show_json(obj):
     pretty_json = json.dumps(json_obj, indent=4)  # Pretty print JSON
     print( pretty_json )
 
+#
+# write to hard drive
+#
+def write_file(filename, content):
+    """Writes content to a specified file.
+    
+    Args:
+        filename (str): The name of the file to write to.
+        content (str): The content to write to the file.
+    """
+    with open(filename, 'w') as file:
+        file.write(content)
+    return "File written successfully."
+
+#
+# read from hard drive
+#
+def read_file(filename):
+    """Reads content from a specified file.
+    
+    Args:
+        filename (str): The name of the file to read from.
+    
+    Returns:
+        str: The content of the file.
+    """
+    with open(filename, 'r') as file:
+        return file.read()
+
 # create an assistant asst_Zw3KYZUBFI9jZheRiVLkQAta MemGPT_Coder
 assistantFactory = AssistantFactory()
 
@@ -37,6 +66,31 @@ run = client.beta.threads.runs.create(
   thread_id=thread.id,
   assistant_id=assistant.id,
 )
+
+def execute_function( function_json ):
+    """Parses a JSON object to execute a function based on the name and parameters.
+    
+    Args:
+        function_json (str): A JSON string containing the function name and parameters.
+        
+    Returns:
+        str: The result of the function execution.
+    """
+    
+    # Parse the JSON string into a Python dictionary
+    function_data = json.loads(function_json)
+    
+    # Extract the function name and parameters
+    function_name = function_data.get("function")
+    parameters = function_data.get("parameters", {})
+    
+    # Match the function name to the actual function and execute it
+    if function_name == "write_file":
+        return write_file(parameters.get("filename"), parameters.get("content"))
+    elif function_name == "read_file":
+        return read_file(parameters.get("filename"))
+    else:
+        return "Function not recognized."
 
 # check the run status
 import time
