@@ -57,13 +57,24 @@ def run_conversation():
         messages.append(response_message)  # extend conversation with assistant's reply
         # Step 4: send the info for each function call and function response to the model
         for tool_call in tool_calls:
+            
+            # get the function name
             function_name = tool_call.function.name
+            
+            # translate the name to a function pointer
             function_to_call = available_functions[function_name]
+            
+            # get the function's arguments
             function_args = json.loads(tool_call.function.arguments)
+            
+            # call the function and store the resonse in a string 
             function_response = function_to_call(
                 location=function_args.get("location"),
                 unit=function_args.get("unit"),
             )
+            
+            # append the response to the messages array including the tool call id
+            # and the function name.  make sure to make the role "tool"
             messages.append(
                 {
                     "tool_call_id": tool_call.id,
@@ -72,9 +83,12 @@ def run_conversation():
                     "content": function_response,
                 }
             )  # extend conversation with function response
+            
+        # here we give the messages array back to the model with the function responses
         second_response = client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
             messages=messages,
         )  # get a new response from the model where it can see the function response
         return second_response
+    
 print( run_conversation())
