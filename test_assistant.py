@@ -1,7 +1,5 @@
-#
-#
-#
 import json
+import time
 from time import sleep
 from openai import OpenAI
 GPT_MODEL = "gpt-3.5-turbo-0125"
@@ -13,10 +11,7 @@ def show_json(obj):
     pretty_json = json.dumps(json_obj, indent=4)  # Pretty print JSON
     print( pretty_json )
 
-#
-# write to hard drive
-#
-def write_file( filename, content ):
+def write_file( filename, content ):  # write to hard drive
     """Writes content to a specified file.
     
     Args:
@@ -27,10 +22,7 @@ def write_file( filename, content ):
         file.write( content )
     return "File written successfully."
 
-#
-# read from hard drive
-#
-def read_file( filename ):
+def read_file( filename ): # read from hard drive
     """Reads content from a specified file.
     
     Args:
@@ -45,9 +37,9 @@ def read_file( filename ):
     with open(filename, 'r') as file:
         return file.read()
 
-# create an assistant asst_Zw3KYZUBFI9jZheRiVLkQAta MemGPT_Coder
 assistantFactory = AssistantFactory()
 
+# create an assistant asst_Zw3KYZUBFI9jZheRiVLkQAta MemGPT_Coder
 # assistant = assistantFactory.createAssistant( nameArg="MemGPT_Coder" )
 assistant =  assistantFactory.getExistingAssistant( assistant_id="asst_Zw3KYZUBFI9jZheRiVLkQAta" )
 
@@ -93,9 +85,6 @@ def execute_function( function_json ):
     else:
         return "Function not recognized."
 
-# check the run status
-import time
-
 def wait_on_run( run, thread ):
     print ( "entering while.  run status is: " + run.status )
     while run.status == "queued" or run.status == "in_progress":
@@ -103,16 +92,14 @@ def wait_on_run( run, thread ):
             thread_id=thread.id,
             run_id=run.id,
         )
-        time.sleep(0.5)
-        print( "done sleeping.  chekcing for any action required..." )
+        time.sleep( 0.5 )
+        print( "done sleeping.  checking for any action required..." )
         if run.status == "requires_action":
-            # let's pass the run object to something else and get out of here...
             print( "found action required.  sending the run for processing..." )
             available_functions = {
                 "read_file": read_file,
                 "write_file": write_file
             }  # only one function in this example, but you can have multiple
-            # hopefully these function pointers pass through...
             messages = client.beta.threads.messages.list( thread_id=thread.id )
             handleActionRequired = HandleActionRequired( messages, available_functions, run )
             return handleActionRequired.execute( thread.id ) # returns run for now...
@@ -123,10 +110,8 @@ def wait_on_run( run, thread ):
 run = wait_on_run( run, thread )
 show_json( run )
 
-
-# display the assistant's response
 messages = client.beta.threads.messages.list(thread_id=thread.id)
-show_json(messages)
+show_json(messages) # display the assistant's response
 print ( "\n" )
 
 def pretty_print(messages):
@@ -143,38 +128,23 @@ while ( True ):
         thread_id=thread.id,
         role="user",
         content=new_message )
-
-    # run the assistant
-    run = client.beta.threads.runs.create(
+   
+    run = client.beta.threads.runs.create( # run the assistant
     thread_id=thread.id,
-    assistant_id=assistant.id,
-    )
+    assistant_id=assistant.id )
     
     # get the run steps so that we can look at them
     run_steps = client.beta.threads.runs.steps.list(
-        thread_id=thread.id, run_id=run.id, order="asc"
-    )
+        thread_id=thread.id, run_id=run.id, order="asc" )
     
-    # look at them
     for step in run_steps.data:
-        step_details = step.step_details
+        step_details = step.step_details # look at them
         print(json.dumps(show_json(step_details), indent=4))
 
-    wait_on_run(run, thread)
-
-    # display the assistant's response.
-    
-    messages = client.beta.threads.messages.list(
-    thread_id=thread.id
-    )
-    
-    # reverse the order
-    # so that the most recent message is at the top
-    # of the list
+    wait_on_run(run, thread) 
+    messages = client.beta.threads.messages.list( thread_id=thread.id )
+    # reverse the order so that the most recent message is at the top of the list
     # Convert to list if it's not already one, assuming messages is iterable
     messages_list = list(messages)
-
-    # Reverse the list
-    reversed_messages = messages_list[::-1]
-    
+    reversed_messages = messages_list[::-1] # Reverse the list
     pretty_print( reversed_messages )

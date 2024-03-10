@@ -12,7 +12,7 @@ class HandleActionRequired: #  This object encapsulates the handling of the acti
         if tool_calls: # Note: the JSON response may not always be valid; be sure to handle errors 
             for tool_call in tool_calls:
                 function_name = tool_call.function.name # get the function name
-                function_args = json.loads(tool_call.function.arguments) # get the function arguments
+                function_args = json.loads( tool_call.function.arguments ) # get the function arguments
                 output = "" # variable that will hold the output of the function call
                 # Match the function name to the actual function pointer and execute it
                 if function_name == "write_file":
