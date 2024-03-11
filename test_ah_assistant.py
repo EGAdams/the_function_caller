@@ -4,7 +4,39 @@ from time import sleep
 from openai import OpenAI
 GPT_MODEL = "gpt-3.5-turbo-0125"
 from AssistantFactory import AssistantFactory
-from HandleActionRequired import HandleActionRequired
+from ActionHandler import ActionHandler
+from termcolor import colored  
+
+def pretty_print(messages):
+    print( "\n\n")
+    print( "# Messages" )
+    for m in messages:
+        print(f"{m.role}: {m.content[0].text.value}")
+    print()
+    
+#
+# Define the pretty print conversation
+#
+def pretty_print_conversation( messages ):
+    role_to_color = {
+        "system": "red",
+        "user": "green",
+        "assistant": "blue",
+        "function": "magenta" }
+
+    for message in messages:
+        if message == None:
+            continue
+        if message.role == "system":
+            print(colored(f"system: { message.content[0].text.value }\n", role_to_color[message.role]))
+        elif message.role == "user":
+            print(colored(f"user: { message.content[0].text.value }\n", role_to_color[message.role]))
+        # elif message.role == "assistant" and message.get("function_call"):
+        #     print(colored(f"assistant: {message['function_call']}\n", role_to_color[message.role]))
+        elif message.role == "assistant": # and not message.get("function_call"):
+            print(colored(f"assistant: { message.content[0].text.value }\n", role_to_color[message.role]))
+        elif message.role == "function":
+            print(colored(f"function ({message['name']}): { message.content[0].text.value }\n", role_to_color[message.role]))
 
 def show_json(obj):
     json_obj = json.loads(obj.model_dump_json())
@@ -87,7 +119,10 @@ def execute_function( function_json ):
 
 def wait_on_run( run, thread ):
     print ( "entering while.  run status is: " + run.status )
-    while run.status == "queued" or run.status == "in_progress":
+    while run.status == "queued" or \
+          run.status == "in_progress" or \
+          run.status == "requires_action":
+              
         run = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
             run_id=run.id,
@@ -101,8 +136,10 @@ def wait_on_run( run, thread ):
                 "write_file": write_file
             }  # only one function in this example, but you can have multiple
             messages = client.beta.threads.messages.list( thread_id=thread.id )
-            handleActionRequired = HandleActionRequired( messages, available_functions, run )
-            return handleActionRequired.execute( thread.id ) # returns run for now...
+            # handleActionRequired = HandleActionRequired( messages, available_functions, run )
+            # return handleActionRequired.execute( thread.id ) # returns run for now...
+            actionHandler = ActionHandler( messages, available_functions, run )
+            actionHandler.execute( thread.id ) # modifies run for now...
     
     print(f"Run {run.id} is {run.status}.")
     return run
@@ -114,13 +151,6 @@ messages = client.beta.threads.messages.list(thread_id=thread.id)
 show_json(messages) # display the assistant's response
 print ( "\n" )
 
-def pretty_print(messages):
-    print( "\n\n")
-    print( "# Messages" )
-    for m in messages:
-        print(f"{m.role}: {m.content[0].text.value}")
-    print()
-    
 while ( True ):
     new_message = input( "Enter a message to send to the assistant: " )
     # Add a message to a thread
@@ -147,4 +177,5 @@ while ( True ):
     # Convert to list if it's not already one, assuming messages is iterable
     messages_list = list(messages)
     reversed_messages = messages_list[::-1] # Reverse the list
-    pretty_print( reversed_messages )
+    # pretty_print( reversed_messages )
+    pretty_print_conversation( reversed_messages )
