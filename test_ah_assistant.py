@@ -169,7 +169,7 @@ while ( True ):
     
     for step in run_steps.data:
         step_details = step.step_details                        # look at them
-        print(json.dumps(show_json(step_details), indent=4))
+        print( json.dumps(show_json( step_details ), indent=4 ))
 
     wait_on_run( run, thread ) 
     messages = client.beta.threads.messages.list( thread_id=thread.id )
