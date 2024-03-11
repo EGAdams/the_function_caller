@@ -7,16 +7,13 @@ from AssistantFactory import AssistantFactory
 from ActionHandler import ActionHandler
 from termcolor import colored  
 
-def pretty_print(messages):
-    print( "\n\n")
+def pretty_print( messages ):
+    print( "\n\n" )
     print( "# Messages" )
     for m in messages:
-        print(f"{m.role}: {m.content[0].text.value}")
+        print( f"{ m.role }: { m.content[ 0 ].text.value }" )
     print()
     
-#
-# Define the pretty print conversation
-#
 def pretty_print_conversation( messages ):
     role_to_color = {
         "system": "red",
@@ -28,19 +25,19 @@ def pretty_print_conversation( messages ):
         if message == None:
             continue
         if message.role == "system":
-            print(colored(f"system: { message.content[0].text.value }\n", role_to_color[message.role]))
+            print( colored( f"system: { message.content[ 0 ].text.value }\n", role_to_color[ message.role ]))
         elif message.role == "user":
-            print(colored(f"user: { message.content[0].text.value }\n", role_to_color[message.role]))
-        # elif message.role == "assistant" and message.get("function_call"):
-        #     print(colored(f"assistant: {message['function_call']}\n", role_to_color[message.role]))
-        elif message.role == "assistant": # and not message.get("function_call"):
-            print(colored(f"assistant: { message.content[0].text.value }\n", role_to_color[message.role]))
+            print( colored( f"user: { message.content[ 0 ].text.value }\n", role_to_color[ message.role ]))
+        # elif message.role == "assistant" and message.get( "function_call" ):
+        #     print( colored( f"assistant: {message['function_call']}\n", role_to_color[message.role]))
+        elif message.role == "assistant": # and not message.get( "function_call" ):
+            print( colored( f"assistant: { message.content[ 0 ].text.value }\n", role_to_color[ message.role ]))
         elif message.role == "function":
-            print(colored(f"function ({message['name']}): { message.content[0].text.value }\n", role_to_color[message.role]))
+            print( colored( f"function ({ message[ 'name' ]}): { message.content[ 0 ].text.value }\n", role_to_color[ message.role ]))
 
-def show_json(obj):
-    json_obj = json.loads(obj.model_dump_json())
-    pretty_json = json.dumps(json_obj, indent=4)  # Pretty print JSON
+def show_json( obj ):
+    json_obj = json.loads( obj.model_dump_json())
+    pretty_json = json.dumps( json_obj, indent=4 )  # Pretty print JSON
     print( pretty_json )
 
 def write_file( filename, content ):  # write to hard drive
@@ -66,7 +63,7 @@ def read_file( filename ): # read from hard drive
     
     # morph the file name since the assistant seems to be looking at it's sandbox
     filename = filename.replace( '/mnt/data/', '' )
-    with open(filename, 'r') as file:
+    with open( filename, 'r' ) as file:
         return file.read()
 
 assistantFactory = AssistantFactory()
@@ -103,17 +100,17 @@ def execute_function( function_json ):
     """
     
     # Parse the JSON string into a Python dictionary
-    function_data = json.loads(function_json)
+    function_data = json.loads( function_json)
     
     # Extract the function name and parameters
-    function_name = function_data.get("function")
-    parameters = function_data.get("parameters", {})
+    function_name = function_data.get( "function" )
+    parameters = function_data.get( "parameters", {})
     
     # Match the function name to the actual function and execute it
     if function_name == "write_file":
-        return write_file(parameters.get("filename"), parameters.get("content"))
+        return write_file( parameters.get( "filename" ), parameters.get( "content" ))
     elif function_name == "read_file":
-        return read_file(parameters.get("filename"))
+        return read_file( parameters.get( "filename" ))
     else:
         return "Function not recognized."
 
@@ -141,14 +138,14 @@ def wait_on_run( run, thread ):
             actionHandler = ActionHandler( messages, available_functions, run )
             actionHandler.execute( thread.id ) # modifies run for now...
     
-    print(f"Run {run.id} is {run.status}.")
+    print( f"Run { run.id } is { run.status }." )
     return run
 
 run = wait_on_run( run, thread )
 show_json( run )
 
-messages = client.beta.threads.messages.list(thread_id=thread.id)
-show_json(messages) # display the assistant's response
+messages = client.beta.threads.messages.list( thread_id=thread.id )
+show_json( messages ) # display the assistant's response
 print ( "\n" )
 
 while ( True ):
@@ -169,13 +166,13 @@ while ( True ):
     
     for step in run_steps.data:
         step_details = step.step_details                        # look at them
-        print( json.dumps(show_json( step_details ), indent=4 ))
+        print( json.dumps( show_json( step_details ), indent=4 ))
 
     wait_on_run( run, thread ) 
     messages = client.beta.threads.messages.list( thread_id=thread.id )
     # reverse the order so that the most recent message is at the top of the list
     # Convert to list if it's not already one, assuming messages is iterable
-    messages_list = list(messages)
+    messages_list = list( messages )
     reversed_messages = messages_list[::-1] # Reverse the list
     # pretty_print( reversed_messages )
     pretty_print_conversation( reversed_messages )
