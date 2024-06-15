@@ -1,7 +1,7 @@
 #
-# MessageManager class
+# MessageFactory class
 #
-class MessageManager:
+class MessageFactory:
     
     def __init__(self):
         pass

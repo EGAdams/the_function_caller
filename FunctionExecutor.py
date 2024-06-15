@@ -2,14 +2,8 @@
 # FunctionExecutor class
 #
 class FunctionExecutor:
-    def __init__( self, available_functions ):
-        '''
-        Initialize the FunctionExecutor object with a dictionary of available functions.
-        
-        Args:
-            available_functions (dict): A dictionary mapping function names to their implementations.
-        '''
-        self.available_functions = available_functions
+    def __init__( self, string_to_function_arg ):
+        self.string_to_function = string_to_function_arg
 
     def execute_function( self, function_name, arguments ):
         '''
@@ -22,7 +16,8 @@ class FunctionExecutor:
         Returns:
             str: The result of the function execution or a message if the function is not recognized.
         '''
-        if function_name in self.available_functions:
-            return self.available_functions[ function_name ]( **arguments )
-        
-        return 'Function not recognized.'
+        function_to_run = self.string_to_function.create_function_from_string( function_name )
+        if ( function_to_run != None ):
+            return function_to_run( **arguments )
+        else:
+            return 'Function not recognized.'

@@ -9,7 +9,8 @@ class OAIFunctionCallClient:
     def __init__(self):
         self.client = OpenAI()
 
-    def submit_tool_outputs( self, thread_id, run_id, tool_call_id, output ):
+    # returns a run object
+    def return_output_to_caller( self, thread_id, run_id, tool_call_id, output ):
         return self.client.beta.threads.runs.submit_tool_outputs(
             thread_id=thread_id,
             run_id=run_id,

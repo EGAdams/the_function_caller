@@ -2,7 +2,7 @@
 # ToolManager
 #
 class ToolManager:
-    def get_tools( self ):
+    def get_tool_schemas( self ):
         #
         # we start with giving the model the ability to read and write files
         #
