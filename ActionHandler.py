@@ -13,8 +13,8 @@ class ActionHandler:
     def execute( self, thread_id ):
         tool_calls = self.run.required_action.submit_tool_outputs.tool_calls
         if tool_calls:
-            for tool_call in tool_calls:                 # get the function name
-                function_name = tool_call.function.name  # get the function arguments
+            for tool_call in tool_calls:                 # for each tool call in tool calls
+                function_name = tool_call.function.name  # get the function name & arguments
                 arguments = JSONArgumentParser.parse_arguments(tool_call.function.arguments)
                 output = self.function_executor.execute_function( function_name, arguments )
                 self.run = self.api_client.return_output_to_caller(

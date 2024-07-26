@@ -9,7 +9,7 @@ GPT_MODEL = "gpt-3.5-turbo-0125"
 
 client = OpenAI()
 import MessageManager
-import ToolManager
+import tool_manager.ToolManager as ToolManager
 
 if __name__ == "__main__":
     message_manager = MessageManager.MessageManager()
