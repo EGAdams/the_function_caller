@@ -1,8 +1,8 @@
 #
 # ToolManager
 #
-from tool_manager.read_file_tool.read_file_tool import ReadFileTool
-from tool_manager.write_file_tool.write_file_tool import WriteFileTool
+from read_file_tool.read_file_tool import ReadFileTool
+from write_file_tool.write_file_tool import WriteFileTool
 
 
 class ToolManager:

@@ -1,14 +1,18 @@
 #
-# spring hill pf  got led matrix almost straightened out.  just kept compiling and swapping
-# out until it worked.
+# spring hill pf  got led matrix almost straightened out.  just kept compiling and swapping out until it worked.
 #
 class WriteFileTool:
+    """
+    Provides a tool for writing the contents of a file.
+    The `WriteFileTool` class exposes a `write_file` function that can be used to write a string to a file with the specified filename.
+    The `schema` method returns a JSON schema that describes the parameters expected by the `write_file` function.
+    """
+    
     def __init__( self ):
         print ( "initialaizing" )
 
     def schema():
-        return '''
-            {
+        return {
                 "type": "function",
                 "function": {
                     "name": "write_file",
@@ -29,7 +33,6 @@ class WriteFileTool:
                     },
                 }
             }
-            '''
     
     def write_file( filename, content ):
         """Writes content to a specified file.

@@ -21,7 +21,12 @@ class StringToFunction:
         Returns:
             function: The function object.
         '''
-        if function_name in self.function_map:
-            return self.function_map[ function_name ]
+        if ( self.function_map.get_length() == 0 ):
+            print( "*** Error: No functions initialized in the StringToFunction Object. ***" )
+            return None
+        
+        function_maps = self.function_map.get_all_entries()
+        if function_name in function_maps:
+            return self.function_map.get_function( function_name )
         else:
             return None

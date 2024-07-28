@@ -9,12 +9,12 @@ class ReadFileTool:
     
     The `schema` method returns a JSON schema that describes the `read_file` function, including its parameters and return value.
     """
+    
     def __init__( self ):
         print ( "initialaizing" )
 
     def schema(): 
-        return '''
-            {
+        return {
                 "type": "function",
                 "function": {
                     "name": "read_file",
@@ -24,16 +24,15 @@ class ReadFileTool:
                         "properties": {
                             "filename": {
                                 "type": "string",
-                                "description": "The name of the file to read.",
+                                "description": "The name of the file to read."
                             }
                         },
-                        "required": ["filename"],
-                    },
+                        "required": ["filename"]
+                    }
                 }
             }
-            '''
-    
-    def read_file(filename):
+
+    def read_file( filename ):
         """Reads content from a specified file.
         
         Args:
@@ -42,5 +41,7 @@ class ReadFileTool:
         Returns:
             str: The content of the file.
         """
-        with open(filename, 'r') as file:
+        # morph the file name since the assistant seems to be looking at it's sandbox
+        filename = filename.replace( '/mnt/data/', '' )
+        with open( filename, 'r' ) as file:
             return file.read()

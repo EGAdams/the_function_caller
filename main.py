@@ -4,132 +4,57 @@
 import json
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from termcolor import colored  
 GPT_MODEL = "gpt-3.5-turbo-0125"
 
 client = OpenAI()
-import MessageManager
+from message_factory import MessageFactory
 import tool_manager.ToolManager as ToolManager
-
+import function_map.function_map as FunctionMap # to construct STF object below
+import string_to_function.string_to_function as StringToFunction # for func exec
+import function_executor.FunctionExecutor as FunctionExecutor
+import func_map_init.file_system_mapped_functions as FileSystemMappedFunctions
 if __name__ == "__main__":
-    message_manager = MessageManager.MessageManager()
-    tool_manager = ToolManager.ToolManager()
+    message_factory     = MessageFactory()
+    tool_manager        = ToolManager.ToolManager()
+    fs_mapped_funcs     = FileSystemMappedFunctions.FileSystemMappedFunctions()
+    function_map        = fs_mapped_funcs.get_function_map() # populate for file system tools
+    string_to_function  = StringToFunction.StringToFunction( function_map )
+    function_executor   = FunctionExecutor.FunctionExecutor( string_to_function )
     
-    #
-    # define the chat completion request
-    #
-    @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
-    def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MODEL):
-        try:
-            response = client.chat.completions.create(
-                model=model,
+    @retry( wait=wait_random_exponential( multiplier=1, max=40 ), stop=stop_after_attempt( 3 ))
+    def chat_completion_request( messages, tools=None, tool_choice=None, model=GPT_MODEL ):
+        try:                                               
+            response = client.chat.completions.create(      # define the chat 
+                model=model,                                # completion request.
                 messages=messages,
                 tools=tools,
-                tool_choice=tool_choice,
-            )
+                tool_choice=tool_choice )
+            
             return response
         except Exception as e:
-            print("Unable to generate ChatCompletion response")
-            print(f"Exception: {e}")
-            return e
-    #
-    # Define the pretty print conversation
-    #
-    def pretty_print_conversation( messages ):
-        role_to_color = {
-            "system": "red",
-            "user": "green",
-            "assistant": "blue",
-            "function": "magenta" }
-    
-        for message in messages:
-            if message == None:
-                continue
-            if message["role"] == "system":
-                print(colored(f"system: {message['content']}\n", role_to_color[message["role"]]))
-            elif message["role"] == "user":
-                print(colored(f"user: {message['content']}\n", role_to_color[message["role"]]))
-            elif message["role"] == "assistant" and message.get("function_call"):
-                print(colored(f"assistant: {message['function_call']}\n", role_to_color[message["role"]]))
-            elif message["role"] == "assistant" and not message.get("function_call"):
-                print(colored(f"assistant: {message['content']}\n", role_to_color[message["role"]]))
-            elif message["role"] == "function":
-                print(colored(f"function ({message['name']}): {message['content']}\n", role_to_color[message["role"]]))
-                
-    #
-    # write to hard drive
-    #
-    def write_file(filename, content):
-        """Writes content to a specified file.
-        
-        Args:
-            filename (str): The name of the file to write to.
-            content (str): The content to write to the file.
-        """
-        with open(filename, 'w') as file:
-            file.write(content)
-        return "File written successfully."
-
-    #
-    # read from hard drive
-    #
-    def read_file(filename):
-        """Reads content from a specified file.
-        
-        Args:
-            filename (str): The name of the file to read from.
-        
-        Returns:
-            str: The content of the file.
-        """
-        with open(filename, 'r') as file:
-            return file.read()
+            print( "Unable to generate ChatCompletion response" )
+            print( f"Exception: {e}" )
+            return e         
             
-    #
-    # build the messages object
-    #
-    messages = message_manager.create_initial_messages_object()
-    
-    #
-    # build the tools object
-    #
-    tools = tool_manager.get_tools()
-    
-    #
-    # get the request from the model
-    #
+    messages = message_factory.create_initial_messages_object() # build the messages object.
+    tools    = tool_manager.get_tool_schemas()                  # build the tools object array of schemas.
+   
     def run_conversation():
-        # Step 1: send the conversation and available functions to the model
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
-            messages=messages,
+        response = client.chat.completions.create(              # get the request from the model
+            model=GPT_MODEL,                                    # Step 1: send the conversation 
+            messages=messages,                                  # and available functions to the model
             tools=tools,
-            tool_choice="auto",  # auto is default, but we'll be explicit
-        )
-        response_message = response.choices[0].message
+            tool_choice="auto" )                                # auto is default, but we'll be explicit
+        
+        response_message = response.choices[ 0 ].message
         tool_calls = response_message.tool_calls
-        # Step 2: check if the model wanted to call a function
-        if tool_calls:
-            # Step 3: call the function
-            # Note: the JSON response may not always be valid; be sure to handle errors
-            available_functions = {
-                "read_file": read_file,
-                "write_file": write_file,
-            }  # only one function in this example, but you can have multiple
-            messages.append(response_message)  # extend conversation with assistant's reply
-            # Step 4: send the info for each function call and function response to the model
+       
+        if tool_calls:                              # Step 2: check if the model wanted to call a function
+            messages.append( response_message )     # extend conversation with assistant's reply
             for tool_call in tool_calls:
                 function_name = tool_call.function.name
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call.function.arguments)
-                function_response = ""
-                if ( function_name == "write_file" ):
-                    function_response = function_to_call(
-                        filename=function_args.get("filename"),
-                        content=function_args.get("content"))
-                if( function_name == "read_file" ):
-                    function_response = function_to_call( filename=function_args.get( "filename" ))
-                
+                function_args = json.loads( tool_call.function.arguments )
+                function_response = function_executor.execute_function( function_name, function_args ) #3: call func
                 messages.append(
                     {
                         "tool_call_id": tool_call.id,
@@ -137,27 +62,24 @@ if __name__ == "__main__":
                         "name": function_name,
                         "content": function_response,
                     }
-                )  # extend conversation with function response
-            second_response = client.chat.completions.create(
-                model="gpt-3.5-turbo-0125",
-                messages=messages,
-            )  # get a new response from the model where it can see the function response
-            return second_response.choices[0].message
+                ) # extend conversation with function response
+            second_response = client.chat.completions.create(   # Step 4: send the info for each 
+                model=GPT_MODEL,                                # function call and function response
+                messages=messages,                              # to the model
+            ) # get a new response from the model where it can see the function response
+            return second_response.choices[ 0 ].message
         else:
-            return response_message
+            messages.append( response_message )                 # extend conversation with assistant's reply
+            return response_message             
         
     messages.append( run_conversation())
     
     while ( True ):
-        user_input = input("Enter your message: ")
+        user_input = input( "Enter your message: " )
         if ( user_input == "q" ):
             break
         messages.append({ "role": "user",   "content": user_input  })
         conversation_run = run_conversation()
         print ( "\n" )
         print( conversation_run.content )
-    
-    
-    
-    
     

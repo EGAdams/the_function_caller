@@ -1,6 +1,10 @@
 #
 # FunctionExecutor class
 #
+# since the function executor needs to create a function from a string,
+# it needs to be instantiated with it's main partner.  I'm not sure how 
+# this code would work without creating a function from a string.
+#
 class FunctionExecutor:
     def __init__( self, string_to_function_arg ):
         self.string_to_function = string_to_function_arg
