@@ -3,9 +3,9 @@
 #
 # These tools operate on the file system in different ways.
 #
-from read_file_tool.read_file_tool import ReadFileTool
-from write_file_tool.write_file_tool import WriteFileTool
-from function_map.function_map import FunctionMap
+from read_file_tool.read_file_tool      import ReadFileTool
+from write_file_tool.write_file_tool    import WriteFileTool
+from function_map.function_map          import FunctionMap
 
 class FileSystemMappedFunctions:
     def __init__( self ):
