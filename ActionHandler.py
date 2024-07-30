@@ -9,7 +9,7 @@ class ActionHandler:
     def __init__( self, messages, run ):
         self.messages           = messages
         self.run                = run
-        fs_mapped_funcs         = FileSystemMappedFunctions()
+        fs_mapped_funcs         = FileSystemMappedFunctions.FileSystemMappedFunctions()
         function_map            = fs_mapped_funcs.get_function_map() # populate for file system tools
         string_to_function      = StringToFunction.StringToFunction( function_map )
         self.function_executor  = FunctionExecutor( string_to_function )
