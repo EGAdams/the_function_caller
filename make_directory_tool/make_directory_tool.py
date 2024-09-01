@@ -16,19 +16,18 @@ class MakeDirectoryTool:
     def schema():
         return {
             "name": "make_directory",
-            "type": "function",
-            "function": {
-                "description": "Create a new directory",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "directory_path": {
-                            "type": "string",
-                            "description": "The path of the directory to create."
-                        }
-                    },
-                    "required": ["directory_path"]
-                }
+            "description": "Create a new directory at the specified path",
+            "strict": True,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "directory_path": {
+                        "type": "string",
+                        "description": "The full path of the directory to create."
+                    }
+                },
+                "additionalProperties": False,
+                "required": ["directory_path"]
             }
         }
 
