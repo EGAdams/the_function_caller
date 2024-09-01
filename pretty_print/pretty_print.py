@@ -7,7 +7,7 @@ class PrettyPrint:
     def __init__( self ):
         pass
 
-    def execute( messages ):
+    def execute( self, messages ):
         role_to_color = {
             "system": "red",
             "user": "green",

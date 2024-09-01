@@ -14,6 +14,7 @@ class GetCurrentDirectoryTool:
 
     def schema():
         return {
+            "name": "get_current_directory",
             "type": "function",
             "function": {
                 "name": "get_current_directory",

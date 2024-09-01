@@ -14,7 +14,7 @@ def show_json( obj ):
 
 pretty_print     = PrettyPrint()
 assistantFactory = AssistantFactory()
-assistant        =  assistantFactory.getExistingAssistant( assistant_id="asst_Zw3KYZUBFI9jZheRiVLkQAta" )
+assistant        =  assistantFactory.getExistingAssistant( assistant_id="asst_a7tqamjvSj1vdnIbaAqpajjr" )
 client           = OpenAI()                              # create the client
 run_spinner      = RunSpinner( client )                  # create the wait loop Object
 thread           = client.beta.threads.create()          # create a thread

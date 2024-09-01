@@ -14,8 +14,8 @@ class FileSystemMappedFunctions:
         self.function_map.add_function( "read_file" , ReadFileTool.read_file   )
         self.function_map.add_function( "make_directory", MakeDirectoryTool.make_directory )
         self.function_map.add_function( "change_directory", ChangeDirectoryTool.change_directory )
-        self.function_map.add_function( "execute_command", LinuxCommandTool.execute_command )
         self.function_map.add_function( "get_current_directory", GetCurrentDirectoryTool.get_current_directory )
+        self.function_map.add_function( "execute_command", LinuxCommandTool.execute_command )
 
     def get_function_map( self ):
         return self.function_map

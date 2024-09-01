@@ -14,6 +14,7 @@ class ChangeDirectoryTool:
 
     def schema():
         return {
+            "name": "change_directory",
             "type": "function",
             "function": {
                 "name": "change_directory",

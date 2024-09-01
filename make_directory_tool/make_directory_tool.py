@@ -15,9 +15,9 @@ class MakeDirectoryTool:
 
     def schema():
         return {
+            "name": "make_directory",
             "type": "function",
             "function": {
-                "name": "make_directory",
                 "description": "Create a new directory",
                 "parameters": {
                     "type": "object",
