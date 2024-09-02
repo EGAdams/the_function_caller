@@ -29,7 +29,7 @@ class MakeDirectoryTool:
                 "additionalProperties": False,
                 "required": ["directory_path"]
             }
-        }
+        } # False and True need to be changed to false and true in the assistants API
 
     def make_directory(directory_path):
         """Creates a new directory at the specified path.

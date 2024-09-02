@@ -15,22 +15,21 @@ class ChangeDirectoryTool:
     def schema():
         return {
             "name": "change_directory",
-            "type": "function",
-            "function": {
-                "name": "change_directory",
-                "description": "Change the current working directory",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "path": {
-                            "type": "string",
-                            "description": "The path of the directory to change to."
-                        }
-                    },
-                    "required": ["path"]
-                }
+            "description": "Change the current working directory",
+            "strict": True,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "The path of the directory to change to."
+                    }
+                },
+                "additionalProperties": False,
+                "required": ["path"]
             }
         }
+
 
     def change_directory(path):
         """Changes the current working directory.

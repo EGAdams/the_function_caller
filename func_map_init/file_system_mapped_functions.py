@@ -1,4 +1,6 @@
 from read_file_tool.read_file_tool      import ReadFileTool
+from todo_list_tools.add_todo_tool import AddTodoTool
+from todo_list_tools.remove_todo_tool import RemoveTodoTool
 from write_file_tool.write_file_tool    import WriteFileTool
 from function_map.function_map          import FunctionMap
 from make_directory_tool.make_directory_tool import MakeDirectoryTool
@@ -16,6 +18,8 @@ class FileSystemMappedFunctions:
         self.function_map.add_function( "change_directory", ChangeDirectoryTool.change_directory )
         self.function_map.add_function( "get_current_directory", GetCurrentDirectoryTool.get_current_directory )
         self.function_map.add_function( "execute_command", LinuxCommandTool.execute_command )
+        self.function_map.add_function( "add_todo", AddTodoTool.add_todo )
+        self.function_map.add_function( "remove_todo", RemoveTodoTool.remove_todo )
 
     def get_function_map( self ):
         return self.function_map

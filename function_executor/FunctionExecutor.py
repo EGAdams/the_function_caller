@@ -20,8 +20,23 @@ class FunctionExecutor:
         Returns:
             str: The result of the function execution or a message if the function is not recognized.
         '''
-        function_to_run = self.string_to_function.create_function_from_string( function_name )
-        if ( function_to_run != None ):
-            return function_to_run( **arguments )
+        
+        function_to_run = self.string_to_function.create_function_from_string(function_name)
+        if function_to_run is not None:
+            if isinstance(function_to_run, type):
+                # If it's a class, instantiate it and call the method
+                instance = function_to_run()
+                method = getattr(instance, function_name.split('.')[-1])
+                return method(**arguments)
+            elif callable(function_to_run):
+                # If it's a function or static method, call it directly
+                return function_to_run(**arguments)
+            else:
+                # If it's an instance method, call it on the instance
+                instance = function_to_run.__self__
+                return function_to_run(**arguments)
         else:
             return 'Function not recognized.'
+
+
+
