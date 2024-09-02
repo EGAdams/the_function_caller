@@ -6,10 +6,10 @@
 # this code would work without creating a function from a string.
 #
 class FunctionExecutor:
-    def __init__( self, string_to_function_arg ):
+    def __init__(self, string_to_function_arg):
         self.string_to_function = string_to_function_arg
 
-    def execute_function( self, function_name, arguments ):
+    def execute_function(self, function_name, arguments):
         '''
         Execute a function referenced by its name with provided arguments.
         
@@ -32,11 +32,8 @@ class FunctionExecutor:
                 # If it's a function or static method, call it directly
                 return function_to_run(**arguments)
             else:
-                # If it's an instance method, call it on the instance
+                # Handle instance methods
                 instance = function_to_run.__self__
-                return function_to_run(**arguments)
+                return function_to_run.__func__(instance, **arguments)
         else:
             return 'Function not recognized.'
-
-
-
