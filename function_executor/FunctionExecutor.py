@@ -26,14 +26,14 @@ class FunctionExecutor:
             if isinstance(function_to_run, type):
                 # If it's a class, instantiate it and call the method
                 instance = function_to_run()
-                method = getattr(instance, function_name.split('.')[-1])
+                method_name = function_name.split('.')[-1]
+                method = getattr(instance, method_name)
                 return method(**arguments)
             elif callable(function_to_run):
                 # If it's a function or static method, call it directly
                 return function_to_run(**arguments)
             else:
-                # Handle instance methods
-                instance = function_to_run.__self__
-                return function_to_run.__func__(instance, **arguments)
+                # If it's an instance method already bound to an instance
+                return function_to_run(**arguments)
         else:
             return 'Function not recognized.'
