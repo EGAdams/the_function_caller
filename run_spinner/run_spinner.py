@@ -9,6 +9,7 @@ class RunSpinner():
     def __init__( self, client_arg ):
         self.spin_count = 0
         self.client     = client_arg
+        self.SLEEP_TIME = 1.0
 
     def spin( self, run, thread ):
         print ( "entering while.  run status is: " + run.status )
@@ -16,7 +17,7 @@ class RunSpinner():
             run.status == "in_progress" or \
             run.status == "requires_action":
             run = self.client.beta.threads.runs.retrieve( thread_id=thread.id, run_id=run.id )
-            time.sleep( 0.5 )
+            time.sleep( self.SLEEP_TIME )
             print( "done sleeping.  checking for any action required..." )
             if run.status == "requires_action":
                 print( "found action required.  sending the run for processing..." )

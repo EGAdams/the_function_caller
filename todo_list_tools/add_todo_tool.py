@@ -40,9 +40,9 @@ class AddTodoTool:
             json.dump(self.todo_list, file, indent=2)
 
     def add_todo(self, task):
-        """Adds a new todo item to the list and saves it to a file."""
         timestamp = datetime.now().isoformat()
-        todo_item = {"timestamp": timestamp, "task": task}
+        new_id = str(len(self.todo_list) + 1)
+        todo_item = {"id": new_id, "timestamp": timestamp, "task": task}
         self.todo_list.append(todo_item)
         self.save_todo_list()
         return f"Todo item added and saved: {json.dumps(todo_item)}"
