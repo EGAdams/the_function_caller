@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 from datetime import datetime
-from edit_todo_tool import EditTodoTool
+from todo_list_tools.edit_todo_tool.edit_todo_tool import EditTodoTool
 
 class TestEditTodoTool(unittest.TestCase):
 

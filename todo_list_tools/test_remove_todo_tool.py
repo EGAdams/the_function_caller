@@ -2,7 +2,7 @@ import unittest
 import json
 import tempfile
 import os
-from todo_list_tools.remove_todo_tool import RemoveTodoTool
+from todo_list_tools.remove_todo_tool.remove_todo_tool import RemoveTodoTool
 
 class TestRemoveTodoTool(unittest.TestCase):
     def setUp(self):

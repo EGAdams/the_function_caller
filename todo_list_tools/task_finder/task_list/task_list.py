@@ -5,7 +5,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Now you can import TaskList from task_list.py and Task from task.py
-from task.task import Task  # This works after modifying sys.path
+from task.task import Task
+
 
 class TaskList:
     """Manages a list of tasks and subtasks."""

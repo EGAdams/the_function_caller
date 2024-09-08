@@ -1,5 +1,12 @@
 import unittest
 
+import sys
+import os
+
+# Add the root directory of the project (two levels up from task_list)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# Now you can import TaskList from task_list.py
 # Assuming TaskList and Task are defined in a module named task_finder
 from task_list import TaskList
 

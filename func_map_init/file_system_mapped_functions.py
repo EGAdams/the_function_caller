@@ -1,6 +1,6 @@
 from read_file_tool.read_file_tool      import ReadFileTool
 from todo_list_tools.add_todo_tool import AddTodoTool
-from todo_list_tools.remove_todo_tool import RemoveTodoTool
+from todo_list_tools.remove_todo_tool.remove_todo_tool import RemoveTodoTool
 from todo_list_tools.read_todo_tool import ReadTodoTool
 from write_file_tool.write_file_tool    import WriteFileTool
 from function_map.function_map          import FunctionMap
