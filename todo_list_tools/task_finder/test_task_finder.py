@@ -36,15 +36,15 @@ class TestTaskFinder(unittest.TestCase):
         """Test finding a root-level task."""
         task = TaskFinder.find_task(self.todo_list, "1")
         self.assertIsNotNone(task)
-        self.assertEqual(task["id"], "1")
-        self.assertEqual(task["task"], "Root Task 1")
+        self.assertEqual(task.get_id(), "1")
+        self.assertEqual(task.get_task(), "Root Task 1")
 
     def test_find_subtask(self):
         """Test finding a subtask."""
         task = TaskFinder.find_task(self.todo_list, "1.a")
         self.assertIsNotNone(task)
-        self.assertEqual(task["id"], "1.a")
-        self.assertEqual(task["task"], "Subtask 1.a")
+        self.assertEqual(task.get_id(), "1.a")
+        self.assertEqual(task.get_task(), "Subtask 1.a")
     
     def test_find_non_existent_task(self):
         """Test finding a non-existent task."""
@@ -66,8 +66,8 @@ class TestTaskFinder(unittest.TestCase):
         ]
         task = TaskFinder.find_task(self.todo_list, "1.a.1")
         self.assertIsNotNone(task)
-        self.assertEqual(task["id"], "1.a.1")
-        self.assertEqual(task["task"], "Subtask 1.a.1")
+        self.assertEqual(task.get_id(), "1.a.1")
+        self.assertEqual(task.get_task(), "Subtask 1.a.1")
     
     def test_find_subtask_with_multiple_levels_missing(self):
         """Test finding a subtask with multiple levels that does not exist."""

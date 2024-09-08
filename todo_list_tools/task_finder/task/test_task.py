@@ -18,8 +18,8 @@ class TestTask(unittest.TestCase):
         
         # Verify subtasks
         self.assertEqual(len(task.subtasks), 2)
-        self.assertEqual(task.subtasks[0].get("id"), "1.1")
-        self.assertEqual(task.subtasks[1].get("id"), "1.2")
+        self.assertEqual(task.subtasks[0].id, "1.1")
+        self.assertEqual(task.subtasks[1].id, "1.2")
 
     def test_task_no_subtasks(self):
         """Test a Task object with no subtasks."""
@@ -45,8 +45,7 @@ class TestTask(unittest.TestCase):
         # Verify task has subtasks
         self.assertTrue(task.has_subtasks())
         self.assertEqual(len(task.subtasks), 1)
-        self.assertEqual(task.subtasks[0].get("id"), "3.1")
-
-
+        self.assertEqual(task.subtasks[0].id, "3.1")
+        
 if __name__ == "__main__":
     unittest.main()

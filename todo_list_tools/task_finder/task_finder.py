@@ -1,18 +1,18 @@
+import sys
+import os
+
+# Add the parent directory of the current file (task_list) to the system path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Now you can import TaskList from task_list.py and Task from task.py
+from task_iterator.task_iterator import TaskIterator
+from task_factory.task_factory import TaskFactory
+
 class TaskFinder:
     """Responsible for finding tasks within a todo list by ID."""
-
+    
     @staticmethod
     def find_task(todo_list, task_id):
-        parts = task_id.split('.')
-        current_list = todo_list
-        
-        for part in parts:
-            for item in current_list:
-                if item.get("id") == part:
-                    if part == parts[-1]:  # If it's the last part, return the item
-                        return item
-                    current_list = item.get("subtasks", [])
-                    break
-            else:
-                return None  # Return None if part not found
-        return None
+        task_list = TaskFactory.create_task_list(todo_list)
+        task_iterator = TaskIterator(task_list, task_id)
+        return task_iterator.iterate()

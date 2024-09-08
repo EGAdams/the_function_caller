@@ -5,29 +5,24 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Now you can import TaskList from task_list.py and Task from task.py
-from task_list.task_list import TaskList  # This works after modifying sys.path
-
-
 from task_list.task_list import TaskList
 
+# Redefine the TaskIterator with the new logic to match the full task ID
 class TaskIterator:
     """Iterates through the tasks based on task ID parts."""
     
     def __init__(self, task_list, task_id):
         self.task_list = task_list
-        self.parts = task_id.split('.')
+        self.task_id = task_id
     
     def iterate(self):
-        current_list = self.task_list
-        for idx, part in enumerate(self.parts):
-            task = current_list.find_task_by_id(part)
-            if task is None:
-                return None
-            # Check if it's the last part of the task_id
-            if idx == len(self.parts) - 1:  
-                return task
-            # Move to the subtasks of the current task
-            current_list = TaskList(task.subtasks) if task.subtasks else None
-            if current_list is None:
-                return None
+        current_tasks = self.task_list.tasks
+        for task in current_tasks:
+            result = task.find_task_by_id(self.task_id)
+            if result:
+                return result
         return None
+
+# Rerun the tests with the new logic
+# unittest.TextTestRunner().run(unittest.TestLoader().loadTestsFromTestCase(TaskIteratorTest))
+

@@ -4,8 +4,8 @@ import subprocess
 
 # Ask the user for the object to test     
 # object_name = input( "Enter the object to test (e.g., edit_todo_tool): " )
-object_file_name = "task_finder"
-object_name = "TaskFinder"
+object_file_name = "task"
+object_name = "Task"
 
 object_file = f"{ object_file_name }.py"
 test_file = f"test_{ object_file_name }.py"
