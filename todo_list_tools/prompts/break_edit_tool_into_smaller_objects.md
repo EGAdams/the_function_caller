@@ -1,3 +1,13 @@
+
+# Persona
+- World-class Python Developer
+- Seasoned GoF Expert and user of SOLID Principles
+
+# Goal
+Break up the following object into smaller objects.  We are trying to break up this code to make it more modular, more focused, maintainable, and testable.
+
+# Python Source Code for the Object: `EditTodoTool`
+```py
 import json
 from datetime import datetime
 
@@ -89,3 +99,7 @@ class EditTodoTool:
             if not task_found:
                 return None
         return None
+```
+
+# Your Task
+Break the original object `EditTodoTool` into smaller objects.  Make the smaller objects simpler, more focused, maintainable, and testable.  Use your skills at using GoF and SOLID principles to rewrite the file `EditTodoTool.py` to conform to this more modular approach.
