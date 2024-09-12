@@ -1,6 +1,9 @@
 import unittest
-from unittest.mock import MagicMock
+import sys
 
+sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools/' )
+
+from unittest.mock import MagicMock
 from add_todo_tool import AddTodoTool
 
 class TestAddTodoTool(unittest.TestCase):
