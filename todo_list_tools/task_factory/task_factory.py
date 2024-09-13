@@ -1,11 +1,14 @@
 import sys
 import os
 
-# Add the parent directory of the current file (task_list) to the system path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Now you can import TaskList from task_list.py and Task from task.py
-from task_list.task_list import TaskList
+# Dynamically add '~/the_function_caller/todo_list_tools' to sys.path
+# project_root = os.path.expanduser('~/the_function_caller/todo_list_tools')
+sys.path.append( '/home/eg1972/the_function_caller/todo_list_tools' )
+
+
+from task_finder.task_list.task_list import TaskList
+
 
 class TaskFactory:
     """Factory for creating Task objects."""
