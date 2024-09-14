@@ -1,6 +1,5 @@
 import json
 
-
 class EditTodoTool:
     def __init__(self, storage_handler, task_finder, task_editor, subtask_manager):
         self.storage_handler = storage_handler
