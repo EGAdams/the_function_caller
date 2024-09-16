@@ -13,7 +13,7 @@ class ReadFileTool:
     def __init__( self ):
         print ( "initialaizing" )
 
-    def schema(): 
+    def schema( self ): 
         return {
                 "type": "function",
                 "function": {
@@ -32,7 +32,7 @@ class ReadFileTool:
                 }
             }
 
-    def read_file( filename ):
+    def read_file( self, filename ):
         """Reads content from a specified file.
         
         Args:

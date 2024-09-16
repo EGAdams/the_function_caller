@@ -11,7 +11,7 @@ from message_factory import MessageFactory
 import tool_manager.ToolManager as ToolManager
 import function_map.function_map as FunctionMap # to construct STF object below
 import string_to_function.string_to_function as StringToFunction # for func exec
-import function_executor.FunctionExecutor as FunctionExecutor
+import function_executor.function_executor as function_executor
 import func_map_init.file_system_mapped_functions as FileSystemMappedFunctions
 if __name__ == "__main__":
     message_factory     = MessageFactory()
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     fs_mapped_funcs     = FileSystemMappedFunctions.FileSystemMappedFunctions()
     function_map        = fs_mapped_funcs.get_function_map() # populate for file system tools
     string_to_function  = StringToFunction.StringToFunction( function_map )
-    function_executor   = FunctionExecutor.FunctionExecutor( string_to_function )
+    function_executor   = function_executor.FunctionExecutor( string_to_function )
     
     @retry( wait=wait_random_exponential( multiplier=1, max=40 ), stop=stop_after_attempt( 3 ))
     def chat_completion_request( messages, tools=None, tool_choice=None, model=GPT_MODEL ):

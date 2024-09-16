@@ -17,7 +17,7 @@ class RunSpinner():
             run.status == "in_progress" or \
             run.status == "requires_action":
             run = self.client.beta.threads.runs.retrieve( thread_id=thread.id, run_id=run.id )
-            time.sleep( self.SLEEP_TIME )
+            time.sleep( self.SLEEP_TIME )  # shhhh... im sleeping...
             print( "done sleeping.  checking for any action required..." )
             if run.status == "requires_action":
                 print( "found action required.  sending the run for processing..." )
