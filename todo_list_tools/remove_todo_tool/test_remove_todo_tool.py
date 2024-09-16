@@ -3,7 +3,7 @@ import json
 import tempfile
 import os
 from unittest.mock import MagicMock
-from todo_list_tools.remove_todo_tool.remove_todo_tool import RemoveTodoTool
+from remove_todo_tool.remove_todo_tool import RemoveTodoTool
 
 
 class TestRemoveTodoTool(unittest.TestCase):

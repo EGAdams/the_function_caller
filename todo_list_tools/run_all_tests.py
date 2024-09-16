@@ -36,4 +36,3 @@ def discover_and_run_tests():
 
 if __name__ == '__main__':
     discover_and_run_tests()
-
