@@ -23,17 +23,20 @@ def build_prompt( object_name, object_file_text, test_file_text, test_output ):
     prompt = f"""
 # Persona
 - World-class Python Developer
-- Expert in debugging and creating unit tests
+- Expert in debugging Python code
 
 # Goal
 - Debug the unit test failures for the object: `{ object_name }`
 
 # Python Source Code for the `{ object_name }` object:
-```py
+```python
 { object_file_text }
+```
 
 # Unit Test for the tool: `{ object_name }`
+```python
 { test_file_text }
+```
 
 # Output from running the unit tests
 ```bash
@@ -67,21 +70,23 @@ def main():
     # object_file = f"{ current_dir }/{ testing_directory }/{      object_name }.py"
     # test_file = f"{ current_dir }/{ testing_directory }/test_{ object_name }.py"
 
+    tool_file_path = f"{current_dir}/todo_list_tools/task_finder/{object_file_name}/{object_file}"
+    test_file_path = f"{current_dir}/todo_list_tools/task_finder/{object_file_name}/{test_file}"
 
-    print(f"Tool file path: {object_file}")
-    print(f"Test file path: {test_file}")
+    print(f"Tool file path: { tool_file_path }")
+    print(f"Test file path: { test_file_path }")
     print(f"Current working directory: {os.getcwd()}")
-    print(f"Tool file exists: {os.path.exists(object_file)}")
-    print(f"Test file exists: {os.path.exists(test_file)}")
+    print(f"Tool file exists: {os.path.exists( tool_file_path )}")
+    print(f"Test file exists: {os.path.exists( test_file_path )}")
 
     # Ensure files exist
-    if not os.path.exists( object_file ) or not os.path.exists( test_file ):
-        print(f"Either {object_file} or {test_file} does not exist in the current directory: {current_dir}")
+    if not os.path.exists( tool_file_path ) or not os.path.exists( test_file_path ):
+        print(f"Either { tool_file_path } or { test_file_path } does not exist in the current directory: {current_dir}")
         return
 
     # Read the contents of the tool and test files
-    object_file_text = read_file( object_file )
-    test_file_text = read_file( test_file )
+    object_file_text = read_file( tool_file_path )
+    test_file_text = read_file( test_file_path )
 
     # Run the unit tests and capture the output
     test_output = run_unit_test( test_file )
@@ -96,6 +101,7 @@ def main():
     print( f"Prompt generated and saved to 'unit_test_prompt.md'. Test output:\n{test_output}" )
     
     print( __name__ )
+    print( "exiting main..." )
 
 if __name__ == "__main__":
         main()
