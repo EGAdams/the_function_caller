@@ -1,9 +1,10 @@
 # Import main classes and functions from the package modules using relative imports
-
-
+# task_iterator/__init__.py
+from .task_iterator import TaskIterator
+from .task_list     import TaskList
 
 # You can define __all__ to specify what gets imported when using "from todo_list_tools import *"
-__all__ = [ 'Task', 'TaskEditor', 'TaskFactory', 'TaskList' ]
+__all__ = [ 'TaskList', 'TaskIterator' ]
 
 # Package metadata
 __version__ = '0.1.0'

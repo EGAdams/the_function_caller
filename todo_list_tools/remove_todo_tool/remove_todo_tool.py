@@ -1,14 +1,18 @@
-import json
+from storage_handler.storage_handler import StorageHandler
 
 class RemoveTodoTool:
     """
     Provides a tool for removing a todo item from a list and updating the storage.
     """
-    
-    def __init__(self, storage_handler):
-        self.storage_handler = storage_handler
+    def __init__(self, file_name: str = None, storage_handler = None):
+        if storage_handler:
+            self.storage_handler = storage_handler
+        elif file_name:
+            self.storage_handler = StorageHandler(file_name)
+        else:
+            raise ValueError("Either file_name or storage_handler must be provided")
+        
         self.todo_list = self.storage_handler.load()
-
     @staticmethod
     def schema():
         return {

@@ -6,7 +6,9 @@ from todo_list_tools.edit_todo_tool.edit_todo_tool import EditTodoTool
 
 # Ask the user for the tool to test     
 # tool_name = input( "Enter the tool to test (e.g., edit_todo_tool): " )
-tool_name = "edit_todo_tool"
+source_file_path = ""/home/eg1972/the_function_caller/todo_list_tools/add_todo_tool/test_add_todo_tool.py"
+
+module_name = "edit_todo_tool"
 
 tool_file = f"{ tool_name }.py"
 test_file = f"test_{ tool_name }.py"
