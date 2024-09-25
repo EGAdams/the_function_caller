@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>G-Force Needle Test</title>
+</head>
+<body>
+  <test-gauge></test-gauge>
+
+  <script type="module" src="test-gauge.js"></script>
+  <script type="module" src="g-force-needle.js"></script>
+  <script type="module" src="coreMotionDataSimulator.js"></script>
+
+  <script type="module">
+    import { CoreMotionDataSimulator } from './coreMotionDataSimulator.js';
+
+    // Wait for the custom elements to be defined
+    window.addEventListener('DOMContentLoaded', () => {
+      const testGauge = document.querySelector('test-gauge');
+      const gForceNeedle = testGauge.shadowRoot.querySelector('g-force-needle');
+
+      // Instantiate the simulator
+      const simulator = new CoreMotionDataSimulator((angle) => {
+        // Update the needle's angle
+        gForceNeedle.setAngle(angle);
+      });
+
+      // Start the simulation
+      simulator.start();
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import unittest
-from function_executor.FunctionExecutor import FunctionExecutor
+from function_executor.function_executor import FunctionExecutor
 
 class TestFunctionExecutor(unittest.TestCase):
     def setUp(self):

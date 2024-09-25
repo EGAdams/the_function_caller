@@ -1,6 +1,6 @@
 #
 import string_to_function.string_to_function as StringToFunction # for func exec
-from function_executor.FunctionExecutor import FunctionExecutor
+from function_executor.function_executor import FunctionExecutor
 import func_map_init.file_system_mapped_functions as FileSystemMappedFunctions
 from JsonArgumentParser     import JSONArgumentParser
 from OAIFunctionCallClient  import OAIFunctionCallClient

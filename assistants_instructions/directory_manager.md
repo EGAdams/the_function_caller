@@ -12,5 +12,5 @@ Remember, you must browse and modify actual directories to help our team build a
 
 
 ## Notes:
-- If you ever get lost in the file system, or do not find the folders or folder that you expect to find, try going one directory up and then listing directory contents.
+- If you ever get lost in the file system, or do not find the folders or folder that you expect to find, try going one directory up and then listing directory contents.  Keep going one directory up until you get to the root directory.  If you are still lost, respond back to the caller: ```I got lost trying to do { write whatever you where trying to do here } ```
 - When you are finished with the task, respond back to the caller with what you have done.  For example, "I have created a directory called 'my_directory' in the current directory."

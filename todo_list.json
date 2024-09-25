@@ -105,113 +105,13 @@
     "task": "Implement ToolFactory class"
   },
   {
-    "id": "22",
-    "timestamp": "2024-09-03T10:43:28.366368",
-    "task": "Write unit test for IMessageBus interface"
+    "id": "44",
+    "timestamp": "2024-09-17T09:18:11.162412",
+    "task": "Debug a segfault"
   },
   {
     "id": "23",
-    "timestamp": "2024-09-03T10:43:28.367431",
-    "task": "Write unit test for SimpleMessageBus class"
-  },
-  {
-    "id": "24",
-    "timestamp": "2024-09-03T10:43:28.368611",
-    "task": "Write unit test for IMessage interface"
-  },
-  {
-    "id": "25",
-    "timestamp": "2024-09-03T10:43:28.369481",
-    "task": "Write unit test for SimpleMessage class"
-  },
-  {
-    "id": "26",
-    "timestamp": "2024-09-03T10:43:28.370238",
-    "task": "Write unit test for ISubscriber interface"
-  },
-  {
-    "id": "27",
-    "timestamp": "2024-09-03T10:43:28.371011",
-    "task": "Write unit test for BaseSubscriber class"
-  },
-  {
-    "id": "28",
-    "timestamp": "2024-09-03T10:43:28.371563",
-    "task": "Write unit test for IHandler interface"
-  },
-  {
-    "id": "29",
-    "timestamp": "2024-09-03T10:43:28.372119",
-    "task": "Write unit test for ThreadRetrievalHandler class"
-  },
-  {
-    "id": "30",
-    "timestamp": "2024-09-03T10:43:28.372642",
-    "task": "Write unit test for ToolExecutionHandler class"
-  },
-  {
-    "id": "31",
-    "timestamp": "2024-09-03T10:43:28.373187",
-    "task": "Write unit test for IAgent interface"
-  },
-  {
-    "id": "32",
-    "timestamp": "2024-09-03T10:43:28.373721",
-    "task": "Write unit test for UserInteractionManager class"
-  },
-  {
-    "id": "33",
-    "timestamp": "2024-09-03T10:43:28.374267",
-    "task": "Write unit test for IUserInteraction interface"
-  },
-  {
-    "id": "34",
-    "timestamp": "2024-09-03T10:43:28.374817",
-    "task": "Write unit test for Thread class"
-  },
-  {
-    "id": "35",
-    "timestamp": "2024-09-03T10:43:28.375381",
-    "task": "Write unit test for IToolCall interface"
-  },
-  {
-    "id": "36",
-    "timestamp": "2024-09-03T10:43:28.376044",
-    "task": "Write unit test for ToolCall class"
-  },
-  {
-    "id": "37",
-    "timestamp": "2024-09-03T10:43:28.376655",
-    "task": "Write unit test for IMessageOutput interface"
-  },
-  {
-    "id": "38",
-    "timestamp": "2024-09-03T10:43:28.377289",
-    "task": "Write unit test for MessageOutput class"
-  },
-  {
-    "id": "39",
-    "timestamp": "2024-09-03T10:43:28.383635",
-    "task": "Write unit test for IErrorHandler interface"
-  },
-  {
-    "id": "40",
-    "timestamp": "2024-09-03T10:43:28.384617",
-    "task": "Write unit test for ErrorHandler class"
-  },
-  {
-    "id": "41",
-    "timestamp": "2024-09-03T10:43:28.385476",
-    "task": "Write unit test for ThreadFactory class"
-  },
-  {
-    "id": "42",
-    "timestamp": "2024-09-03T10:43:28.386242",
-    "task": "Write unit test for ToolFactory class"
-  },
-  {
-    "id": "43",
-    "timestamp": "2024-09-03T10:45:03.903350",
-    "task": "Group the unit testing tasks with respective object creation tasks"
+    "timestamp": "2024-09-17T09:56:25.890807",
+    "task": "Debug zero connection"
   }
 ]

@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 # Assuming refactored classes are in separate files or appropriately imported
 from ActionHandler import ActionHandler
-from function_executor.FunctionExecutor import FunctionExecutor
+from function_executor.function_executor import FunctionExecutor
 from OAIFunctionCallClient import OAIFunctionCallClient
 
 
