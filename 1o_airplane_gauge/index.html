@@ -1,33 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>G-Force Needle Test</title>
+    <meta charset="UTF-8">
+    <title>Aircraft Speedometer</title>
+    <!-- Include the canvas-gauges library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-gauges@2.1.7/gauge.min.js"></script>
+    <style>
+        body {
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        test-gauge {
+            width: 400px;
+            height: 400px;
+        }
+    </style>
 </head>
 <body>
-  <test-gauge></test-gauge>
+    <test-gauge></test-gauge>
 
-  <script type="module" src="test-gauge.js"></script>
-  <script type="module" src="g-force-needle.js"></script>
-  <script type="module" src="coreMotionDataSimulator.js"></script>
+    <script>
+        // CoreMotionDataSimulator class
+        class CoreMotionDataSimulator {
+            constructor(callback) {
+                this.callback = callback;
+                this.speed = 0;
+                this.intervalId = null;
+                this.direction = 1; // 1 for increasing, -1 for decreasing
+            }
 
-  <script type="module">
-    import { CoreMotionDataSimulator } from './coreMotionDataSimulator.js';
+            start() {
+                this.intervalId = setInterval(() => {
+                    // Simulate speed changes between 0 and 400 knots
+                    if (this.speed >= 400) this.direction = -1;
+                    if (this.speed <= 0) this.direction = 1;
+                    this.speed += 5 * this.direction;
 
-    // Wait for the custom elements to be defined
-    window.addEventListener('DOMContentLoaded', () => {
-      const testGauge = document.querySelector('test-gauge');
-      const gForceNeedle = testGauge.shadowRoot.querySelector('g-force-needle');
+                    this.callback(parseFloat(this.speed.toFixed(1)));
+                }, 100);
+                // Update every 100ms
+            }
 
-      // Instantiate the simulator
-      const simulator = new CoreMotionDataSimulator((angle) => {
-        // Update the needle's angle
-        gForceNeedle.setAngle(angle);
-      });
+            stop() {
+                clearInterval(this.intervalId);
+            }
+        }
 
-      // Start the simulation
-      simulator.start();
-    });
-  </script>
+        class TestGauge extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+
+                // Create template
+                const template = document.createElement('template');
+                template.innerHTML = `
+                    <style>
+                        :host {
+                            display: block;
+                            width: 100%;
+                            height: 100%;
+                            position: relative;
+                        }
+                        canvas {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    </style>
+                    <canvas></canvas>
+                `;
+                this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+                this.canvas = this.shadowRoot.querySelector('canvas');
+
+                // Initialize the gauge using canvas-gauges
+                this.gauge = new RadialGauge({
+                    renderTo: this.canvas,
+                    width: 400,
+                    height: 400,
+                    minValue: 0,
+                    maxValue: 400,
+                    majorTicks: ['0', '50', '100', '150', '200', '250', '300', '350', '400'],
+                    minorTicks: 5,
+                    ticksAngle: 260,
+                    startAngle: 140,
+                    strokeTicks: true,
+                    highlights: [
+                        { from: 0, to: 200, color: 'rgba(0, 255, 0, .3)' },
+                        { from: 200, to: 300, color: 'rgba(255, 255, 0, .3)' },
+                        { from: 300, to: 400, color: 'rgba(255, 0, 0, .3)' }
+                    ],
+                    valueInt: 3,
+                    valueDec: 0,
+                    colorPlate: '#000000',
+                    colorMajorTicks: '#ffffff',
+                    colorMinorTicks: '#ffffff',
+                    colorNumbers: '#ffffff',
+                    colorNeedle: 'rgba(255, 0, 0, 1)',
+                    colorNeedleEnd: 'rgba(255, 0, 0, 1)',
+                    colorNeedleShadowDown: '#333',
+                    animationDuration: 150,
+                    animationRule: 'linear',
+                    needleType: 'arrow',
+                    needleWidth: 4,
+                    borders: false,
+                    borderShadowWidth: 0,
+                    valueBox: false,
+                    colorNeedleCircleOuter: '#ffffff',
+                    needleCircleSize: 7,
+                    needleCircleOuter: true,
+                    needleCircleInner: false,
+                    fontNumbersSize: 18,
+                    fontNumbersStyle: 'bold',
+                    fontNumbers: 'Arial',
+                    fontTitle: 'Arial',
+                    fontUnits: 'Arial',
+                    animatedValue: true,
+                    // Title
+                    title: 'AIRSPEED',
+                    fontTitleSize: 24,
+                    fontTitleWeight: 'bold',
+                    colorTitle: '#ffffff',
+                    // Units
+                    units: 'KNOTS',
+                    fontUnitsSize: 20,
+                    colorUnits: '#ffffff',
+                    // Adjust the needle
+                    needleStart: 0,
+                    needleEnd: 75,
+                }).draw();
+
+                // Start the simulator
+                this.simulator = new CoreMotionDataSimulator((value) => {
+                    this.gauge.value = value;
+                });
+                this.simulator.start();
+            }
+
+            disconnectedCallback() {
+                this.simulator.stop();
+            }
+        }
+        customElements.define('test-gauge', TestGauge);
+    </script>
 </body>
 </html>

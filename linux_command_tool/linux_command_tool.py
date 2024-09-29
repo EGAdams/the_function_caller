@@ -48,4 +48,4 @@ class LinuxCommandTool:
             child.close()
             return f"Command output:\n{output}"
         except pexpect.ExceptionPexpect as e:
-            return f"An error occurred while executing the command: {str(e)}"
+            return f"An error occurred while executing the command: {str(e)}" EditTodoTool(
