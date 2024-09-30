@@ -3,12 +3,16 @@ import unittest
 import sys
 import os
 
+from todo_list_tools.task_finder.task_list.task_list import TaskList
+
 # Add the root directory of the project (two levels up from task_list)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
+# put the home directory (~) into a variable
+# Add the parent directory of the current file (task_list) to the system path
+sys.path.append( os.path.expanduser("~") + '/the_function_caller/todo_list_tools/' )
 # Now you can import TaskList from task_list.py
 # Assuming TaskList and Task are defined in a module named task_finder
-from task_list import TaskList
+
 
 class TestTaskList(unittest.TestCase):
 

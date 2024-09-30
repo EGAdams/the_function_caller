@@ -1,10 +1,11 @@
 import sys
 import os
 
-
+# put the home directory (~) into a variable
+# home_directory = os.path.expanduser("~")
 # Add the parent directory of the current file (task_list) to the system path
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools/' )
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # from todo_list_tools.task.task import Task
 from task import Task
