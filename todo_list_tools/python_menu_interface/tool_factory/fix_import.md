@@ -183,4 +183,7 @@ ModuleNotFoundError: No module named 'todo_list_tools'
 adamsl@DESKTOP-2OBSQMC:~/the_function_caller/todo_list_tools$
 ```
 
-Pleas fix this error.
+Please fix this error.
+
+# link to discussion
+https://chatgpt.com/share/66fb09a8-63d8-8006-8886-dc764a659556
