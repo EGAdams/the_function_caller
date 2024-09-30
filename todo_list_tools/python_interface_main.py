@@ -1,11 +1,16 @@
 #
 # 09-29-2024
 #
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+
 from python_menu_interface.show_todo_list_command.show_todo_list_command import ShowTodoListCommand
-from todo_list_tools.python_menu_interface.add_todo_comand.add_todo_command import AddTodoCommand
-from todo_list_tools.python_menu_interface.menu_invoker.menu_invoker import MenuInvoker
-from todo_list_tools.python_menu_interface.tool_factory.tool_factory import ToolFactory
-from todo_list_tools.storage_handler.storage_handler import StorageHandler
+from python_menu_interface.add_todo_comand.add_todo_command import AddTodoCommand
+from python_menu_interface.menu_invoker.menu_invoker import MenuInvoker
+from python_menu_interface.tool_factory.tool_factory import ToolFactory
+from storage_handler.storage_handler import StorageHandler
 
 
 if __name__ == "__main__":
