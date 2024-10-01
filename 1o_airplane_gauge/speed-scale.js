@@ -12,21 +12,36 @@ class SpeedScale extends HTMLElement {
       svg.style.width = '100%';
       svg.style.height = '100%';
   
+      // Ensure the SVG is positioned correctly
+      svg.style.position = 'absolute';
+      svg.style.top = '0';
+      svg.style.left = '0';
+  
       // Draw the scale markings and numbers
       this.drawScale(svg);
   
-      // Append styles if needed
+      // Append styles
       const style = document.createElement('style');
       style.textContent = `
+        :host {
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        svg {
+          width: 100%;
+          height: 100%;
+        }
         text {
-          fill: #fff;
+          fill: #ffffff;
           font-size: 12px;
           text-anchor: middle;
           dominant-baseline: middle;
+          font-family: 'Roboto', sans-serif;
         }
         line {
-          stroke: #fff;
-          stroke-width: 2;
+          stroke: #ffffff;
         }
       `;
   
