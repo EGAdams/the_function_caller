@@ -2,54 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Aircraft Speedometer</title>
+    <title>G-Force Gauge Test</title>
     <!-- Include the canvas-gauges library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-gauges@2.1.7/gauge.min.js"></script>
-    <style>
-        body {
-            background-color: #000000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        test-gauge {
-            width: 400px;
-            height: 400px;
-        }
-    </style>
 </head>
 <body>
     <test-gauge></test-gauge>
 
     <script>
-        // CoreMotionDataSimulator class
-        class CoreMotionDataSimulator {
-            constructor(callback) {
-                this.callback = callback;
-                this.speed = 0;
-                this.intervalId = null;
-                this.direction = 1; // 1 for increasing, -1 for decreasing
-            }
-
-            start() {
-                this.intervalId = setInterval(() => {
-                    // Simulate speed changes between 0 and 400 knots
-                    if (this.speed >= 400) this.direction = -1;
-                    if (this.speed <= 0) this.direction = 1;
-                    this.speed += 5 * this.direction;
-
-                    this.callback(parseFloat(this.speed.toFixed(1)));
-                }, 100);
-                // Update every 100ms
-            }
-
-            stop() {
-                clearInterval(this.intervalId);
-            }
-        }
-
         class TestGauge extends HTMLElement {
             constructor() {
                 super();
@@ -61,8 +21,8 @@
                     <style>
                         :host {
                             display: block;
-                            width: 100%;
-                            height: 100%;
+                            width: 400px;
+                            height: 400px;
                             position: relative;
                         }
                         canvas {
@@ -81,56 +41,35 @@
                     renderTo: this.canvas,
                     width: 400,
                     height: 400,
-                    minValue: 0,
-                    maxValue: 400,
-                    majorTicks: ['0', '50', '100', '150', '200', '250', '300', '350', '400'],
-                    minorTicks: 5,
-                    ticksAngle: 260,
-                    startAngle: 140,
+                    minValue: -2,
+                    maxValue: 2,
+                    majorTicks: ['-2', '-1', '0', '1', '2'],
+                    minorTicks: 10,
+                    ticksAngle: 180,
+                    startAngle: 90,
                     strokeTicks: true,
                     highlights: [
-                        { from: 0, to: 200, color: 'rgba(0, 255, 0, .3)' },
-                        { from: 200, to: 300, color: 'rgba(255, 255, 0, .3)' },
-                        { from: 300, to: 400, color: 'rgba(255, 0, 0, .3)' }
+                        { from: -2, to: -1, color: 'rgba(200, 50, 50, .75)' },
+                        { from: -1, to: -0.5, color: 'rgba(200, 200, 50, .75)' },
+                        { from: -0.5, to: 0.5, color: 'rgba(50, 200, 50, .75)' },
+                        { from: 0.5, to: 1, color: 'rgba(200, 200, 50, .75)' },
+                        { from: 1, to: 2, color: 'rgba(200, 50, 50, .75)' }
                     ],
-                    valueInt: 3,
-                    valueDec: 0,
-                    colorPlate: '#000000',
-                    colorMajorTicks: '#ffffff',
-                    colorMinorTicks: '#ffffff',
-                    colorNumbers: '#ffffff',
+                    valueInt: 1,
+                    valueDec: 1,
+                    colorPlate: '#fff',
+                    colorMajorTicks: '#000',
+                    colorMinorTicks: '#000',
+                    colorNumbers: '#000',
                     colorNeedle: 'rgba(255, 0, 0, 1)',
                     colorNeedleEnd: 'rgba(255, 0, 0, 1)',
-                    colorNeedleShadowDown: '#333',
                     animationDuration: 150,
                     animationRule: 'linear',
                     needleType: 'arrow',
-                    needleWidth: 4,
+                    needleWidth: 3,
                     borders: false,
                     borderShadowWidth: 0,
-                    valueBox: false,
-                    colorNeedleCircleOuter: '#ffffff',
-                    needleCircleSize: 7,
-                    needleCircleOuter: true,
-                    needleCircleInner: false,
-                    fontNumbersSize: 18,
-                    fontNumbersStyle: 'bold',
-                    fontNumbers: 'Arial',
-                    fontTitle: 'Arial',
-                    fontUnits: 'Arial',
-                    animatedValue: true,
-                    // Title
-                    title: 'AIRSPEED',
-                    fontTitleSize: 24,
-                    fontTitleWeight: 'bold',
-                    colorTitle: '#ffffff',
-                    // Units
-                    units: 'KNOTS',
-                    fontUnitsSize: 20,
-                    colorUnits: '#ffffff',
-                    // Adjust the needle
-                    needleStart: 0,
-                    needleEnd: 75,
+                    valueBox: false
                 }).draw();
 
                 // Start the simulator
@@ -145,6 +84,33 @@
             }
         }
         customElements.define('test-gauge', TestGauge);
+
+        // CoreMotionDataSimulator class
+        class CoreMotionDataSimulator {
+            constructor(callback) {
+                this.callback = callback;
+                this.gForce = -2;
+                this.intervalId = null;
+                this.direction = 1;
+                // 1 for increasing, -1 for decreasing
+            }
+
+            start() {
+                this.intervalId = setInterval(() => {
+                    // Simulate G-force changes between -2g and +2g
+                    if (this.gForce >= 2) this.direction = -1;
+                    if (this.gForce <= -2) this.direction = 1;
+                    this.gForce += 0.1 * this.direction;
+
+                    this.callback(this.gForce.toFixed(1));
+                }, 100);
+                // Update every 100ms
+            }
+
+            stop() {
+                clearInterval(this.intervalId);
+            }
+        }
     </script>
 </body>
 </html>
