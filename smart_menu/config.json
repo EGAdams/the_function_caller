@@ -1,0 +1,20 @@
+[
+    {
+        "title": "ls",
+        "action": "ls",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "test smart menu system",
+        "action": "python3 test_smart_menu_system.py config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "todo list",
+        "action": "python3 test_smart_menu_system.py todo_list.json",
+        "working_directory": "",
+        "open_in_subprocess": false
+    }
+]

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauge with Two Needles</title>
+    <style>
+        /* Add some basic styling to our gauge */
+        .gauge {
+            position: relative;
+            width: 200px;
+            height: 100px;
+        }
+        
+        .gauge svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .needle {
+            transition: transform 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="gauge">
+        <svg viewBox="0 0 200 100">
+            <!-- Circle for gauge -->
+            <circle cx="100" cy="50" r="45" fill="none" stroke="#ddd" stroke-width="2" />
+            
+            <!-- Long red needle -->
+            <line x1="100" y1="50" x2="150" y2="10" stroke="#ff0000" stroke-width="2" class="needle" id="red-needle" />
+            
+            <!-- Yellow needle -->
+            <polygon points="95,40 105,40 100,20" fill="#ffff00" class="needle" id="yellow-needle" />
+        </svg>
+    </div>
+
+    <script>
+        // Calculate angle for needles
+        const angle = (value) => {
+            return (value / 100) * 180 - 90;
+        };
+
+        // Set initial values
+        const redNeedle = document.getElementById('red-needle');
+        const yellowNeedle = document.getElementById('yellow-needle');
+        
+        // Position needles
+        redNeedle.setAttribute('transform', `rotate(${angle(100)} 100 50)`);
+        yellowNeedle.setAttribute('transform', `rotate(${angle(33)} 100 40)`);
+    </script>
+</body>
+</html>
