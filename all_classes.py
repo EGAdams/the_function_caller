@@ -58,12 +58,15 @@ class MockOpenAI:
 
 
 class MessageFactory:
-
+    """
+    Factory class for creating Message objects.
+    """
 
 class StringToFunction:
     def __init__( self, function_map_arg ):
         '''
         Initialize the StringToFunction object with a dictionary of available functions.
+        '''
 
 
 class ToolManager:
@@ -81,7 +84,7 @@ class FunctionMap:
     """
     Manages a mapping of function names to function pointers. This allows for
     dynamic lookup and execution of functions by name.
-
+    """
 
 class FunctionExecutor:
     def __init__(self, string_to_function_arg):
@@ -91,6 +94,7 @@ class FunctionExecutor:
 class FuncMapInit:
     """
     Initializes a FuncMapInit object and a function map.
+    """
 
 
 class FileSystemMappedFunctions:
@@ -102,7 +106,7 @@ class FileSystemMappedFunctions:
 class ReadFileTool:
     """
     Provides a tool for reading the contents of a file.
-
+    """
 
 class WriteFileTool:
     """
@@ -127,27 +131,27 @@ class RunSpinner():
 class ChangeDirectoryTool:
     """
     Provides a tool for changing the current working directory.
-
+    """
 
 class MakeDirectoryTool:
     """
     Provides a tool for creating a new directory.
-
+    """
 
 class LinuxCommandTool:
     """
     Provides a tool for executing Linux commands and capturing their output using pexpect.
-
+    """
 
 class GetCurrentDirectoryTool:
     """
     Provides a tool for getting the current working directory.
-
+    """
 
 class TodoListTool:
     """
     Provides a tool for managing a todo list.
-
+    """
 
 class AddTodoTool:
     """
