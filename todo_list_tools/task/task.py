@@ -37,3 +37,40 @@ class Task:
     def get_task(self):
         """Return the task description."""
         return self.task
+
+def add_subtask(self, subtask):
+    """Add a new subtask to this task."""
+    if not isinstance(subtask, Task):
+        raise TypeError("subtask must be a Task object")
+    self.subtasks.append(subtask)
+    return self
+
+def update_task(self, new_task_description):
+    """Update the task description."""
+    self.task = new_task_description
+    return self
+
+def to_dict(self):
+    """Convert Task object to dictionary representation."""
+    return {
+        "id": self.id,
+        "task": self.task,
+        "subtasks": [subtask.to_dict() for subtask in self.subtasks]
+    }
+
+def remove_subtask(self, task_id):
+    """Remove a subtask by its ID."""
+    for i, subtask in enumerate(self.subtasks):
+        if subtask.get_id() == task_id:
+            return self.subtasks.pop(i)
+        
+    return None
+
+def get_subtasks(self):
+    """Return the list of subtasks."""
+    return self.subtasks
+
+def set_id(self, new_id):
+    """Set a new ID for the task."""
+    self.id = new_id
+    return self
