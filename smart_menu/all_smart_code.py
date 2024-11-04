@@ -77,7 +77,6 @@ class DialogMenu:
     def add_item(self, item):
         self.items.append(item)
 
-
     def display_and_select(self, menu_manager):
         d = dialog.Dialog(dialog="dialog")
 
@@ -105,8 +104,6 @@ class DialogMenu:
                 break
 
     
-    
-
     def add_new_item(self):
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")

@@ -14,7 +14,7 @@ from storage_handler.storage_handler import StorageHandler
 
 
 if __name__ == "__main__":
-    storage_handler = StorageHandler()
+    storage_handler = StorageHandler() # defaults to todo_list.json
     tool_factory = ToolFactory(storage_handler) # Initialize the factory
     menu = MenuInvoker()    # Create the menu
 

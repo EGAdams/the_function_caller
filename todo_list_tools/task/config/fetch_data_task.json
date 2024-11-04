@@ -1,0 +1,51 @@
+{
+    "id": 1,
+    "priority": 1,
+    "task": "Get file from internet",
+    "subtasks": [
+        {
+            "id": 2,
+            "priority": 2,
+            "task": "Build the packet",
+            "subtasks": [
+                {
+                    "id": 3,
+                    "priority": 3,
+                    "task": "Set request headers",
+                    "subtasks": []
+                },
+                {
+                    "id": 4,
+                    "priority": 3,
+                    "task": "Configure request parameters",
+                    "subtasks": []
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "priority": 2,
+            "task": "Send HTTP request",
+            "subtasks": []
+        },
+        {
+            "id": 6,
+            "priority": 2,
+            "task": "Handle response",
+            "subtasks": [
+                {
+                    "id": 7,
+                    "priority": 3,
+                    "task": "Check status code",
+                    "subtasks": []
+                },
+                {
+                    "id": 8,
+                    "priority": 3,
+                    "task": "Save received data",
+                    "subtasks": []
+                }
+            ]
+        }
+    ]
+}

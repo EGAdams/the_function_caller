@@ -1,76 +1,90 @@
 import json
 from datetime import datetime
 
-# Now, let's rerun the unit tests with the corrected Task class implementation.
-
-# Redefine the Task class
-# Define the Task class
 class Task:
-    """Represents a task with optional subtasks."""
+    """Represents a task with optional subtasks.
     
-    def __init__(self, task_dict):
-        # Ensure task_dict is a dictionary
-        if isinstance(task_dict, dict):
-            self.id = task_dict.get('id')
-            self.task = task_dict.get('task')
-            self.subtasks = [Task(subtask) for subtask in task_dict.get('subtasks', [])]
-        else:
-            raise ValueError("task_dict must be a dictionary")
+    The `Task` class is used to model a task, which can have subtasks. Each task has an ID, priority, born_on, description and an array of subtask which could possibly be an empty array. Subtasks are also represented as `Task` objects.
 
-    def find_task_by_id(self, task_id):
+    The class provides methods to manage the task and its subtasks, such as adding, removing, and updating tasks, as well as traversing the task hierarchy.
+    """
+    
+    def __init__( self, task_dict ):
+        if isinstance( task_dict, dict ):                  # 1st make sure task_dict is a dict
+            self.id          = task_dict.get( 'id'          )
+            self.parent_id   = task_dict.get( 'parent_id'   )   
+            self.priority    = task_dict.get( 'priority'    )
+            self.born_on     = task_dict.get( 'born_on'     )        
+            self.description = task_dict.get( 'description' )
+            self.subtasks    = [ Task( subtask ) for subtask in task_dict.get( 'subtasks', [])]
+        else:
+            raise ValueError( "task_dict must be a dictionary" )
+
+    def find_task_by_id( self, task_id ):
         if self.id == task_id:
             return self
         for subtask in self.subtasks:
-            result = subtask.find_task_by_id(task_id)
+            result = subtask.find_task_by_id( task_id )
             if result:
                 return result
         return None
 
-    def has_subtasks(self):
+    def has_subtasks( self ):
         """Return True if the task has subtasks."""
         return len(self.subtasks) > 0
     
-    def get_id(self):
+    def get_id( self ):
         """Return the task's ID."""
         return self.id
 
-    def get_task(self):
+    def get_description( self ):
         """Return the task description."""
-        return self.task
+        return self.description
 
-def add_subtask(self, subtask):
-    """Add a new subtask to this task."""
-    if not isinstance(subtask, Task):
-        raise TypeError("subtask must be a Task object")
-    self.subtasks.append(subtask)
-    return self
+    def add_subtask( self, subtask ):
+        """Add a new subtask to this task."""
+        if not isinstance( subtask, Task ):
+            raise TypeError( "subtask must be a Task object" )
+        subtask.parent_id = self.id
+        self.subtasks.append( subtask )
+        return self
 
-def update_task(self, new_task_description):
-    """Update the task description."""
-    self.task = new_task_description
-    return self
+    def update_task( self, new_task_description ):
+        """Update the task description."""
+        self.description = new_task_description
+        return self
 
-def to_dict(self):
-    """Convert Task object to dictionary representation."""
-    return {
-        "id": self.id,
-        "task": self.task,
-        "subtasks": [subtask.to_dict() for subtask in self.subtasks]
-    }
+    def to_dict( self ):
+        """Convert Task object to dictionary representation."""
+        return {
+            "id"          : self.id,
+            "priority"    : self.priority,
+            "born_on"     : self.born_on,
+            "description" : self.description,
+            "subtasks"  : [ subtask.to_dict() for subtask in self.subtasks ]}
 
-def remove_subtask(self, task_id):
-    """Remove a subtask by its ID."""
-    for i, subtask in enumerate(self.subtasks):
-        if subtask.get_id() == task_id:
-            return self.subtasks.pop(i)
-        
-    return None
+    def remove_subtask(self, task_id):
+        """Remove a subtask by its ID."""
+        for i, subtask in enumerate( self.subtasks ):
+            if subtask.get_id() == task_id:
+                return self.subtasks.pop( i )
+            
+        return None
 
-def get_subtasks(self):
-    """Return the list of subtasks."""
-    return self.subtasks
+    def get_subtasks( self ):
+        """Return the list of subtasks."""
+        return self.subtasks
 
-def set_id(self, new_id):
-    """Set a new ID for the task."""
-    self.id = new_id
-    return self
+    def set_id( self, new_id ):
+        """Set a new ID for the task."""
+        self.id = new_id
+        return self
+    
+    def display_tree(self, indent=""):
+        """Display task and subtasks in a tree format."""
+        tree_output = f"{indent}├── {self.description}"
+        for i, subtask in enumerate(self.subtasks):
+            is_last = i == len(self.subtasks) - 1
+            next_indent = indent + ("    " if is_last else "│   ")
+            tree_output += subtask.display_tree(next_indent)
+        return tree_output

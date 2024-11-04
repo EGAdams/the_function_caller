@@ -1,10 +1,10 @@
+import json
 from ConfigReader import ConfigReader
 from Menu import Menu
-# from DialogMenu import DialogMenu
 from MenuItem import MenuItem
 from CommandExecutor import CommandExecutor
-import json
 from SmartMenuItem import SmartMenuItem
+# from DialogMenu import DialogMenu
 
 # and for the DialogMenu...
 import shutil

@@ -1,0 +1,16 @@
+[
+    {
+        "title": "ls",
+        "action": "ls",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "show todo list",
+        "action": "",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]

@@ -1,8 +1,0 @@
-[
-    {
-        "title": "ls",
-        "action": "ls",
-        "working_directory": "",
-        "open_in_subprocess": false
-    }
-]

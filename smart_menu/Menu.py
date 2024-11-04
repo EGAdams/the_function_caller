@@ -33,7 +33,7 @@ class Menu:
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")
         working_directory = input("Enter the working directory (optional): ")
-        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'yes'
+        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'no'
         use_expect_library = input("Use the expect library? (yes/no): ").lower() == 'yes'
         new_item = MenuItem( title, command, working_directory, open_in_subprocess, use_expect_library )
         self.add_item( new_item )

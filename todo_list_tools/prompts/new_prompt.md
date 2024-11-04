@@ -26,3 +26,11 @@ OK
 # Your Task
 Create more, smaller unit tests because the ones that we have are too involved in too many things. Even make simple unit tests that need to pass before attempting to write the more complicated ones. Rewrite the test file `test_edit_todo_tool.py` to conform to this more simple approach. We are going
 
+## Other Subtasks that we may need to create:
+### Subtasks
+* "Create IMessageBus interface",
+* "Implement SimpleMessageBus class",
+* "Write unit tests for Message Bus",
+* "Generate a Mermaid Sequence Diagram for the Message Bus",
+* "Generate a Mermaid Class Diagram for the Message Bus",
+* "Create a Mermaid Mindmap for the Message Bus"

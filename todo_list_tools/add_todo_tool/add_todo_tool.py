@@ -1,3 +1,14 @@
+import os
+import sys
+
+
+# Add the parent directory of the current file (task_list) to the system path
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the parent directory of the current file ( task_list) to the system path
+sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools' )
+
+# import Task
+from task import Task
 import json
 from datetime import datetime
 
@@ -20,8 +31,8 @@ class AddTodoTool:
                 "type": "object",
                 "properties": {
                     "task": {
-                        "type": "string",
-                        "description": "The task to add to the todo list."
+                        "type": "object",
+                        "description": "The task to add to the todo list.  may contain subtasks which are also objects with the same properties",
                     }
                 },
                 "additionalProperties": False,
@@ -29,10 +40,30 @@ class AddTodoTool:
             }
         }
 
-    def add_todo(self, task):
-        timestamp = datetime.now().isoformat()
-        new_id = str(len(self.todo_list) + 1)
-        todo_item = {"id": new_id, "timestamp": timestamp, "task": task}
-        self.todo_list.append(todo_item)
-        self.storage_handler.save(self.todo_list)
-        return f"Todo item added and saved: {json.dumps(todo_item)}"
+    # def add_todo(self, task): # typesafe task
+    def add_todo(self, description: str ): # typesafe task
+        # check if this is a task object, if not, fail and exit
+        if not isinstance( description, str ):
+          # print the instance type of task
+          print( "task is a " + str(type(task)) + " something is not right..." )
+          print( "*** ERROR: task must be a String object ***" )
+          exit()
+
+        # Generate a new ID
+        new_id = str( len( self.todo_list ) + 1 )
+        todo_item = {
+            "id": new_id,
+            "priority": 1,  # Default priority
+            "description": description,
+            "subtasks": []  # Initialize empty subtasks list
+        }
+        
+        # Create a Task object
+        new_task = Task( todo_item )
+        
+        # Add to list and save
+        self.todo_list.append( new_task.to_dict())
+        self.storage_handler.save( self.todo_list )
+        
+        return f"Task added successfully: [ID: { new_id }] { description }"
+
