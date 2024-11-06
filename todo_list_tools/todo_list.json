@@ -1,7 +1,217 @@
 [
   {
     "id": "1",
-    "timestamp": "2024-09-30T16:40:09.499212",
-    "task": "Make a note taker section in this list."
+    "timestamp": "2024-09-03T10:41:55.390220",
+    "description": "Create IMessageBus interface",
+    "priority": "1",
+    "born_on": "2024-09-01T08:30:45.123456",
+    "subtasks": []
+  },
+  {
+    "id": "2",
+    "timestamp": "2024-09-03T10:41:55.391614",
+    "description": "Implement SimpleMessageBus class",
+    "priority": "1",
+    "born_on": "2024-09-02T09:15:32.654321",
+    "subtasks": []
+  },
+  {
+    "id": "3",
+    "timestamp": "2024-09-03T10:41:55.391942",
+    "description": "Create IMessage interface",
+    "priority": "1",
+    "born_on": "2024-09-02T10:05:12.321654",
+    "subtasks": []
+  },
+  {
+    "id": "4",
+    "timestamp": "2024-09-03T10:41:55.392152",
+    "description": "Implement SimpleMessage class",
+    "priority": "1",
+    "born_on": "2024-09-01T11:45:27.789456",
+    "subtasks": []
+  },
+  {
+    "id": "5",
+    "timestamp": "2024-09-03T10:41:55.392358",
+    "description": "Create ISubscriber interface",
+    "priority": "1",
+    "born_on": "2024-09-03T09:23:19.564738",
+    "subtasks": []
+  },
+  {
+    "id": "6",
+    "timestamp": "2024-09-03T10:41:55.392577",
+    "description": "Implement BaseSubscriber class",
+    "priority": "1",
+    "born_on": "2024-09-03T10:12:42.987654",
+    "subtasks": []
+  },
+  {
+    "id": "7",
+    "timestamp": "2024-09-03T10:41:55.392830",
+    "description": "Create IHandler interface",
+    "priority": "1",
+    "born_on": "2024-09-01T08:47:23.654321",
+    "subtasks": []
+  },
+  {
+    "id": "8",
+    "timestamp": "2024-09-03T10:41:55.393091",
+    "description": "Implement ThreadRetrievalHandler class",
+    "priority": "1",
+    "born_on": "2024-09-02T09:05:34.876543",
+    "subtasks": []
+  },
+  {
+    "id": "9",
+    "timestamp": "2024-09-03T10:41:55.393351",
+    "description": "Implement ToolExecutionHandler class",
+    "priority": "1",
+    "born_on": "2024-09-03T08:51:12.234567",
+    "subtasks": []
+  },
+  {
+    "id": "10",
+    "timestamp": "2024-09-03T10:41:55.393612",
+    "description": "Create IAgent interface",
+    "priority": "1",
+    "born_on": "2024-09-01T11:12:09.123456",
+    "subtasks": []
+  },
+  {
+    "id": "11",
+    "timestamp": "2024-09-03T10:41:55.393895",
+    "description": "Implement UserInteractionManager class",
+    "priority": "1",
+    "born_on": "2024-09-03T07:58:32.876543",
+    "subtasks": []
+  },
+  {
+    "id": "12",
+    "timestamp": "2024-09-03T10:41:55.394157",
+    "description": "Create IUserInteraction interface",
+    "priority": "1",
+    "born_on": "2024-09-02T08:43:19.987654",
+    "subtasks": []
+  },
+  {
+    "id": "13",
+    "timestamp": "2024-09-03T10:41:55.394433",
+    "description": "Implement Thread class",
+    "priority": "1",
+    "born_on": "2024-09-01T09:24:14.432198",
+    "subtasks": []
+  },
+  {
+    "id": "14",
+    "timestamp": "2024-09-03T10:41:55.394708",
+    "description": "Create IToolCall interface",
+    "priority": "1",
+    "born_on": "2024-09-01T08:29:34.221344",
+    "subtasks": []
+  },
+  {
+    "id": "15",
+    "timestamp": "2024-09-03T10:41:55.395004",
+    "description": "Implement ToolCall class",
+    "priority": "1",
+    "born_on": "2024-09-02T10:55:45.698765",
+    "subtasks": []
+  },
+  {
+    "id": "16",
+    "timestamp": "2024-09-03T10:41:55.395605",
+    "description": "Create IMessageOutput interface",
+    "priority": "1",
+    "born_on": "2024-09-02T08:30:45.345678",
+    "subtasks": []
+  },
+  {
+    "id": "17",
+    "timestamp": "2024-09-03T10:41:55.395930",
+    "description": "Implement MessageOutput class",
+    "priority": "1",
+    "born_on": "2024-09-03T09:18:54.912345",
+    "subtasks": []
+  },
+  {
+    "id": "18",
+    "timestamp": "2024-09-03T10:41:55.396267",
+    "description": "Create IErrorHandler interface",
+    "priority": "1",
+    "born_on": "2024-09-01T07:44:21.432109",
+    "subtasks": []
+  },
+  {
+    "id": "19",
+    "timestamp": "2024-09-03T10:41:55.396635",
+    "description": "Implement ErrorHandler class",
+    "priority": "1",
+    "born_on": "2024-09-02T08:59:45.876432",
+    "subtasks": []
+  },
+  {
+    "id": "20",
+    "timestamp": "2024-09-03T10:41:55.397747",
+    "description": "Implement ThreadFactory class",
+    "priority": "1",
+    "born_on": "2024-09-02T09:34:28.654123",
+    "subtasks": []
+  },
+  {
+    "id": "21",
+    "timestamp": "2024-09-03T10:41:55.398456",
+    "description": "Implement ToolFactory class",
+    "priority": "1",
+    "born_on": "2024-09-01T10:23:57.901234",
+    "subtasks": []
+  },
+  {
+    "id": "44",
+    "timestamp": "2024-09-17T09:18:11.162412",
+    "description": "Debug a segfault",
+    "priority": "1",
+    "born_on": "2024-09-16T10:30:12.654321",
+    "subtasks": []
+  },
+  {
+    "id": "23",
+    "timestamp": "2024-09-17T09:56:25.890807",
+    "description": "Debug zero connection",
+    "priority": "1",
+    "born_on": "2024-09-15T11:02:34.123456",
+    "subtasks": []
+  },
+  {
+    "id": "24",
+    "priority": 1,
+    "born_on": null,
+    "description": "finish beer",
+    "subtasks": []
+  },
+  {
+    "id": "25",
+    "priority": 1,
+    "born_on": null,
+    "description": "get out of here",
+    "subtasks": []
+  },
+  {
+    "id": "26",
+    "parent_id": null,
+    "priority": 1,
+    "born_on": "2024-11-04T22:58:47.112459",
+    "description": "sleep",
+    "subtasks": [
+      {
+        "id": "27",
+        "parent_id": "26",
+        "priority": 1,
+        "born_on": "2024-11-05T01:15:23.827299",
+        "description": "get tired",
+        "subtasks": []
+      }
+    ]
   }
 ]

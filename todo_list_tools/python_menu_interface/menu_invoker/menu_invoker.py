@@ -12,10 +12,14 @@ class MenuInvoker:
 
     def display_menu(self):
         while True:
-            print("Todo Command Menu")
-            print("1. Add Todo")
-            print("2. Show Todo List")
+            print( "Todo Command Menu"   )
+            print( "1. Add Todo"         )
+            print( "2. Add Todo Subtask" )
+            print( "3. Show Todo List"   )
+            print( "x. Exit"             )
             choice = input("Choose an option:\n")
+            if ( choice == "x" ):
+                exit( 0 )
             command = self.commands.get(choice)
             if command:
                 command.execute()

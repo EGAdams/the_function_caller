@@ -1,5 +1,5 @@
 #
-# AddTodoCommand implements IMenuCommand
+# ShowTodoListCommand implements IMenuCommand
 #
 from python_menu_interface.menu_command.i_menu_command import IMenuCommand
 from task.task import Task

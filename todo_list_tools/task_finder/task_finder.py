@@ -9,7 +9,16 @@ from task_finder.task_iterator.task_iterator import TaskIterator
 from task_factory.task_factory   import TaskFactory
 
 class TaskFinder:
-    """Responsible for finding tasks within a todo list by ID."""
+    """
+    Finds a task within a todo list by its ID.
+    
+    Args:
+        todo_list (TaskList): The todo list to search.
+        task_id (str): The ID of the task to find.
+    
+    Returns:
+        Task: The task with the specified ID, or None if not found.
+    """
 
     @staticmethod
     def find_task( todo_list, task_id ):

@@ -1,13 +1,15 @@
-# Persona
+# Instructions for building a menu system for the TODO list - 110424
+
+## Persona
 World-class Python Developer and seasoned user of the GoF Design Patterns
 
-# Our Goal
+## Our Goal
 Create a command-line menu system in Python to help us use the tools that manipulate the TODO List.
 
-# Your Task For now
+## Your Task For now
 Create the Python menu with only one item, the "Add Todo" action.  Be creative with the design patterns.  I am trying to learn how to use them myself.  We will need some sample Python Task objects and make a sample config file to get us started.
 
-# Menu operation
+## Menu operation
 When the program starts up, we show the menu:
 ```bash
 Todo Commnad Menu
@@ -29,7 +31,7 @@ TODO ID: {task_id} "Clean my room" added successfully.
 
 Then the system sleeps for 1 second, after that, the menu is shown again.
 
-# Python Source Code for the AddTodoTool that we are using
+## Python Source Code for the AddTodoTool that we are using
 ```python
 import json
 from datetime import datetime
@@ -71,7 +73,7 @@ class AddTodoTool:
         return f"Todo item added and saved: {json.dumps(todo_item)}"
 ```
 
-# Python Source Code for the Task Object that the AddTodoTool is going to use
+## Python Source Code for the Task Object that the AddTodoTool is going to use
 ```python
 import json
 from datetime import datetime
@@ -85,7 +87,7 @@ class Task:
     """
     
     def __init__( self, task_dict ):
-        if isinstance( task_dict, dict ):                  # 1st make sure task_dict is a dict
+        if isinstance( task_dict, dict ):                  ## 1st make sure task_dict is a dict
             self.id          = task_dict.get( 'id'          )
             self.priority    = task_dict.get( 'priority'    )
             self.born_on     = task_dict.get( 'born_on'   )        
