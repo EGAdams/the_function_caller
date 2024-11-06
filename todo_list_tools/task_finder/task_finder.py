@@ -21,7 +21,10 @@ class TaskFinder:
     """
 
     @staticmethod
-    def find_task( todo_list, task_id ):
-        task_list = TaskFactory.create_task_list( todo_list )
-        task_iterator = TaskIterator( task_list, task_id )
-        return task_iterator.iterate()
+    def find_task(todo_list, task_id):
+        for task in todo_list:
+            result = task.find_task_by_id(task_id)
+            if result:
+                return result
+        return None
+

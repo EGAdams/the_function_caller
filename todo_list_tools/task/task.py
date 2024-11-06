@@ -40,13 +40,17 @@ class Task:
     def get_description( self ):
         """Return the task description."""
         return self.description
+    
+    def set_parent_id( self, parent_id ):
+        """Set the parent ID for the task."""
+        self.parent_id = parent_id
 
     def add_subtask( self, subtask ):
         """Add a new subtask to this task."""
-        if not isinstance( subtask, dict ):
-            raise TypeError( "subtask must be a JSON object" )
+        if not isinstance( subtask, Task ):
+            raise TypeError( "subtask must be a Task object" )
         # set the subtask parent id to self.id
-        subtask['parent_id'] = self.id
+        subtask.set_parent_id ( self.id )
         self.subtasks.append( subtask )
         return self
 
@@ -58,12 +62,14 @@ class Task:
     def to_dict( self ):
         """Convert Task object to dictionary representation."""
         return {
-            "id"          : self.id,
-            "parent_id"   : self.parent_id,
-            "priority"    : self.priority,
-            "born_on"     : self.born_on,
-            "description" : self.description,
-            "subtasks"    : [ Task(subtask).to_dict() for subtask in self.subtasks ]}
+            "id": self.id,
+            "parent_id": self.parent_id,
+            "priority": self.priority,
+            "born_on": self.born_on,
+            "description": self.description,
+            "subtasks": [subtask.to_dict() for subtask in self.subtasks]
+        }
+
     def remove_subtask(self, task_id):
         """Remove a subtask by its ID."""
         for i, subtask in enumerate( self.subtasks ):
@@ -80,7 +86,14 @@ class Task:
         """Set a new ID for the task."""
         self.id = new_id
         return self
-    
+
+    def get_all_ids(self):
+        """Recursively collect all task IDs."""
+        ids = [self.id]
+        for subtask in self.subtasks:
+            ids.extend(subtask.get_all_ids())
+        return ids
+
     def display_tree(self, indent="", is_last=True):
         """Display task and subtasks in a tree format with proper alignment."""
         branch = " └───" if is_last else "├───" # ──
