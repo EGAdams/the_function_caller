@@ -10,18 +10,35 @@ class MenuInvoker:
     def register(self, option, command):
         self.commands[option] = command
 
-    def display_menu(self):
+    def display_menu(self, command_sequence=None):
+        commands_iter = iter(command_sequence) if command_sequence else None
         while True:
-            print( "Todo Command Menu"   )
-            print( "1. Add Todo"         )
-            print( "2. Add Todo Subtask" )
-            print( "3. Show Todo List"   )
-            print( "x. Exit"             )
-            choice = input("Choose an option:\n")
-            if ( choice == "x" ):
-                exit( 0 )
-            command = self.commands.get(choice)
-            if command:
-                command.execute()
+            print("\nTodo Command Menu")
+            print("1. Add Todo")
+            print("2. Add Todo Subtask")
+            print("3. Edit Todo List")
+            print("4. Show Todo List")
+            print("5. Show Storage Handler Path")
+            print("x. Exit")
+
+            if commands_iter:
+                try:
+                    choice = next(commands_iter)
+                    print(f"Automatically selected option: {choice}")
+                except StopIteration:
+                    print("No more commands in sequence. Exiting menu.")
+                    break
             else:
-                print("Invalid choice. Try again.")
+                try:
+                    choice = input("Choose an option: ")
+                except EOFError:
+                    print("\nNo interactive input available. Exiting menu.")
+                    break
+
+            if choice == 'x':
+                print("Exiting menu.")
+                break
+            elif choice in self.commands:
+                self.commands[choice].execute()
+            else:
+                print("Invalid option, please try again.")

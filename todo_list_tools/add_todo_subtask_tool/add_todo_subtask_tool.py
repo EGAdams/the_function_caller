@@ -69,6 +69,7 @@ class AddTodoSubtaskTool:
             "priority": 1,  # Default priority
             "born_on": datetime.now().isoformat(),
             "description": description,
+            "status": "born_status",
             "subtasks": []
         })
 

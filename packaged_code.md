@@ -1,9 +1,4 @@
-# Persona
-- World-class Python developer and avid user of the GoF design patterns.
-
-# Your Goal
-Rewrite the add_todo_subtask method in the AddTodoSubtaskTool class.  It is not adding the subtask correctly.  Maybe you can use the task iterator to help us put the subtask into the correct place in the task hierarchy.  Please let me know what I need to change to get this to work.
-
+I am developing a system that uses a TODO list with Task Objects.  I am wondering if I need an edit todo tool or is the edit todo subtask tool all we need?  I am trying not to mix up responsibilities, but I don't want architecture overkill either.
 ```python
 class Task:
     """Represents a task with optional subtasks.
@@ -20,6 +15,7 @@ class Task:
             self.priority    = task_dict.get( 'priority'    )
             self.born_on     = task_dict.get( 'born_on'     )        
             self.description = task_dict.get( 'description' )
+            self.status      = task_dict.get( 'status'      )
             self.subtasks    = [ Task( subtask ) for subtask in task_dict.get( 'subtasks', [])]
         else:
             raise ValueError( "task_dict must be a dictionary" )
@@ -44,13 +40,17 @@ class Task:
     def get_description( self ):
         """Return the task description."""
         return self.description
+    
+    def set_parent_id( self, parent_id ):
+        """Set the parent ID for the task."""
+        self.parent_id = parent_id
 
     def add_subtask( self, subtask ):
         """Add a new subtask to this task."""
-        if not isinstance( subtask, dict ):
-            raise TypeError( "subtask must be a JSON object" )
+        if not isinstance( subtask, Task ):
+            raise TypeError( "subtask must be a Task object" )
         # set the subtask parent id to self.id
-        subtask['parent_id'] = self.id
+        subtask.set_parent_id ( self.id )
         self.subtasks.append( subtask )
         return self
 
@@ -62,12 +62,14 @@ class Task:
     def to_dict( self ):
         """Convert Task object to dictionary representation."""
         return {
-            "id"          : self.id,
-            "parent_id"   : self.parent_id,
-            "priority"    : self.priority,
-            "born_on"     : self.born_on,
-            "description" : self.description,
-            "subtasks"    : [ Task(subtask).to_dict() for subtask in self.subtasks ]}
+            "id": self.id,
+            "parent_id": self.parent_id,
+            "priority": self.priority,
+            "born_on": self.born_on,
+            "description": self.description,
+            "subtasks": [subtask.to_dict() for subtask in self.subtasks]
+        }
+
     def remove_subtask(self, task_id):
         """Remove a subtask by its ID."""
         for i, subtask in enumerate( self.subtasks ):
@@ -84,35 +86,25 @@ class Task:
         """Set a new ID for the task."""
         self.id = new_id
         return self
-    
+
+    def get_all_ids(self):
+        """Recursively collect all task IDs."""
+        ids = [self.id]
+        for subtask in self.subtasks:
+            ids.extend(subtask.get_all_ids())
+        return ids
+
     def display_tree(self, indent="", is_last=True):
         """Display task and subtasks in a tree format with proper alignment."""
-        branch = " └───" if is_last else "├───" # ──
+        branch = " └───" if is_last else " ├───" # ──
         tree_output = f"{indent}{branch}[{self.id}] {self.description}\n"
         
         for i, subtask in enumerate(self.subtasks):
             sub_is_last = (i == len(self.subtasks) - 1)
-            next_indent = indent + ("    " if is_last else "│   ")
+            next_indent = indent + ("    " if is_last else " │   ")
             tree_output += subtask.display_tree(next_indent, sub_is_last)
             
         return tree_output
-```
-
-```python
-class TaskIterator:
-    """Iterates through the tasks based on task ID parts."""
-    
-    def __init__( self, task_list, task_id ):
-        self.task_list = task_list
-        self.task_id = task_id
-    
-    def iterate( self ):
-        current_tasks = self.task_list.tasks
-        for task in current_tasks:
-            result = task.find_task_by_id( self.task_id )
-            if result:
-                return result
-        return None
 ```
 
 ```python
@@ -129,10 +121,12 @@ class TaskFinder:
     """
 
     @staticmethod
-    def find_task( todo_list, task_id ):
-        task_list = TaskFactory.create_task_list( todo_list )
-        task_iterator = TaskIterator( task_list, task_id )
-        return task_iterator.iterate()
+    def find_task(todo_list, task_id):
+        for task in todo_list:
+            result = task.find_task_by_id(task_id)
+            if result:
+                return result
+        return None
 ```
 
 ```python
@@ -141,9 +135,11 @@ class AddTodoSubtaskTool:
     Provides a tool for adding a new todo item to a list and saving it.
     """
     
-    def __init__(self, storage_handler):              # load self.todo_list
-        self.storage_handler = storage_handler        # from a file.
-        self.todo_list = self.storage_handler.load()
+    def __init__(self, storage_handler):
+        self.storage_handler = storage_handler
+        todo_list_data = self.storage_handler.load()
+        # Convert the list of dicts into a list of Task objects
+        self.todo_list = [Task(task_dict) for task_dict in todo_list_data]
 
     @staticmethod
     def schema():
@@ -156,7 +152,7 @@ class AddTodoSubtaskTool:
                 "properties": {
                     "task": {
                         "type": "object",
-                        "description": "The task to add to the todo list.  may contain subtasks which are also objects with the same properties",
+                        "description": "The task to add to the todo list. May contain subtasks which are also objects with the same properties",
                     },
                     "parent_id": {
                         "type": "string",
@@ -168,38 +164,117 @@ class AddTodoSubtaskTool:
             }
         }
 
-    def add_todo_subtask(self, description: str, parent_id: str ):
-        # check if this is a task object, if not, fail and exit
-        if not isinstance( description, str ) or not isinstance( parent_id, str ):
-          print( "task is a " + str(type(task)))
-          print( "parent_id is a " + str(type(parent_id)))
-          print( "*** ERROR: add todo subtask only accepts String objects in the constructor ***" )
-          exit()
+    def get_all_task_ids(self):
+        """Collect all task IDs from the todo list."""
+        ids = []
+        for task in self.todo_list:
+            ids.extend(task.get_all_ids())
+        return ids
 
-        # Generate a new ID
-        new_id = str( len( self.todo_list ) + 1 )
-        todo_item = {
+    def add_todo_subtask(self, description: str, parent_id: str):
+        # Validate input types
+        if not isinstance(description, str) or not isinstance(parent_id, str):
+            print("description is a " + str(type(description)))
+            print("parent_id is a " + str(type(parent_id)))
+            print("*** ERROR: add_todo_subtask only accepts string objects for description and parent_id ***")
+            exit()
+
+        # Generate a unique new ID
+        existing_ids = self.get_all_task_ids()
+        max_id = max([int(id) for id in existing_ids if id.isdigit()] + [0])
+        new_id = str(max_id + 1)
+
+        # Create a new Task object
+        new_task = Task({
             "id": new_id,
-            "parent_id": parent_id or None,
+            "parent_id": parent_id,
             "priority": 1,  # Default priority
             "born_on": datetime.now().isoformat(),
             "description": description,
-            "subtasks": []  # Initialize empty subtasks list
+            "subtasks": []
+        })
+
+        # Find the parent task
+        parent_task = TaskFinder.find_task(self.todo_list, parent_id)
+
+        if not parent_task:
+            print(f"*** ERROR: Parent task with ID {parent_id} not found ***")
+            exit()
+
+        # Add the new task to the parent task's subtasks
+        parent_task.add_subtask(new_task)
+
+        # Save the updated todo list
+        todo_list_data = [task.to_dict() for task in self.todo_list]
+        self.storage_handler.save(todo_list_data)
+        
+        return f"Task added successfully: [ID: {new_id}] {description}"
+```
+
+```python
+class EditTodoSubtaskTool:
+    """
+    Provides a tool for editing an existing todo item in the list and saving it.
+    """
+    
+    def __init__(self, storage_handler):
+        self.storage_handler = storage_handler
+        todo_list_data = self.storage_handler.load()
+        # Convert the list of dicts into a list of Task objects
+        self.todo_list = [Task(task_dict) for task_dict in todo_list_data]
+
+    @staticmethod
+    def schema():
+        return {
+            "name": "edit_todo_subtask",
+            "description": "Edit an existing todo item in the list",
+            "strict": True,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string",
+                        "description": "The ID of the task to edit",
+                    },
+                    "new_description": {
+                        "type": "string",
+                        "description": "The new description of the task",
+                    }
+                },
+                "additionalProperties": False,
+                "required": ["task_id", "new_description"]
+            }
         }
 
-        # Find the parent task inside the Task object
-        parent_task = TaskFinder.find_task( self.todo_list, parent_id )
+    def get_all_task_ids(self):
+        """Collect all task IDs from the todo list."""
+        ids = []
+        for task in self.todo_list:
+            ids.extend(task.get_all_ids())
+        return ids
 
-        # add the new task to the parent task
-        parent_task.add_subtask( todo_item )
+    def edit_todo_subtask(self, task_id: str, new_description: str):
+        # Validate input types
+        if not isinstance(task_id, str) or not isinstance(new_description, str):
+            print("task_id is a " + str(type(task_id)))
+            print("new_description is a " + str(type(new_description)))
+            print("*** ERROR: edit_todo_subtask only accepts string objects for task_id and new_description ***")
+            exit()
 
-        # Put the edited parent task back into the todo list
-        # transform the parent id to it's integer equivalent
-        parent_id = int( parent_id ) - 1
-        self.todo_list[ parent_id ] = parent_task.to_dict()
+        # Find the task
+        task_to_edit = TaskFinder.find_task(self.todo_list, task_id)
 
-        self.storage_handler.save( self.todo_list )
+        if not task_to_edit:
+            print(f"*** ERROR: Task with ID {task_id} not found ***")
+            exit()
+
+        # Update the task's description
+        task_to_edit.update_task(new_description)
+
+        # Save the updated todo list
+        todo_list_data = [task.to_dict() for task in self.todo_list]
+        self.storage_handler.save(todo_list_data)
         
-        return f"Task added successfully: [ID: { new_id }] { description }"
+        return f"Task updated successfully: [ID: {task_id}] {new_description}"
 ```
 

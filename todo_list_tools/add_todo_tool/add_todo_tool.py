@@ -9,7 +9,6 @@ sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools' )
 
 # import Task
 from task import Task
-import json
 from datetime import datetime
 
 class AddTodoTool:
@@ -57,6 +56,7 @@ class AddTodoTool:
             "priority": 1,  # Default priority
             "born_on": datetime.now().isoformat(),
             "description": description,
+            "status": "born_status",
             "subtasks": []  # Initialize empty subtasks list
         }
         

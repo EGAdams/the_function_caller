@@ -16,6 +16,7 @@ class Task:
             self.priority    = task_dict.get( 'priority'    )
             self.born_on     = task_dict.get( 'born_on'     )        
             self.description = task_dict.get( 'description' )
+            self.status      = task_dict.get( 'status'      )
             self.subtasks    = [ Task( subtask ) for subtask in task_dict.get( 'subtasks', [])]
         else:
             raise ValueError( "task_dict must be a dictionary" )
@@ -67,6 +68,7 @@ class Task:
             "priority": self.priority,
             "born_on": self.born_on,
             "description": self.description,
+            "status": self.status,
             "subtasks": [subtask.to_dict() for subtask in self.subtasks]
         }
 
@@ -96,12 +98,12 @@ class Task:
 
     def display_tree(self, indent="", is_last=True):
         """Display task and subtasks in a tree format with proper alignment."""
-        branch = " └───" if is_last else "├───" # ──
+        branch = " └───" if is_last else " ├───" # ──
         tree_output = f"{indent}{branch}[{self.id}] {self.description}\n"
         
         for i, subtask in enumerate(self.subtasks):
             sub_is_last = (i == len(self.subtasks) - 1)
-            next_indent = indent + ("    " if is_last else "│   ")
+            next_indent = indent + ("    " if is_last else " │   ")
             tree_output += subtask.display_tree(next_indent, sub_is_last)
             
         return tree_output

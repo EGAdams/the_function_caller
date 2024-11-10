@@ -1,40 +1,68 @@
-import json
+from task.task import Task
+from task_finder.task_finder import TaskFinder
+
 
 class EditTodoTool:
-    def __init__(self, storage_handler, task_finder, task_editor, subtask_manager):
+    """
+    Provides a tool for editing an existing todo item in the list and saving it.
+    """
+    
+    def __init__(self, storage_handler):
         self.storage_handler = storage_handler
-        self.task_finder = task_finder
-        self.task_editor = task_editor
-        self.subtask_manager = subtask_manager
-        self.todo_list = self.storage_handler.load()
+        todo_list_data = self.storage_handler.load()
+        # Convert the list of dicts into a list of Task objects
+        self.todo_list = [Task(task_dict) for task_dict in todo_list_data]
 
     @staticmethod
     def schema():
         return {
-            "name": "edit_todo",
-            "description": "Edit a todo item or add a subtask",
+            "name": "edit_todo_subtask",
+            "description": "Edit an existing todo item in the list",
             "strict": True,
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "task_id": {"type": "string"},
-                    "new_task": {"type": "string"},
-                    "action": {"type": "string", "enum": ["edit", "add_subtask"]}
+                    "task_id": {
+                        "type": "string",
+                        "description": "The ID of the task to edit",
+                    },
+                    "new_description": {
+                        "type": "string",
+                        "description": "The new description of the task",
+                    }
                 },
                 "additionalProperties": False,
-                "required": ["task_id", "new_task", "action"]
+                "required": ["task_id", "new_description"]
             }
         }
 
-    def process_request(self, task_id, new_task, action):
-        task = self.task_finder.find_task(self.todo_list, task_id)
-        if task is None:
-            return f"Task with ID {task_id} not found."
-        if action == "edit":
-            self.task_editor.edit_task(task, new_task)
-        elif action == "add_subtask":
-            self.subtask_manager.add_subtask(task, task_id, new_task)
-        else:
-            return f"Invalid action: {action}"
-        self.storage_handler.save(self.todo_list)
-        return f"Task updated: {task}"
+    def get_all_task_ids(self):
+        """Collect all task IDs from the todo list."""
+        ids = []
+        for task in self.todo_list:
+            ids.extend(task.get_all_ids())
+        return ids
+
+    def edit_todo(self, task_id: str, new_description: str):
+        # Validate input types
+        if not isinstance(task_id, str) or not isinstance(new_description, str):
+            print("task_id is a " + str(type(task_id)))
+            print("new_description is a " + str(type(new_description)))
+            print("*** ERROR: edit_todo_subtask only accepts string objects for task_id and new_description ***")
+            exit()
+
+        # Find the task
+        task_to_edit = TaskFinder.find_task(self.todo_list, task_id)
+
+        if not task_to_edit:
+            print(f"*** ERROR: Task with ID {task_id} not found ***")
+            exit()
+
+        # Update the task's description
+        task_to_edit.update_task(new_description)
+
+        # Save the updated todo list
+        todo_list_data = [task.to_dict() for task in self.todo_list]
+        self.storage_handler.save(todo_list_data)
+        
+        return f"Task updated successfully: [ID: {task_id}] {new_description}"
