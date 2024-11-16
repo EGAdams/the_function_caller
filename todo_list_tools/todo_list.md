@@ -1,4 +1,18 @@
-* [26] root
-  * [27] iron out subscription issues
-    * [29] show subscription view controller after the user hits the subscribe button on the home page.
-  * [28] fix firebase push notification intermittent problems.
+* [26] sleep
+  * [27] get tired
+  * [45] read
+    * [50] find something to read
+      * [52] pick the subject
+          * [54] list the subjects
+            * [55] find the subject lister
+            * [59] find the execute method
+      * [56] find the reading glasses
+    * [51] put the glasses on
+  * [46] count sheep
+    * [47] smoke something
+    * [48] find something to smoke
+    * [49] determine the amount of sheep to count
+      * [53] think about what color the sheep are
+      * [57] find some flammable paper
+  * [58] start a fire
+    * [60] test something else

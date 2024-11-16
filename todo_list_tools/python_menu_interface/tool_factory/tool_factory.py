@@ -3,18 +3,14 @@
 #
 import sys
 import os
-
-
-
 PROJECT_ROOT = "/home/adamsl/the_function_caller/todo_list_tools"
 
 # Add the parent directory of the current script to sys.path
 print( "appending path: " + PROJECT_ROOT)
 sys.path.append( PROJECT_ROOT)
-
+from todo_list_tools.edit_todo_description_tool.edit_todo_description_tool import EditTodoDescriptionTool
 from add_todo_tool.add_todo_tool import AddTodoTool
 from add_todo_subtask_tool.add_todo_subtask_tool import AddTodoSubtaskTool
-from edit_todo_tool.edit_todo_tool import EditTodoTool
 from python_menu_interface.show_todo_list_command.show_todo_list_command import ShowTodoListCommand
 
 
@@ -29,7 +25,7 @@ class ToolFactory:
             return ShowTodoListCommand(self.storage_handler)
         elif tool_name == "add_todo_subtask":
             return AddTodoSubtaskTool(self.storage_handler)
-        elif tool_name == "edit_todo_subtask":
-            return EditTodoTool( self.storage_handler )
+        elif tool_name == "edit_todo_description":
+            return EditTodoDescriptionTool( self.storage_handler )
         else:
             raise ValueError(f"Tool {tool_name} not found")

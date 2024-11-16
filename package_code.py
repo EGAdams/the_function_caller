@@ -68,14 +68,17 @@ process_python_file( path, output_file_path, append_mode=False              )
 # path = os.path.join( task_iterator_path, "task_iterator.py"               )
 # process_python_file( path, output_file_path, append_mode=True             )   
 
-path = os.path.join( task_finder_path, "task_finder.py"                     )
-process_python_file( path, output_file_path, append_mode=True               )
+# path = os.path.join( task_finder_path, "task_finder.py"                     )
+# process_python_file( path, output_file_path, append_mode=True               )
 
 path = os.path.join( add_todo_subtask_path, "add_todo_subtask_tool.py"      )
 process_python_file( path, output_file_path, append_mode=True               )
 
-path = os.path.join( add_todo_subtask_path, "test_add_todo_subtask_tool.py" )
-process_python_file( path, output_file_path, append_mode=True               )
+# path = os.path.join( add_todo_subtask_path, "add_todo_subtask_tool.py"      )
+# process_python_file( path, output_file_path, append_mode=True               )
+
+# path = os.path.join( add_todo_subtask_path, "test_add_todo_subtask_tool.py" )
+# process_python_file( path, output_file_path, append_mode=True               )
 
 # path = os.path.join( edit_todo_subtask_path, "edit_todo_subtask_tool.py" )
 # process_python_file( path, output_file_path, append_mode=True            )

@@ -55,9 +55,19 @@ class Task:
         self.subtasks.append( subtask )
         return self
 
-    def update_task( self, new_task_description ):
+    def update_task_description( self, new_task_description ):
         """Update the task description."""
         self.description = new_task_description
+        return self
+    
+    def update_task_status( self, new_status ):
+        """Update the task status"""
+        self.status = new_status
+        return self
+    
+    def update_task_priority( self, new_priority ):
+        """Update the task priority"""
+        self.priority = new_priority
         return self
 
     def to_dict( self ):

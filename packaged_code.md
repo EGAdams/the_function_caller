@@ -1,4 +1,4 @@
-Please analyze the following Python code and think about how many more exhaustive, edge case tests that we may need for the AddTodoSubtaskTool.  Think about adding subtasks over 10 levels deep and testing for accuracy of the addition of these tasks:
+Please analyze the following Python code and think about how we could make a tool to edit the Task object:
 ```python
 class Task:
     """Represents a task with optional subtasks.
@@ -109,28 +109,6 @@ class Task:
 ```
 
 ```python
-class TaskFinder:
-    """
-    Finds a task within a todo list by its ID.
-    
-    Args:
-        todo_list (TaskList): The todo list to search.
-        task_id (str): The ID of the task to find.
-    
-    Returns:
-        Task: The task with the specified ID, or None if not found.
-    """
-
-    @staticmethod
-    def find_task(todo_list, task_id):
-        for task in todo_list:
-            result = task.find_task_by_id(task_id)
-            if result:
-                return result
-        return None
-```
-
-```python
 class AddTodoSubtaskTool:
     """
     Provides a tool for adding a new todo item to a list and saving it.
@@ -213,113 +191,4 @@ class AddTodoSubtaskTool:
         return f"Task added successfully: [ID: {new_id}] {description}"
 ```
 
-```python
-class TestAddTodoSubtaskTool(unittest.TestCase):
-    
-    def setUp(self):
-        """Set up a test environment with a sample todo list file."""
-        self.test_filename = "test_todo_list.json"
-        self.sample_todo_list = [
-            {
-                "id": "1",
-                "parent_id": None,
-                "priority": 1,
-                "born_on": "2024-01-01T00:00:00",
-                "description": "Main Task",
-                "status": "active",
-                "subtasks": []
-            },
-            {
-                "id": "2",
-                "parent_id": None,
-                "priority": 2,
-                "born_on": "2024-01-02T00:00:00",
-                "description": "Another Main Task",
-                "status": "active",
-                "subtasks": []
-            }
-        ]
-        with open(self.test_filename, "w") as file:
-            json.dump(self.sample_todo_list, file, indent=2)
-
-        self.storage_handler = StorageHandler(self.test_filename)
-        self.add_tool = AddTodoSubtaskTool(self.storage_handler)
-
-    def tearDown(self):
-        """Clean up the test environment."""
-        if os.path.exists(self.test_filename):
-            os.remove(self.test_filename)
-
-    def test_add_valid_subtask(self):
-        """Test adding a valid subtask to an existing task."""
-        description = "Subtask for Main Task"
-        parent_id = "1"
-        result = self.add_tool.add_todo_subtask(description, parent_id)
-
-        self.assertIn("Task added successfully", result)
-
-        todo_list = self.storage_handler.load()
-        parent_task = Task(todo_list[0])  # The first task
-        
-        self.assertTrue(parent_task.has_subtasks())
-        subtask = parent_task.get_subtasks()[0]
-
-        self.assertEqual(subtask.get_description(), description)
-        self.assertEqual(subtask.parent_id, parent_id)
-
-    def test_add_subtask_to_nonexistent_parent(self):
-        """Test adding a subtask to a non-existent parent task."""
-        description = "Orphan Subtask"
-        parent_id = "999"  # Non-existent ID
-
-        with self.assertRaises(SystemExit):
-            self.add_tool.add_todo_subtask(description, parent_id)
-
-    def test_add_subtask_with_invalid_description_type(self):
-        """Test adding a subtask with an invalid description type."""
-        description = 123  # Invalid type
-        parent_id = "1"
-
-        with self.assertRaises(SystemExit):
-            self.add_tool.add_todo_subtask(description, parent_id)
-
-    def test_add_subtask_with_invalid_parent_id_type(self):
-        """Test adding a subtask with an invalid parent ID type."""
-        description = "Subtask with Invalid Parent ID"
-        parent_id = 123  # Invalid type
-
-        with self.assertRaises(SystemExit):
-            self.add_tool.add_todo_subtask(description, parent_id)
-
-    def test_task_id_generation(self):
-        """Test that the tool generates unique task IDs."""
-        description = "Unique ID Subtask"
-        parent_id = "1"
-        self.add_tool.add_todo_subtask(description, parent_id)
-
-        todo_list = self.storage_handler.load()
-        parent_task = Task(todo_list[0])
-        subtask_ids = [subtask.get_id() for subtask in parent_task.get_subtasks()]
-
-        # Ensure the new task ID is unique and greater than existing IDs
-        existing_ids = [task["id"] for task in self.sample_todo_list]
-        new_id = subtask_ids[0]
-        
-        self.assertNotIn(new_id, existing_ids)
-
-    def test_storage_persistence(self):
-        """Test that the storage file is correctly updated after adding a subtask."""
-        description = "Persistent Subtask"
-        parent_id = "1"
-        self.add_tool.add_todo_subtask(description, parent_id)
-
-        with open(self.test_filename, "r") as file:
-            data = json.load(file)
-
-        parent_task = Task(data[0])
-        subtasks = parent_task.get_subtasks()
-        self.assertEqual(len(subtasks), 1)
-        self.assertEqual(subtasks[0].get_description(), description)
-```
-
-The 6 test cases written above pass.  Please ONLY WRITE THE CODE FOR THE NEW METHODS.  Write more exhaustive test cases and edge cases.  Test for many levels deep.
+Create the EditTodoSubtaskTool class.  Use the AdddTodoSubtaskTool class as a guide.

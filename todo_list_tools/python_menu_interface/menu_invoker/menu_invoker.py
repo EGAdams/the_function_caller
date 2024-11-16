@@ -14,11 +14,10 @@ class MenuInvoker:
         commands_iter = iter(command_sequence) if command_sequence else None
         while True:
             print("\nTodo Command Menu")
-            print("1. Add Todo")
-            print("2. Add Todo Subtask")
-            print("3. Edit Todo List")
-            print("4. Show Todo List")
-            print("5. Show Storage Handler Path")
+            print("1. Add Todo Subtask")
+            print("2. Edit Todo Description")
+            print("3. Show Todo List")
+            print("4. Show Storage Handler Path")
             print("x. Exit")
 
             if commands_iter:
