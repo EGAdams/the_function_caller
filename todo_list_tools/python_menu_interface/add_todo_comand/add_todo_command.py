@@ -8,8 +8,7 @@ class AddTodoCommand( IMenuCommand ):
         self.add_todo_tool = add_todo_tool
 
     def execute(self):
-        task = input(
-            "What is the task that you want to add to the TODO list?\n")
+        task = input( "What is the task that you want to add to the TODO list?\n" )
         result = self.add_todo_tool.add_todo(task)
         print(result)
         # Simulate a pause after the task is added

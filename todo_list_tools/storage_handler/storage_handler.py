@@ -11,7 +11,10 @@ class StorageHandler:
     def show_path( self ):
         # show the current path of this process:
         import os
-        print( "Current path:", os.getcwd())
+        current_path = os.getcwd()
+        if ( current_path != "/home/adamsl/the_function_caller/todo_list_tools" ):
+            print ( "*** Warning: not a tested current path. *** " )
+        print( "Current path:", current_path )
         print( "storage file name: " + self.filename )
 
 

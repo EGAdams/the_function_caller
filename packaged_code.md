@@ -1,4 +1,4 @@
-I am developing a system that uses a TODO list with Task Objects.  I am wondering if I need an edit todo tool or is the edit todo subtask tool all we need?  I am trying not to mix up responsibilities, but I don't want architecture overkill either.
+Please analyze the following Python code and think about how many more exhaustive, edge case tests that we may need for the AddTodoSubtaskTool.  Think about adding subtasks over 10 levels deep and testing for accuracy of the addition of these tasks:
 ```python
 class Task:
     """Represents a task with optional subtasks.
@@ -67,6 +67,7 @@ class Task:
             "priority": self.priority,
             "born_on": self.born_on,
             "description": self.description,
+            "status": self.status,
             "subtasks": [subtask.to_dict() for subtask in self.subtasks]
         }
 
@@ -191,6 +192,7 @@ class AddTodoSubtaskTool:
             "priority": 1,  # Default priority
             "born_on": datetime.now().isoformat(),
             "description": description,
+            "status": "born_status",
             "subtasks": []
         })
 
@@ -212,69 +214,112 @@ class AddTodoSubtaskTool:
 ```
 
 ```python
-class EditTodoSubtaskTool:
-    """
-    Provides a tool for editing an existing todo item in the list and saving it.
-    """
+class TestAddTodoSubtaskTool(unittest.TestCase):
     
-    def __init__(self, storage_handler):
-        self.storage_handler = storage_handler
-        todo_list_data = self.storage_handler.load()
-        # Convert the list of dicts into a list of Task objects
-        self.todo_list = [Task(task_dict) for task_dict in todo_list_data]
-
-    @staticmethod
-    def schema():
-        return {
-            "name": "edit_todo_subtask",
-            "description": "Edit an existing todo item in the list",
-            "strict": True,
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "task_id": {
-                        "type": "string",
-                        "description": "The ID of the task to edit",
-                    },
-                    "new_description": {
-                        "type": "string",
-                        "description": "The new description of the task",
-                    }
-                },
-                "additionalProperties": False,
-                "required": ["task_id", "new_description"]
+    def setUp(self):
+        """Set up a test environment with a sample todo list file."""
+        self.test_filename = "test_todo_list.json"
+        self.sample_todo_list = [
+            {
+                "id": "1",
+                "parent_id": None,
+                "priority": 1,
+                "born_on": "2024-01-01T00:00:00",
+                "description": "Main Task",
+                "status": "active",
+                "subtasks": []
+            },
+            {
+                "id": "2",
+                "parent_id": None,
+                "priority": 2,
+                "born_on": "2024-01-02T00:00:00",
+                "description": "Another Main Task",
+                "status": "active",
+                "subtasks": []
             }
-        }
+        ]
+        with open(self.test_filename, "w") as file:
+            json.dump(self.sample_todo_list, file, indent=2)
 
-    def get_all_task_ids(self):
-        """Collect all task IDs from the todo list."""
-        ids = []
-        for task in self.todo_list:
-            ids.extend(task.get_all_ids())
-        return ids
+        self.storage_handler = StorageHandler(self.test_filename)
+        self.add_tool = AddTodoSubtaskTool(self.storage_handler)
 
-    def edit_todo_subtask(self, task_id: str, new_description: str):
-        # Validate input types
-        if not isinstance(task_id, str) or not isinstance(new_description, str):
-            print("task_id is a " + str(type(task_id)))
-            print("new_description is a " + str(type(new_description)))
-            print("*** ERROR: edit_todo_subtask only accepts string objects for task_id and new_description ***")
-            exit()
+    def tearDown(self):
+        """Clean up the test environment."""
+        if os.path.exists(self.test_filename):
+            os.remove(self.test_filename)
 
-        # Find the task
-        task_to_edit = TaskFinder.find_task(self.todo_list, task_id)
+    def test_add_valid_subtask(self):
+        """Test adding a valid subtask to an existing task."""
+        description = "Subtask for Main Task"
+        parent_id = "1"
+        result = self.add_tool.add_todo_subtask(description, parent_id)
 
-        if not task_to_edit:
-            print(f"*** ERROR: Task with ID {task_id} not found ***")
-            exit()
+        self.assertIn("Task added successfully", result)
 
-        # Update the task's description
-        task_to_edit.update_task(new_description)
-
-        # Save the updated todo list
-        todo_list_data = [task.to_dict() for task in self.todo_list]
-        self.storage_handler.save(todo_list_data)
+        todo_list = self.storage_handler.load()
+        parent_task = Task(todo_list[0])  # The first task
         
-        return f"Task updated successfully: [ID: {task_id}] {new_description}"
+        self.assertTrue(parent_task.has_subtasks())
+        subtask = parent_task.get_subtasks()[0]
+
+        self.assertEqual(subtask.get_description(), description)
+        self.assertEqual(subtask.parent_id, parent_id)
+
+    def test_add_subtask_to_nonexistent_parent(self):
+        """Test adding a subtask to a non-existent parent task."""
+        description = "Orphan Subtask"
+        parent_id = "999"  # Non-existent ID
+
+        with self.assertRaises(SystemExit):
+            self.add_tool.add_todo_subtask(description, parent_id)
+
+    def test_add_subtask_with_invalid_description_type(self):
+        """Test adding a subtask with an invalid description type."""
+        description = 123  # Invalid type
+        parent_id = "1"
+
+        with self.assertRaises(SystemExit):
+            self.add_tool.add_todo_subtask(description, parent_id)
+
+    def test_add_subtask_with_invalid_parent_id_type(self):
+        """Test adding a subtask with an invalid parent ID type."""
+        description = "Subtask with Invalid Parent ID"
+        parent_id = 123  # Invalid type
+
+        with self.assertRaises(SystemExit):
+            self.add_tool.add_todo_subtask(description, parent_id)
+
+    def test_task_id_generation(self):
+        """Test that the tool generates unique task IDs."""
+        description = "Unique ID Subtask"
+        parent_id = "1"
+        self.add_tool.add_todo_subtask(description, parent_id)
+
+        todo_list = self.storage_handler.load()
+        parent_task = Task(todo_list[0])
+        subtask_ids = [subtask.get_id() for subtask in parent_task.get_subtasks()]
+
+        # Ensure the new task ID is unique and greater than existing IDs
+        existing_ids = [task["id"] for task in self.sample_todo_list]
+        new_id = subtask_ids[0]
+        
+        self.assertNotIn(new_id, existing_ids)
+
+    def test_storage_persistence(self):
+        """Test that the storage file is correctly updated after adding a subtask."""
+        description = "Persistent Subtask"
+        parent_id = "1"
+        self.add_tool.add_todo_subtask(description, parent_id)
+
+        with open(self.test_filename, "r") as file:
+            data = json.load(file)
+
+        parent_task = Task(data[0])
+        subtasks = parent_task.get_subtasks()
+        self.assertEqual(len(subtasks), 1)
+        self.assertEqual(subtasks[0].get_description(), description)
 ```
 
+The 6 test cases written above pass.  Please ONLY WRITE THE CODE FOR THE NEW METHODS.  Write more exhaustive test cases and edge cases.  Test for many levels deep.
