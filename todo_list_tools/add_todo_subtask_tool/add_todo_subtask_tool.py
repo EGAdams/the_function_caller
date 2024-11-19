@@ -22,23 +22,26 @@ class AddTodoSubtaskTool:
     @staticmethod
     def schema():
         return {
-            "name": "add_todo_subtask",
+            "name": "add_todo",
             "description": "Add a new todo item to the list",
             "strict": True,
             "parameters": {
-                "task_description": "object",
+                "type": "object",
                 "properties": {
-                    "task": {
-                        "type": "object",
-                        "description": "The task to add to the todo list. May contain subtasks which are also objects with the same properties",
-                    },
-                    "parent_id": {
-                        "type": "string",
-                        "description": "The ID of the parent task",
-                    }
+                "task_description": {
+                    "type": "string",
+                    "description": "The description of the task to add to the todo list."
+                },
+                "parent_id": {
+                    "type": "string",
+                    "description": "The ID of the parent task that we are adding the task to."
+                }
                 },
                 "additionalProperties": False,
-                "required": ["task_description", "parent_id"]
+                "required": [
+                "task_description",
+                "parent_id"
+                ]
             }
         }
 
