@@ -1,18 +1,7 @@
-* [26] sleep
-  * [27] get tired
-  * [45] read
-    * [50] find something to read
-      * [52] pick the subject
-          * [54] list the subjects
-            * [55] find the subject lister
-            * [59] find the execute method
-      * [56] find the reading glasses
-    * [51] put the glasses on
-  * [46] count sheep
-    * [47] smoke something
-    * [48] find something to smoke
-    * [49] determine the amount of sheep to count
-      * [53] think about what color the sheep are
-      * [57] find some flammable paper
-  * [58] start a fire
-    * [60] test something else
+* [0] root
+  * [28] Airport Project
+    * [31] reply to apple
+      * [32] make screenshots for all of the sections that we have.
+      * [33] put all of those screenshots into one document
+  * [29] largo spa
+  * [30] mcba

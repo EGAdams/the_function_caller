@@ -35,7 +35,7 @@ class ReadTodoTool:
             return "The todo list is empty."
         else:
             def format_task(task, indent=""):
-                result = f"{indent}{task['id']}. {task['task']}\n"
+                result = f"{indent}{task['id']}. {task['description']}\n"
                 if "subtasks" in task:
                     for subtask in task["subtasks"]:
                         result += format_task(subtask, indent + "  ")

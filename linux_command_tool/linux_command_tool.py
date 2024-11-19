@@ -43,9 +43,10 @@ class LinuxCommandTool:
             str: The output of the command.
         """
         try:
+            print(f"Executing( pexpect.spawn ) command: {command}")
             child = pexpect.spawn(command, encoding='utf-8')
             output = child.read().strip()
             child.close()
             return f"Command output:\n{output}"
         except pexpect.ExceptionPexpect as e:
-            return f"An error occurred while executing the command: {str(e)}" EditTodoTool(
+            return f"An error occurred while executing the command: {str(e)}"

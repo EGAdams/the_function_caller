@@ -1,4 +1,4 @@
-# FunctionHandler/__init__.py
-from function_handler import FunctionHandler
+# IFunctionHandler/__init__.py
+from .ifunction_handler import IFunctionHandler
 
-__all__ = [ 'FunctionHandler' ]
+__all__ = [ 'IFunctionHandler' ]

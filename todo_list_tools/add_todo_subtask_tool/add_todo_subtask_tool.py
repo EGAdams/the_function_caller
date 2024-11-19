@@ -26,7 +26,7 @@ class AddTodoSubtaskTool:
             "description": "Add a new todo item to the list",
             "strict": True,
             "parameters": {
-                "type": "object",
+                "task_description": "object",
                 "properties": {
                     "task": {
                         "type": "object",
@@ -38,7 +38,7 @@ class AddTodoSubtaskTool:
                     }
                 },
                 "additionalProperties": False,
-                "required": ["task", "parent_id"]
+                "required": ["task_description", "parent_id"]
             }
         }
 
@@ -46,14 +46,14 @@ class AddTodoSubtaskTool:
         """Collect all task IDs from the todo list."""
         ids = []
         for task in self.todo_list:
-            ids.extend(task.get_all_ids())
+            ids.extend( task.get_all_ids())
         return ids
 
-    def add_todo_subtask(self, description: str, parent_id: str):
+    def add_todo_subtask( self, task_description: str, parent_id: str ):
         # Validate input types
-        if not isinstance(description, str) or not isinstance(parent_id, str):
-            print("description is a " + str(type(description)))
-            print("parent_id is a " + str(type(parent_id)))
+        if not isinstance( task_description, str ) or not isinstance( parent_id, str ):
+            print("description is a " + str( type( task_description )))
+            print("parent_id is a " + str( type( parent_id )))
             print("*** ERROR: add_todo_subtask only accepts string objects for description and parent_id ***")
             exit()
 
@@ -68,13 +68,18 @@ class AddTodoSubtaskTool:
             "parent_id": parent_id,
             "priority": 1,  # Default priority
             "born_on": datetime.now().isoformat(),
-            "description": description,
+            "description": task_description,
             "status": "born_status",
             "subtasks": []
         })
 
         # Find the parent task
         parent_task = TaskFinder.find_task(self.todo_list, parent_id)
+
+        if not parent_task:
+            print(f"*** Warning: Parent task with ID {parent_id} not found ***")
+            print( "getting task 0... " )
+            parent_task = TaskFinder.find_task( self.todo_list, "0" )
 
         if not parent_task:
             print(f"*** ERROR: Parent task with ID {parent_id} not found ***")
@@ -87,4 +92,4 @@ class AddTodoSubtaskTool:
         todo_list_data = [task.to_dict() for task in self.todo_list]
         self.storage_handler.save(todo_list_data)
         
-        return f"Task added successfully: [ID: {new_id}] {description}"
+        return f"Task added successfully: [ID: {new_id}] {task_description}"

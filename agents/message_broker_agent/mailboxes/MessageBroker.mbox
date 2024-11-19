@@ -1,0 +1,12 @@
+{
+    "message_type": "greeting",
+    "sender": "Agent1",
+    "receiver": "Agent2",
+    "timestamp": 1731871074.5746095,
+    "payload": {
+        "content": "Hello, Agent2!"
+    }
+}
+{"message_type": "greeting", "sender": "Agent1", "receiver": "Agent2", "timestamp": 1731871101.4386823, "payload": {"content": "Hello, Agent2!"}}
+{"message_type": "greeting", "sender": "Agent1", "receiver": "Agent2", "timestamp": 1731871114.84928, "payload": {"content": "Hello, Agent2!"}}
+{"message_type": "greeting", "sender": "Agent1", "receiver": "Agent2", "timestamp": 1731871137.7983203, "payload": {"content": "Hello, Agent2!"}}

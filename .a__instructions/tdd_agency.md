@@ -1,45 +1,47 @@
 
-# Project Manager Agent System Design and Roadmap
-
+Here is the Design Document for the system that we are building.
+#
+# Design and Development Plan for Agent-Based Test-Driven Development System
+#
 ## Overview
-
-The **Project Manager Agent** will oversee the development of the Test-Driven Development (TDD) system, keeping track of what has been built and identifying components that are still under development or pending implementation.
 
 ---
 
 ## Current System Components
 
 ### Built Components
-1. **CodeGeneratorAgent**
-   - Functionality: Interprets test cases and generates code snippets.
-   - Status: Implemented and unit-tested.
 
-2. **MessageBrokerAgent**
-   - Functionality: Routes messages between agents.
-   - Status: Implemented and unit-tested.
 
 ---
 
 ## Pending Components
 
 ### Agents to Build
-1. **TestCaseGeneratorAgent**
+1. **CodeGeneratorAgent**
+   - Functionality: Interprets test cases and generates code snippets.
+   - Status: not started.
+
+2. **MessageCollabratorAgent**
+   - Functionality: Routes messages between agents.
+   - Status: not started.
+
+3. **TestCaseGeneratorAgent**
    - Functionality: Automatically generates test cases from requirements or specifications.
-   - Dependencies: MessageBrokerAgent for communication.
+   - Dependencies: MessageCollaboratorAgent for communication.
    - Status: Not started.
 
-2. **TestRunnerAgent**
+4. **TestRunnerAgent**
    - Functionality: Executes generated code against test cases and reports results.
-   - Dependencies: CodeGeneratorAgent, MessageBrokerAgent.
+   - Dependencies: CodeGeneratorAgent, MessageCollaboratorAgent.
    - Status: Not started.
 
-3. **FeedbackAnalyzerAgent**
+5. **FeedbackAnalyzerAgent**
    - Functionality: Analyzes test results and provides recommendations for improvement.
-   - Dependencies: TestRunnerAgent, MessageBrokerAgent.
+   - Dependencies: TestRunnerAgent, MessageCollaboratorAgent.
    - Status: Not started.
 
-4. **ProjectManagerAgent**
-   - Functionality: Tracks progress, logs completed tasks, and assigns next steps to agents.
+6. **ProjectManagerAgent**
+   - Functionality: oversee the development of the Test-Driven Development (TDD) system, keeping track of what has been built and identifying components that are still under development or pending implementation.Tracks progress, logs completed tasks, and assigns next steps to agents.
    - Dependencies: None (acts as a central authority).
    - Status: In planning.
 
@@ -49,30 +51,30 @@ The **Project Manager Agent** will oversee the development of the Test-Driven De
 
 ### TestCaseGeneratorAgent
 - [ ] Implement logic to generate test cases.
-- [ ] Integrate with MessageBrokerAgent.
+- [ ] Integrate with MessageCollaboratorAgent.
 - [ ] Unit test generation logic.
 
 ### TestRunnerAgent
 - [ ] Implement test execution functionality.
-- [ ] Integrate with MessageBrokerAgent.
+- [ ] Integrate with MessageCollaboratorAgent.
 - [ ] Write unit tests for test execution.
 
 ### FeedbackAnalyzerAgent
 - [ ] Develop analysis methods for test results.
-- [ ] Integrate with MessageBrokerAgent.
+- [ ] Integrate with MessageCollaboratorAgent.
 - [ ] Write unit tests for feedback generation.
 
 ### ProjectManagerAgent
 - [ ] Create tracking and logging functionality.
 - [ ] Develop methods to assign tasks to agents.
-- [ ] Integrate with MessageBrokerAgent for communication.
+- [ ] Integrate with MessageCollaboratorAgent for communication.
 - [ ] Unit test tracking and task assignment.
 
 ---
 
 ## System Design Notes
 
-- **Communication:** All agents communicate via the MessageBrokerAgent using predefined message types.
+- **Communication:** All agents communicate via the MessageCollaboratorAgent using predefined message types.
 - **Unit Testing:** Each agent requires comprehensive unit tests to ensure reliability.
 - **Extensibility:** Design each agent with scalability in mind to accommodate future system requirements.
 
@@ -130,6 +132,38 @@ The following table outlines the communication plan for the agents in the system
   </table>
 </div>
 
+---
+---
+---
+
+# Agent Communication Sequence Diagram
+```mermaid
+sequenceDiagram
+    participant PMA as ProjectManagerAgent
+    participant MCA as MessageCollaboratorAgent
+    participant TCGA as TestCaseGeneratorAgent
+    participant CGA as CodeGeneratorAgent
+    participant TRA as TestRunnerAgent
+    participant FAA as FeedbackAnalyzerAgent
+
+    PMA->>MCA: Assign task to TCGA
+    MCA->>TCGA: Task assignment from PMA
+
+    TCGA->>MCA: `test_case` message
+    MCA->>CGA: `test_case` from TCGA
+
+    CGA->>MCA: `generated_code` message
+    MCA->>TRA: `generated_code` from CGA
+
+    TRA->>MCA: `test_results` message
+    MCA->>FAA: `test_results` from TRA
+
+    FAA->>MCA: `feedback` message
+    MCA->>PMA: `feedback` from FAA
+```
+
+
+
 ## Next Steps
 
 1. Begin implementing the **TestCaseGeneratorAgent**.
@@ -138,3 +172,6 @@ The following table outlines the communication plan for the agents in the system
 
 ---
 
+Please create a Markdown file that shows all of the plans and details that we need to build the Base Agent and Message Broker Agent for this system.  We are going to build and test and Agent that I can communicate with first, and then make it so that the Agent can communicate with not only me, but also other Agents.  For now, to isolate things, we will have each Agent run in it's own separate process.  Each Agent will have it's own "mailbox file"  It will periodically check for mail in this mailbox file.  We want to make an interface for reading this mailbox so that we program to this interface that could be a remote mail file, a database implementation a web socket, etc... This way, the Agents will be able to communicate across hardware boundaries.  Please put your answer in one downloadable .md file so that I can go over it with my Design Team.
+
+You're the boss...
