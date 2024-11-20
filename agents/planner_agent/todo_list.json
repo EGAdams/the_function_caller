@@ -40,15 +40,6 @@
                 "description": "put all of those screenshots into one document",
                 "status": "born_status",
                 "subtasks": []
-              },
-              {
-                "id": "34",
-                "parent_id": "31",
-                "priority": 1,
-                "born_on": "2024-11-19T12:02:13.472275",
-                "description": "Create an email for the stakeholders",
-                "status": "born_status",
-                "subtasks": []
               }
             ]
           }

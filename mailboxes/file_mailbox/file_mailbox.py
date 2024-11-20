@@ -1,6 +1,6 @@
 
 #
-# File Mail Box
+# File Mail Box - File based implementation of the IMailbox interface
 #
 import json
 import os

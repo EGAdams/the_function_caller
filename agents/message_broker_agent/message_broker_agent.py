@@ -3,9 +3,9 @@
 #
 import json
 import os
-from agents.test_two_agents import MailboxInterface
+from agents.test_two_agents import IMailBox
 
-class FileMailbox( MailboxInterface ):
+class FileMailbox( IMailBox ):
     def __init__( self, agent_id: str, mailbox_dir: str = "./mailboxes" ):
         self.agent_id = agent_id
         self.mailbox_path = os.path.join( mailbox_dir, f"{agent_id}.mbox" )

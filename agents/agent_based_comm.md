@@ -241,7 +241,7 @@ The following are standard message types that agents will use for communication:
 ```python
 from abc import ABC, abstractmethod
 
-class MailboxInterface(ABC):
+class IMailbox( ABC ):
     @abstractmethod
     def send(self, message: dict, recipient_id: str) -> None:
         pass
@@ -256,7 +256,7 @@ class MailboxInterface(ABC):
 import json
 import os
 
-class FileMailbox(MailboxInterface):
+class FileMailbox( IMailbox ):
     def __init__(self, agent_id: str, mailbox_dir: str = "./mailboxes"):
         self.agent_id = agent_id
         self.mailbox_path = os.path.join(mailbox_dir, f"{agent_id}.mbox")

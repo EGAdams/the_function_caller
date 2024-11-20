@@ -5,17 +5,6 @@ Here is the Design Document for the system that we are building.
 #
 ## Overview
 
----
-
-## Current System Components
-
-### Built Components
-
-
----
-
-## Pending Components
-
 ### Agents to Build
 1. **CodeGeneratorAgent**
    - Functionality: Interprets test cases and generates code snippets.
