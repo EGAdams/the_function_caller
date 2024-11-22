@@ -1,29 +1,32 @@
-import os
-import time
-import json
-from base_agent import BaseAgent 
+import sys
+sys.path.append( '/home/adamsl/the_function_caller' )
+from agents.base_agent import BaseAgent
+import xmlrpc.client
+from xmlrpc.server import SimpleXMLRPCServer
 
-class MessageCollaboratorAgent( BaseAgent ):
-    def __init__(self, agent_id, mailboxes):
-        super().__init__(agent_id)
-        self.mailboxes = mailboxes
+class MessageCollaboratorAgent(BaseAgent):
+    def __init__(self, agent_id: str, server_port: int, agents_urls: dict):
+        super().__init__(agent_id, server_port)
+        self.agents_urls = agents_urls  # Dictionary mapping agent IDs to their RPC URLs
 
-    def send_message(self, recipient_id, message):
+    def send_message(self, recipient_id: str, message: dict):
         """
-        Send a message to the specified recipient's mailbox.
+        Send a message to the specified recipient via their RPC URL.
         """
-        mailbox_path = self.mailboxes.get(recipient_id)
-        if mailbox_path:
-            with open(mailbox_path, "a") as f:
-                f.write(json.dumps(message) + "\n")
-            self.logger.info(f"Message sent to {recipient_id}: {message}")
+        recipient_url = self.agents_urls.get(recipient_id)
+        if recipient_url:
+            try:
+                with xmlrpc.client.ServerProxy(recipient_url) as proxy:
+                    proxy.receive_message(message)
+                    self.logger.info(f"Message sent to {recipient_id}: {message}")
+            except Exception as e:
+                self.logger.error(f"Failed to send message to {recipient_id}: {e}")
         else:
             self.logger.error(f"Unknown agent: {recipient_id}")
 
-    def process_message(self, message):
+    def process_message(self, message: dict):
         """
-        Process incoming messages from the mailbox.
-        For this agent, we'll handle routing commands from the user.
+        Process incoming messages. Routes commands to other agents.
         """
         try:
             command = message.get("command")
@@ -40,30 +43,28 @@ class MessageCollaboratorAgent( BaseAgent ):
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
 
+
 def main():
     """
     Main entry point for the MessageCollaboratorAgent.
     """
-    mailboxes = {
-        "coder": "coder_mailbox.txt",
-        "planner": "planner_mailbox.txt",
-        "collaborator": "collaborator_mailbox.txt",
+    # Define RPC URLs for other agents
+    agents_urls = {
+        "planner":      "http://localhost:8002",
+        "coder":        "http://localhost:8003",
+        "collaborator": "http://localhost:8001",
     }
 
-    # Create the collaborator agent
-    collaborator = MessageCollaboratorAgent(agent_id="collaborator", mailboxes=mailboxes)
+    # Create the MessageCollaboratorAgent
+    collaborator = MessageCollaboratorAgent(agent_id="collaborator_agent", server_port=8001, agents_urls=agents_urls)
 
-    # Ensure mailboxes exist
-    for mailbox in mailboxes.values():
-        if not os.path.exists(mailbox):
-            open(mailbox, "w").close()
-
-    # Start the agent's main loop
+    # Start the RPC server for the collaborator
     try:
         collaborator.logger.info("MessageCollaboratorAgent is starting...")
-        collaborator.run()
+        collaborator.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         collaborator.logger.info("Shutting down...")
+
 
 if __name__ == "__main__":
     main()
