@@ -11,7 +11,6 @@ from openai import OpenAI
 
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
-from mailboxes.file_mailbox.file_mailbox import FileMailbox
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
@@ -67,7 +66,9 @@ class PlannerAgent( BaseAgent ):
             reversed_messages = messages_list[::-1]
 
             # Return the content of the last message
-            response = reversed_messages[0].content[0].text.value
+            # Get the last message from reversed messages
+            response = reversed_messages[len(reversed_messages) - 1]
+            print(response.role)
             self.pretty_print.execute(response)
             return response
         except Exception as e:

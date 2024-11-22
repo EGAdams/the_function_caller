@@ -1,4 +1,4 @@
 # IRPCCommunication/__init__.py
-from mailbox import IRPCCommunication
+from .rpc_mailbox import IRPCCommunication
 
 __all__ = [ 'IRPCCommunication' ]

@@ -4,7 +4,7 @@ from agents.base_agent import BaseAgent
 import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 
-class MessageCollaboratorAgent(BaseAgent):
+class MessageCollaboratorAgent( BaseAgent ):
     def __init__(self, agent_id: str, server_port: int, agents_urls: dict):
         super().__init__(agent_id, server_port)
         self.agents_urls = agents_urls  # Dictionary mapping agent IDs to their RPC URLs

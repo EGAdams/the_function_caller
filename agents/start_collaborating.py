@@ -21,7 +21,8 @@ def main():
                 # Send the message as a command to the collaborator
                 command_packaged_message = {"command": message}
                 try:
-                    proxy.receive_message( command_packaged_message )
+                    # invoke the recieving agent's receive_message method `agent.receive_message(message)`  
+                    proxy.receive_message( command_packaged_message ) 
                     print(f"Message sent to collaborator: {message}")
                 except Exception as e:
                     print(f"Failed to send message: {e}")

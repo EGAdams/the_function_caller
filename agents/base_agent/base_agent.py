@@ -6,13 +6,25 @@ from mailboxes.imailbox import IMailbox
 import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
+ 
+ # create a generic logger out of thin air here.. time is burning...
+class BaseAgentLogger:
+    def __init__( self ):
+        pass
+        
+    def info( self, message ):
+        print( f"INFO: {message}" )
+
+    def error(self, message):
+        print( f"*** Error: {message}" )
+
 
 class BaseAgent:
     def __init__(self, agent_id: str, server_port: int):
         self.agent_id = agent_id
         self.server_port = server_port
         self.rpc_communication = IRPCCommunication()
-        self.logger = self.initialize_logger()
+        self.logger = BaseAgentLogger()
 
     def run(self):
         self.logger.info(f"Agent {self.agent_id} started.")
@@ -32,7 +44,3 @@ class BaseAgent:
 
     def process_message(self, message: dict):
         raise NotImplementedError("Subclasses should implement this method.")
-
-    def initialize_logger(self):
-        # Replace this with a proper logging setup
-        return None
