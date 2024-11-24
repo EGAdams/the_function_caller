@@ -79,7 +79,53 @@
         "born_on": "2024-11-22T16:34:50.950873",
         "description": "Build a coding agent",
         "status": "born_status",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": "36",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.920320",
+            "description": "Create directories for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "37",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.922490",
+            "description": "Create source files for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "38",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.923145",
+            "description": "Create test files for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "39",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.923774",
+            "description": "Create __init__.py file for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "40",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.924560",
+            "description": "Write documentation for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          }
+        ]
       }
     ]
   }

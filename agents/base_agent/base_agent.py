@@ -7,16 +7,15 @@ import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
  
- # create a generic logger out of thin air here.. time is burning...
-class BaseAgentLogger:
-    def __init__( self ):
+class BaseAgentLogger:          # create a generic logger out
+    def __init__( self ):       # of thin air here.. time is burning...
         pass
         
     def info( self, message ):
         print( f"INFO: {message}" )
 
     def error(self, message):
-        print( f"*** Error: {message}" )
+        print( f"*** ERROR: {message} ***" )
 
 
 class BaseAgent:

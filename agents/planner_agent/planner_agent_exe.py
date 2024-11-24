@@ -70,7 +70,9 @@ class PlannerAgent( BaseAgent ):
             response = reversed_messages[len(reversed_messages) - 1]
             print(response.role)
             self.pretty_print.execute(response)
+            # self.send_message("collaborator", {"message": command[len("coder:"):].strip()})
             return response
+        
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"

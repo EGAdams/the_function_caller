@@ -30,7 +30,7 @@ class AddTodoSubtaskTool:
                 "properties": {
                 "task_description": {
                     "type": "string",
-                    "description": "The description of the task to add to the todo list."
+                    "description": "The description of the new task to add to the todo list."
                 },
                 "parent_id": {
                     "type": "string",
