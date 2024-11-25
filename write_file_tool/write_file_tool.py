@@ -13,26 +13,35 @@ class WriteFileTool:
 
     def schema():
         return {
-                "type": "function",
-                "function": {
-                    "name": "write_file",
-                    "description": "Write the contents of a file",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "filename": {
-                                "type": "string",
-                                "description": "The name of the file to write.",
-                            },
-                            "content": {
-                                "type": "string",
-                                "description": "The content to write to the file.",
-                            }
-                        },
-                        "required": ["filename", "content"],
-                    },
+            "name": "write_file",
+            "description": "Allows you to write new files or modify existing files.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "chain_of_thought": {
+                    "description": "Please think step-by-step about what needs to be written to the file in order for the program to match the requirements.",
+                    "title": "Chain Of Thought",
+                    "type": "string"
+                },
+                "file_path": {
+                    "description": "The full path of the file to write or modify. Will create directories if they don't exist.",
+                    "title": "File Path",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "The full content of the file to write. Content must not be truncated and must represent a correct functioning program with all the imports defined.",
+                    "title": "Content",
+                    "type": "string"
                 }
+                },
+                "required": [
+                "chain_of_thought",
+                "content",
+                "file_path"
+                ],
+                "type": "object"
             }
+        }
     
     def write_file( filename, content ):
         """Writes content to a specified file.

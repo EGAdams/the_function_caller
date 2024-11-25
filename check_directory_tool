@@ -1,0 +1,69 @@
+import os
+
+class CheckDirectoryTool:
+    """
+    Provides a tool for checking directory contents and existence.
+    
+    The `CheckDirectoryTool` class exposes functionality to check if a directory exists
+    and list its contents. This complements the existing file reading capabilities.
+    """
+    
+    def __init__(self):
+        print("Initializing CheckDirectoryTool")
+
+    def schema(self):
+        return {
+            "name": "check_directory_tool",
+            "description": "This tool checks directory existence and lists contents.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                    "directory_path": {
+                        "description": "Path to the directory to check",
+                        "examples": [
+                            "./",
+                            "../",
+                            "/home/user/documents",
+                            "../../"
+                        ],
+                        "title": "Directory Path",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "directory_path"
+                ],
+                "type": "object"
+            }
+        }
+
+    def check_directory(self, directory_path):
+        """Checks a directory and returns information about its contents.
+        
+        Args:
+            directory_path (str): The path to the directory to check.
+        
+        Returns:
+            dict: Information about the directory including:
+                - exists (bool): Whether the directory exists
+                - files (list): List of files in the directory
+                - subdirectories (list): List of subdirectories
+        """
+        directory_path = directory_path.replace('/mnt/data/', '')
+        
+        result = {
+            "exists": False,
+            "files": [],
+            "subdirectories": []
+        }
+        
+        if os.path.exists(directory_path):
+            result["exists"] = True
+            for item in os.listdir(directory_path):
+                full_path = os.path.join(directory_path, item)
+                if os.path.isfile(full_path):
+                    result["files"].append(item)
+                elif os.path.isdir(full_path):
+                    result["subdirectories"].append(item)
+                    
+        return result
