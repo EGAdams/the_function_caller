@@ -126,24 +126,52 @@ class Menu:
     def add_item(self, item):
         self.items.append(item)
 
-    def display_and_select(self, menu_manager):
-        while True:
-            for index, item in enumerate(self.items, start=1):
-                print(f"{index}. {item.title}")
-            print(f"{len(self.items) + 1}. Exit this menu")
-            print(f"{len(self.items) + 2}. Add a menu item")
 
-            choice = input("Please select an option: ")
-            if choice.isdigit():
-                choice = int(choice)
-                if 1 <= choice <= len(self.items):   #
-                    self.items[choice - 1].execute() # Shabaaam! This is the line that executes the command
-                elif choice == len(self.items) + 1:  #
-                    break
-                elif choice == len(self.items) + 2:
-                    menu_manager.add_menu_item()
+    def display_and_select(self, menu_manager):
+        # Initialize Dialog object
+        d = Dialog(dialog="dialog")  # You can specify the path to the 'dialog' executable if needed
+
+        while True:
+            # Build the menu items list
+            menu_items = []
+            for index, item in enumerate(self.items, start=1):
+                menu_items.append((str(index), item.title))
+            # Add exit and add item options
+            menu_items.append((str(len(self.items) + 1), "Exit this menu"))
+            menu_items.append((str(len(self.items) + 2), "Add a menu item"))
+
+            # Display the menu
+            code, tag = d.menu("Please select an option:",
+                            choices=menu_items,
+                            title="Menu",
+                            cancel_label="Exit",
+                            ok_label="Select")
+
+            if code == d.CANCEL or code == d.ESC:
+                # User chose to exit the menu
+                break
+            elif code == d.OK:
+                try:
+                    choice = int(tag)
+                    if 1 <= choice <= len(self.items):
+                        # Execute the selected menu item's action
+                        self.items[choice - 1].execute()
+                    elif choice == len(self.items) + 1:
+                        # Exit this menu
+                        break
+                    elif choice == len(self.items) + 2:
+                        # Add a new menu item
+                        menu_manager.add_menu_item()
+                    else:
+                        # Invalid selection
+                        d.msgbox("Invalid selection. Please try again.", title="Error")
+                except ValueError:
+                    # Non-integer input captured
+                    d.msgbox("Invalid input. Please select a valid option.", title="Error")
             else:
-                print("Invalid selection. Please try again.")
+                # Handle any other dialog return codes if necessary
+                d.msgbox("An unexpected error occurred.", title="Error")
+
     
     
 

@@ -54,7 +54,7 @@ keyboard_scroll_dir = os.path.join(project_dir, "keyboard_scroll")
 
 
 # /home/adamsl/the_function_caller/  # todo_list_tools/task_finder/task_iterator/task_iterator.py
-output_file_path       = os.path.join( base_dir, "all_smart_code.md"                         )
+output_file_path       = os.path.join( base_dir, "smart_menu/all_smart_code.md"                         )
 todo_list_tools_task   = os.path.join( base_dir, "todo_list_tools/task"                      )
 task_iterator_path     = os.path.join( base_dir, "todo_list_tools/task_finder/task_iterator" )
 task_finder_path       = os.path.join( base_dir, "todo_list_tools/task_finder/"              )

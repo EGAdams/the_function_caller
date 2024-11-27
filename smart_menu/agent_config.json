@@ -1,19 +1,7 @@
 [
     {
-        "title": "ll",
-        "action": "ls -larth",
-        "working_directory": ".",
-        "open_in_subprocess": false
-    },
-    {
         "title": "test smart menu system",
         "action": "python3 test_smart_menu_system.py config.json",
-        "working_directory": ".",
-        "open_in_subprocess": false
-    },
-    {
-        "title": "agent menu",
-        "action": "python3 test_smart_menu_system.py agent_config.json",
         "working_directory": ".",
         "open_in_subprocess": false
     },
@@ -27,6 +15,12 @@
         "title": "view current directory",
         "action": "echo; pwd; echo;",
         "working_directory": "",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "launch an agent",
+        "action": "echo; pwd; sleep 3; echo;",
+        "working_directory": ".",
         "open_in_subprocess": false
     }
 ]
