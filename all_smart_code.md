@@ -1,7 +1,4 @@
-import subprocess
-import os
-from MenuItem import MenuItem  # Assuming MenuItem is defined in MenuItem.py
-
+```python
 class CommandExecutor:
     @staticmethod
     def execute_command(menu_item):
@@ -25,9 +22,10 @@ class CommandExecutor:
         except Exception as e:
             print(f"Error executing command {menu_item.action}: {e}")
         finally:
-            os.chdir(original_dir)  # Restore the original directory
-import json
+            os.chdir(original_dir)
+```
 
+```python
 class ConfigReader:
     @staticmethod
     def read_config(file_path):
@@ -61,16 +59,16 @@ class ConfigReader:
         except json.JSONDecodeError:
             print("Error decoding the configuration file. Please ensure it is valid JSON.")
             return []
+```
 
-from MenuItem import MenuItem # import MenuItem
-import dialog # code to import pythondialog
-
+```python
 class DialogMenu:
     def __init__(self, items=None):
         self.items = items if items else []
 
     def add_item(self, item):
         self.items.append(item)
+
 
     def display_and_select(self, menu_manager):
         d = dialog.Dialog(dialog="dialog")
@@ -98,7 +96,6 @@ class DialogMenu:
                 print( "Operation cancelled or closed. Exiting..." )
                 break
 
-    
     def add_new_item(self):
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")
@@ -111,17 +108,17 @@ class DialogMenu:
     def to_dict_list(self):
         """Serializes the menu's items into a list of dictionaries."""
         return [item.to_dict() for item in self.items]
+```
 
+```python
 def main():
     menu = Menu()
     # Example adding initial menu items
     menu.add_item(MenuItem("List current directory", "ls"))
     menu.display_and_select()
+```
 
-if __name__ == "__main__":
-    main()# import MenuItem
-from MenuItem import MenuItem
-
+```python
 class Menu:
     def __init__(self, items=None):
         self.items = items if items else []
@@ -154,7 +151,7 @@ class Menu:
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")
         working_directory = input("Enter the working directory (optional): ")
-        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'yes'
+        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'no'
         use_expect_library = input("Use the expect library? (yes/no): ").lower() == 'yes'
         new_item = MenuItem( title, command, working_directory, open_in_subprocess, use_expect_library )
         self.add_item( new_item )
@@ -162,19 +159,33 @@ class Menu:
     def to_dict_list(self):
         """Serializes the menu's items into a list of dictionaries."""
         return [item.to_dict() for item in self.items]
+```
 
+```python
 def main():
     menu = Menu()
     # Example adding initial menu items
     menu.add_item(MenuItem("List current directory", "ls"))
     menu.display_and_select()
+```
 
-if __name__ == "__main__":
-    main()
-    
-import os
-import subprocess
+```python
 class MenuItem:
+    """
+    Represents a menu item that can be executed, with options to change the working directory, open in a subprocess, and use the expect library.
+
+    The `MenuItem` class provides a way to encapsulate a command or action that can be executed, with various options to control how the command is run. The class has the following attributes:
+
+    - `title`: The title or label of the menu item.
+    - `action`: The command or action to be executed.
+    - `working_directory`: The working directory to change to before executing the action.
+    - `open_in_subprocess`: A boolean indicating whether to open the command in a new subprocess.
+    - `use_expect_library`: A boolean indicating whether to use the expect library to handle the command.
+
+    The `execute()` method is responsible for running the command or action, with the specified options. It changes the working directory if necessary, and then either runs the command in a new subprocess or in the current process, depending on the `open_in_subprocess` option. If an error occurs during execution, it is caught and printed.
+
+    The `to_dict()` method serializes the `MenuItem` instance into a dictionary, which can be useful for storing or transmitting the menu item data.
+    """
     def __init__(self, title, action, working_directory, open_in_subprocess, use_expect_library):
         self.title = title
         self.action = action
@@ -212,22 +223,13 @@ class MenuItem:
             "action": self.action,
             "working_directory": self.working_directory,
             "open_in_subprocess": self.open_in_subprocess,
-            "open_in_subprocess": self.use_expect_library
+            "use_expect_library": self.use_expect_library
         }
-        
-from ConfigReader import ConfigReader
-from Menu import Menu
-# from DialogMenu import DialogMenu
-from MenuItem import MenuItem
-from CommandExecutor import CommandExecutor
-import json
+```
 
-# and for the DialogMenu...
-import shutil
-import os
-
+```python
 class MenuManager:
-    def __init__(self, menu, config_path):
+    def __init__(self, menu: Menu, config_path: str):
         self.menu = menu
         self.config_path = config_path
 
@@ -235,12 +237,13 @@ class MenuManager:
         """Loads the menu items from the configuration file."""
         config_data = ConfigReader.read_config(self.config_path)
         for item_config in config_data:
+            print( item_config.get('working_directory', '' ))
             menu_item = MenuItem(
                 title=item_config['title'],
                 action=item_config['action'],
-                working_directory=item_config.get('workingDirectory', ''),
-                open_in_subprocess=item_config.get('openInSubprocess', False),
-                use_expect_library=item_config.get('useExpectLibrary', False)
+                working_directory=item_config.get('working_directory', ''),
+                open_in_subprocess=item_config.get('open_in_subprocess', False),
+                use_expect_library=item_config.get('use_expect_library', False)
             )
             self.menu.add_item(menu_item)
 
@@ -261,18 +264,20 @@ class MenuManager:
                 print("Invalid selection. Please try again.")
 
     def add_menu_item(self):
-        """Collects information from the user to add a new menu item."""
         print("Adding a new menu item...")
         title = input("Enter the title for the new menu item: ")
-        action = input("Enter the command to execute: ")
-        working_directory = input("Enter the full path to the directory: ")
-        open_in_subprocess_str = input("Should this command open in a separate window (yes/no)? ")
-        use_expect_library_str = input("Should use the Expect library (yes/no)? ")
+        is_submenu = input("Is this a submenu? (yes/no): ").lower() == 'yes'
 
-        open_in_subprocess = open_in_subprocess_str.lower() == 'yes'
-        use_expect_library = use_expect_library_str.lower() == 'yes'
+        if is_submenu:
+            new_menu_item = SmartMenuItem(title, sub_menu=Menu())
+            print("Submenu added. Remember to add items to this submenu.")
+        else:
+            action = input("Enter the command to execute: ")
+            working_directory = input("Enter the full path to the directory: ")
+            open_in_subprocess = input("Should this command open in a separate window (yes/no)? ").lower() == 'yes'
+            use_expect_library = input("Should use the Expect library (yes/no)? ").lower() == 'yes'
+            new_menu_item = SmartMenuItem(title, action, working_directory, open_in_subprocess, use_expect_library)
 
-        new_menu_item = MenuItem(title, action, working_directory, open_in_subprocess, use_expect_library)
         self.menu.add_item(new_menu_item)
         print("New menu item added successfully.")
         self.save_menus_to_config()
@@ -289,29 +294,31 @@ class MenuManager:
         with open(self.config_path, 'w') as config_file:
             json.dump(self.menu.to_dict_list(), config_file, indent=4)
         print("Menu configuration saved.")
-        
-    # def add_new_item(self):
-    #     # Existing code to add a new item
-    #     self.menu.add_item(new_item)
-    #     print("New menu item added successfully.")
-    #     # Save the updated menu configuration
-    #     self.save_to_config()
+```
 
+```python
 def main():
     menu = Menu()
     menu_manager = MenuManager(menu, "path_to_config.json")
     menu_manager.load_menus()
     menu.display_and_select(menu_manager)
+```
 
-if __name__ == "__main__":
-    main()
-from MenuManager import MenuManager
-# from Menu import Menu
-from Menu import Menu
-if __name__ == "__main__":
-    config_path = "/home/eg1972/linuxBash/python_menus/smart_menu/config.json"
+```python
+class SmartMenuItem( MenuItem ):
+    def __init__(self, title, action=None, working_directory='', open_in_subprocess=False, use_expect_library=False, sub_menu=None):
+        super().__init__(title, action, working_directory, open_in_subprocess, use_expect_library)
+        self.sub_menu = sub_menu  # This can be another Menu object or None
 
-    menu = Menu()
-    menu_manager = MenuManager(menu, config_path )
-    menu_manager.load_menus()
-    menu.display_and_select(menu_manager)
+    def execute(self):
+        if self.sub_menu:
+            self.sub_menu.display_and_select()
+        else:
+            super().execute()
+
+    def to_dict(self):
+        item_dict = super().to_dict()
+        # Optionally add serialization for sub_menu if needed
+        return item_dict
+```
+

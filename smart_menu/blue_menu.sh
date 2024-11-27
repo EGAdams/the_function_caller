@@ -1,35 +1,3 @@
-# Your role
-- Expert Python Developer
-- World-class Object-Oriented Programmer
-- Seasoned user of The Gang of Four Design Patterns
-
-# Your task
-- I want the code for the menu system to be written in a certain style that shows dialog boxes and uses the dialog command to display the menu options. I need you to rewrite the display_and_select() method to use this dialog box style menu.  An example of the menu style is provided below the display_and_select_method().
-
-# Python Source Code to rewrite 
-```python
-def display_and_select(self, menu_manager):
-        while True:
-            for index, item in enumerate(self.items, start=1):
-                print(f"{index}. {item.title}")
-            print(f"{len(self.items) + 1}. Exit this menu")
-            print(f"{len(self.items) + 2}. Add a menu item")
-
-            choice = input("Please select an option: ")
-            if choice.isdigit():
-                choice = int(choice)
-                if 1 <= choice <= len(self.items):
-                    self.items[choice - 1].execute()
-                elif choice == len(self.items) + 1:
-                    break
-                elif choice == len(self.items) + 2:
-                    menu_manager.add_menu_item()
-            else:
-                print("Invalid selection. Please try again.")
-```
-    
-# Source Code to get the menu style from
-```python
 #!/bin/bash
 
 # while-menu-dialog: A menu-driven system information program
@@ -152,17 +120,3 @@ while true; do
       ;;
   esac
 done
-```
-
-
-# Here is the vanilla g4 answer
-https://chat.openai.com/share/daa918d7-135c-468a-b86f-6c8791346268
-
-
-# Professional coder answer
-https://chat.openai.com/share/7ed5b449-cb78-428b-97ce-6ae11cd1a164
-
-anyways im using the one from the professional coder anyway, it is slightly better.
-
-
-# thanksgiving_blue.md

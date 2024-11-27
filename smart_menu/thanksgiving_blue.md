@@ -8,7 +8,7 @@
 
 # Python Source Code to rewrite 
 ```python
-def display_and_select(self, menu_manager):
+    def display_and_select(self, menu_manager):
         while True:
             for index, item in enumerate(self.items, start=1):
                 print(f"{index}. {item.title}")
@@ -18,9 +18,9 @@ def display_and_select(self, menu_manager):
             choice = input("Please select an option: ")
             if choice.isdigit():
                 choice = int(choice)
-                if 1 <= choice <= len(self.items):
-                    self.items[choice - 1].execute()
-                elif choice == len(self.items) + 1:
+                if 1 <= choice <= len(self.items):   #
+                    self.items[choice - 1].execute() # Shabaaam! This is the line that executes the command
+                elif choice == len(self.items) + 1:  #
                     break
                 elif choice == len(self.items) + 2:
                     menu_manager.add_menu_item()
@@ -32,48 +32,47 @@ def display_and_select(self, menu_manager):
 ```python
 #!/bin/bash
 
-# while-menu-dialog: A menu-driven system information program
+# while-menu-dialog: a menu driven system information program
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
-HEIGHT=0        # Let dialog calculate the height
-WIDTH=0         # Let dialog calculate the width
-MENU_HEIGHT=0   # Let dialog calculate the menu height
+HEIGHT=0
+WIDTH=0
+NUMBER_OF_OPTIONS=9
 CURRENT_WORKSPACE='/mnt/c/Users/EG/march/fresh_electron'
 LATEST_SOURCE='/mnt/c/Users/EG/electron-vue-example'
 
-# Function to display results (currently unused)
 display_result() {
   dialog --title "$1" \
     --no-collapse \
     --msgbox "$result" 0 0
 }
 
-# Infinite loop to display the menu until the user exits
+echo "entering while loop... "
+echo;
+
 while true; do
-  # Capture the user's selection using 'dialog'
   exec 3>&1
+  echo "decalring selection... "
   selection=$(dialog \
     --backtitle "Main Directory Menu" \
     --title "Menu" \
     --clear \
     --cancel-label "Exit" \
-    --menu "Please select:" $HEIGHT $WIDTH $MENU_HEIGHT \
-    "0" "Exit this menu" \
-    "p" "Open Pickleball Dashboard" \
+    --menu "Please select:" $HEIGHT $WIDTH $NUMBER_OF_OPTIONS \
+    "0" "exit this menu" \
+    "p" "open pickleball dashboard" \
     "1" "Clean all but users" \
-    "f" "Open Flash Menu (includes matrix project with fonts)" \
+    "f" "open flash menu ( includes matrix project with fonts )" \
     "2" "Edit this menu" \
-    "j" "VSCode projects" \
+    "j" "vscode projects" \
     "k" "MCBA System Dashboard" \
-    "a" "Clean all but admin" \
-    "c" "Clean keep users and conversations" \
-    "m" "Start monitor" \
+    "a" "clean all but admin"\
+    "c" "clean keep users and conversations"\
+    "m" "start monitor"\
     2>&1 1>&3)
   exit_status=$?
   exec 3>&-
-
-  # Handle exit conditions from 'dialog'
   case $exit_status in
     $DIALOG_CANCEL)
       clear
@@ -86,83 +85,88 @@ while true; do
       exit 1
       ;;
   esac
-
-  # Exit if selection is empty (prevents infinite loop)
-  if [ -z "$selection" ]; then
-    clear
-    echo "No selection made. Exiting."
-    exit
-  fi
-
-  # Process the user's selection
   case $selection in
-    0)
+    0 )
       clear
-      echo "Exiting the menu. Goodbye!"
       break
       ;;
-    1)
-      echo "Cleaning all but users..."
+    1 )
       cd /mnt/c/Users/EG/Desktop/2022/july/1st_week/vite-vue-electron/src/typescript_source/concrete/commands/delete_html_logs/
       ./clean_but_keep_users.sh
-      cd - >/dev/null
+      #display_result "clean all but users"
+      cd -
       ;;
-    f)
-      echo "Opening flash menu..."
+    f )
       cd /home/adamsl/linuxBash
       ./flash_menu.sh
+      break
       ;;
-    2)
-      echo "Editing the menu in VSCode..."
+    2 )
       cd /home/adamsl/linuxBash
       code .
-      cd - >/dev/null
+      cd -
       ;;
-    j)
-      echo "Opening VSCode projects..."
+    j )
       cd /home/adamsl/linuxBash
       ./vscode_projects.sh
       ;;
-    k)
-      echo "Starting MCBA System Dashboard..."
+    k )
       cd /home/adamsl/linuxBash
       python3 mcba_system_dashboard.py
+      break
       ;;
-    a)
-      echo "Cleaning all but admin..."
+    a )
       cd /home/adamsl/linuxBash
       ./clean_all_but_admin.sh
       ;;
-    c)
-      echo "Cleaning and keeping users and conversations..."
+    c )
       cd /home/adamsl/linuxBash
       ./clean_keep_users_conversatons.sh
-      ;;
-    m)
-      echo "Starting monitor..."
-      # Add the command to start monitor here
-      ;;
-    p)
-      echo "Starting Pickleball Dashboard..."
+    ;;
+
+    p )
       cd /home/adamsl/linuxBash/pickle_ball
       python3 pickleball_dashboard.py
-      ;;
-    *)
-      echo "Invalid selection. Please try again."
-      ;;
+      break
+    ;;  
+    7 )
+      clear
+      cp -fp $LATEST_SOURCE/src/components/* $CURRENT_WORKSPACE/src/components/
+      cp -rfp $LATEST_SOURCE/src/typescript_source $CURRENT_WORKSPACE/src/
+      cp -rfp $LATEST_SOURCE/src/views $CURRENT_WORKSPACE/src/
+      cp -fp $LATEST_SOURCE/src/router/*.ts $CURRENT_WORKSPACE/src/router/
+      cd $CURRENT_WORKSPACE
+      echo "yarn add electron-ssh2"
+      echo "npm install --save-dev @types/jquery"
+      echo "yarn add @types/jquery"
+      echo "yarn add jquery mysql --ignore-engines"
+
+      echo "npm install --save-dev @types/mysql"
+      echo "yarn add @types/mysql"
+      echo "yarn add mysql --ignore-engines"
+      echo "npm install --save-dev @types/socket.io-client"
+      echo "yarn add @types/socket.io-client"
+      echo "yarn add electron-ssh2"
+      echo "npm install --save-dev dns"
+      echo "yarn add dns --ignore-engines"
+      echo "npm install --save-dev cpu-features"
+      echo "npm install node-loader --save-dev"
+      echo "npm install https://github.com/mscdex/cpu-features.git"
+      echo "npm install https://github.com/mscdex/ssh2.git"
+      echo "npm install -g npm-install-peers"
+      echo "yarn add -D native-ext-loader --ignore-engines"
+
+      echo "npm install --save-dev node-loader@latest"
+      echo "npm install"
+      echo "yarn add node-loader@latest --ignore-engines"
+      echo "yarn add cpu-features --ignore-engines"
+      echo "yarn add vue@next"
+      echo "yarn add vue@next --ignore-engine"
+      echo "yarn add @vue/compiler-sfc -D"
+      echo "RUN THE INSTALLS IN WINDOWS ENV!"
+      break
+    ;;  
   esac
+  echo "done with case selection."
 done
 ```
-
-
-# Here is the vanilla g4 answer
-https://chat.openai.com/share/daa918d7-135c-468a-b86f-6c8791346268
-
-
-# Professional coder answer
-https://chat.openai.com/share/7ed5b449-cb78-428b-97ce-6ae11cd1a164
-
-anyways im using the one from the professional coder anyway, it is slightly better.
-
-
-# thanksgiving_blue.md
