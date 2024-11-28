@@ -30,6 +30,7 @@ class MessageCollaboratorAgent(BaseAgent):
         if recipient_url:
             try:
                 with xmlrpc.client.ServerProxy(recipient_url) as proxy:
+                    print( f"Sending message to { recipient_id }: { message } with the proxy.receive_message(message)" )
                     proxy.receive_message(message)
                     self.logger.info(f"Message sent to {recipient_id}: {message}")
                     self.message_logs.append({"to": recipient_id, "message": message})
@@ -38,13 +39,13 @@ class MessageCollaboratorAgent(BaseAgent):
         else:
             self.logger.error(f"Unknown recipient: {recipient_id}")
 
-    def process_message(self, message: dict):
+    def process_message( self, message: dict ):
         """
         Processes incoming messages and routes commands to other agents.
         :param message: Incoming message dictionary containing the "command" key.
         """
         try:
-            command = message.get("command")
+            command = message.get( "command" )
             if not command:
                 self.logger.error("Invalid message format. Missing 'command'.")
                 return

@@ -1,17 +1,13 @@
-#
-# The Planner Agent
-#
+# The Coder Agent
 # OpenAI Assistant address:
 # https://platform.openai.com/assistants/asst_MGrsitU5ZvgY530WDBLK3ZaS
-#
 import sys
 import json
 from time import sleep
 from openai import OpenAI
 import xmlrpc.client
 
-# URL of the collaborator's RPC server
-collaborator_url = "http://localhost:8001"
+collaborator_url = "http://localhost:8001" # URL of the collaborator's RPC server
 PORT = 8003
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
@@ -48,22 +44,19 @@ class CoderAgent(BaseAgent):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
         """
-        try:
-            # Add the incoming message to the thread
-            message = self.client.beta.threads.messages.create(
+        try:  
+            message = self.client.beta.threads.messages.create( # Add the incoming message to the thread
                 thread_id=self.thread.id,
                 role="user",
                 content=new_message["message"]
             )
 
-            # Start a run with the assistant
-            run = self.client.beta.threads.runs.create(
+            run = self.client.beta.threads.runs.create( # Start a run with the assistant
                 thread_id=self.thread.id,
                 assistant_id=self.assistant.id
             )
 
-            # Wait for the run to complete
-            self.run_spinner.spin(run, self.thread)
+            self.run_spinner.spin(run, self.thread) # Wait for the run to complete
 
             # Fetch messages from the thread
             messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
@@ -73,27 +66,19 @@ class CoderAgent(BaseAgent):
             # Return the content of the last message
             # Get the last message from reversed messages
             response = reversed_messages[len(reversed_messages) - 1]
-            # print(response.role)
-            # self.pretty_print.execute(response)
-            # Send the message as a command to the collaborator
             # self.send_message( {"command": command_packaged_message }, collaborator_url )
             with xmlrpc.client.ServerProxy( self.collaborator_url ) as proxy:      
                 # Send the message as a command to the collaborator
                 command_packaged_message = { "command": response.content[0].text.value }
                 try:
-                    # invoke the recieving agent's receive_message method `agent.receive_message(message)`  
-                    print ( proxy.receive_message( command_packaged_message )) 
-                    print(f"Message sent to collaborator: {message}")
+                    print ( proxy.receive_message( command_packaged_message ))  # invoke the recieving agent's receive_message   
+                    print(f"Message sent to collaborator: {message}")           # method `agent.receive_message(message)`
                 except Exception as e:
                     print(f"Failed to send message: {e}")
-
-            # return response
-            # return self.pretty_print.execute( response )
         
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
-
 
 def main():
     """
@@ -107,7 +92,6 @@ def main():
         coder_agent.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         coder_agent.logger.info("Shutting down...")
-
 
 if __name__ == "__main__":
     main()

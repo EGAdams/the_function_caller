@@ -65,14 +65,8 @@ class PlannerAgent( BaseAgent ):
             messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
-
-            # Return the content of the last message
-            # Get the last message from reversed messages
             response = reversed_messages[len(reversed_messages) - 1]
-            # print(response.role)
             return response
-            # self.send_message("collaborator", {"message": command[len("coder:"):].strip()})
-            # return response
         
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
@@ -86,7 +80,7 @@ def main():
     planner_agent = PlannerAgent( agent_id="planner_agent", server_port=PORT )
 
     try:
-        planner_agent.logger.info("PlannerAgent is starting in port " + PORT + "...")
+        planner_agent.logger.info("PlannerAgent is starting in port " + str( PORT ) + "...")
         planner_agent.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         planner_agent.logger.info("Shutting down...")

@@ -13,7 +13,7 @@
     },
     {
         "title": "agent menu",
-        "action": "python3 test_smart_menu_system.py agent_config.json",
+        "action": "python3 CommandMenuApp.py agent_config.json",
         "working_directory": ".",
         "open_in_subprocess": false
     },

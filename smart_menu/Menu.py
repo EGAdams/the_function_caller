@@ -1,7 +1,8 @@
-# import MenuItem
 from MenuItem import MenuItem
 from dialog import Dialog
 import sys
+from CommandExecutor import CommandExecutor  # Ensure this class is correctly imported
+
 
 class Menu:
     def __init__(self, items=None):
@@ -10,10 +11,9 @@ class Menu:
     def add_item(self, item):
         self.items.append(item)
 
-
     def display_and_select(self, menu_manager):
         # Initialize Dialog object
-        d = Dialog(dialog="dialog")  # You can specify the path to the 'dialog' executable if needed
+        d = Dialog(dialog="dialog")  # Specify the path to the 'dialog' executable if needed
 
         while True:
             # Build the menu items list
@@ -25,11 +25,13 @@ class Menu:
             menu_items.append((str(len(self.items) + 2), "Add a menu item"))
 
             # Display the menu
-            code, tag = d.menu("Please select an option:",
-                            choices=menu_items,
-                            title="Menu",
-                            cancel_label="Exit",
-                            ok_label="Select")
+            code, tag = d.menu(
+                "Please select an option:",
+                choices=menu_items,
+                title="Menu",
+                cancel_label="Exit",
+                ok_label="Select"
+            )
 
             if code == d.CANCEL or code == d.ESC:
                 # User chose to exit the menu
@@ -38,14 +40,19 @@ class Menu:
                 try:
                     choice = int(tag)
                     if 1 <= choice <= len(self.items):
-                        # Execute the selected menu item's action
-                        self.items[choice - 1].execute()
+                        # Execute the selected menu item's action using CommandExecutor
+                        menu_item = self.items[choice - 1]
+                        output = "executing command: " + menu_item.title
+                        sleep(0.5)
+                        output = CommandExecutor.execute_command(menu_item)
+                        d.msgbox(output, title="Command Output")
                     elif choice == len(self.items) + 1:
                         # Exit this menu
                         break
                     elif choice == len(self.items) + 2:
                         # Add a new menu item
                         menu_manager.add_menu_item()
+                        # Update the menu items after adding a new one
                     else:
                         # Invalid selection
                         d.msgbox("Invalid selection. Please try again.", title="Error")
@@ -56,27 +63,43 @@ class Menu:
                 # Handle any other dialog return codes if necessary
                 d.msgbox("An unexpected error occurred.", title="Error")
 
-    
-    
-
     def add_new_item(self):
+        print("Adding a new menu item...")
         title = input("Enter title for new item: ")
-        command = input("Enter command to execute: ")
+        action = input("Enter command to execute: ")
         working_directory = input("Enter the working directory (optional): ")
-        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'no'
+        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'yes'
         use_expect_library = input("Use the expect library? (yes/no): ").lower() == 'yes'
-        new_item = MenuItem( title, command, working_directory, open_in_subprocess, use_expect_library )
-        self.add_item( new_item )
-    
+        new_item = MenuItem(
+            title,
+            action,
+            working_directory,
+            open_in_subprocess,
+            use_expect_library
+        )
+        self.add_item(new_item)
+        print("New menu item added successfully.")
+
     def to_dict_list(self):
         """Serializes the menu's items into a list of dictionaries."""
         return [item.to_dict() for item in self.items]
 
 def main():
+    # Import MenuManager here to avoid circular import
+    from MenuManager import MenuManager
+
+    # Create an instance of Menu
     menu = Menu()
-    # Example adding initial menu items
-    menu.add_item(MenuItem("List current directory", "ls"))
-    menu.display_and_select()
+    config_path = "menu_config.json"  # Path to the configuration file
+
+    # Create a MenuManager
+    menu_manager = MenuManager(menu, config_path)
+
+    # Load menus from config
+    menu_manager.load_menus()
+
+    # Display the menu
+    menu.display_and_select(menu_manager)
 
 if __name__ == "__main__":
     main()

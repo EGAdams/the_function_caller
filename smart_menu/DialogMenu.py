@@ -24,6 +24,7 @@ class DialogMenu:
 
             if code == d.OK:
                 if tag == "Exit":
+                    exit(0)
                     break
                 elif tag == "Add":
                     menu_manager.add_menu_item()
