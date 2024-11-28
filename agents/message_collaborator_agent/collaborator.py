@@ -30,14 +30,17 @@ class MessageCollaboratorAgent(BaseAgent):
         if recipient_url:
             try:
                 with xmlrpc.client.ServerProxy(recipient_url) as proxy:
-                    print( f"Sending message to { recipient_id }: { message } with the proxy.receive_message(message)" )
-                    proxy.receive_message(message)
+                    print(f"Sending message to {recipient_id}: {message}")
+                    response = proxy.receive_message(message)
                     self.logger.info(f"Message sent to {recipient_id}: {message}")
                     self.message_logs.append({"to": recipient_id, "message": message})
+                    return response  # Return the response from the recipient
             except Exception as e:
                 self.logger.error(f"Failed to send message to {recipient_id}: {e}")
+                return f"Error: {str(e)}"
         else:
             self.logger.error(f"Unknown recipient: {recipient_id}")
+            return f"Error: Unknown recipient {recipient_id}"
 
     def process_message( self, message: dict ):
         """
@@ -48,19 +51,22 @@ class MessageCollaboratorAgent(BaseAgent):
             command = message.get( "command" )
             if not command:
                 self.logger.error("Invalid message format. Missing 'command'.")
-                return
+                return "Invalid message format. Missing 'command'."
             
             # Example command parsing for routing
             if command.startswith("coder:"):
-                self.send_message("coder", {"message": command[len("coder:"):].strip()})
+                response = self.send_message("coder", {"message": command[len("coder:"):].strip()})
+                return response
             elif command.startswith("planner:"):
-                self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                return response
             else:
                 # Handle other commands or respond directly
-                # self.logger.info(f"Unknown command: {command}")
-                print( command )
+                self.logger.info(f"Unknown command: {command}")
+                return "Unknown command"
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
+            return f"Error: {str(e)}"
 
     def log_message_activity(self):
         """

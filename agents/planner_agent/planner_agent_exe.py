@@ -66,8 +66,11 @@ class PlannerAgent( BaseAgent ):
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
             response = reversed_messages[len(reversed_messages) - 1]
-            return response
-        
+
+            # Extract the content from the response
+            response_content = response.content[0].text.value
+            return response_content
+
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"

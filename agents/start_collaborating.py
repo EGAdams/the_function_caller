@@ -1,8 +1,13 @@
 import xmlrpc.client
 
+from colorama import Fore, Style  # Add this import
+
 def main():
     # URL of the collaborator's RPC server
     collaborator_url = "http://localhost:8001"
+
+    from colorama import init
+    init(autoreset=True)  # Initialize colorama
 
     try:
         # Create a proxy for the collaborator's server
@@ -21,11 +26,18 @@ def main():
                 # Send the message as a command to the collaborator
                 command_packaged_message = {"command": message}
                 try:
-                    # invoke the recieving agent's receive_message method `agent.receive_message(message)`
-                    # in the collaborator's receive_message method, it will unpack the message and call the
-                    # process_message method with the message as an argument.
-                    proxy.receive_message( command_packaged_message ) # this prints `None` so instead of returning, 
-                    print(f"Message sent to collaborator: {message}") # have the proxy ()
+                    # Capture the response from the collaborator
+                    response = proxy.receive_message(command_packaged_message)
+                    
+                    # Color the response based on the agent
+                    print ( "\n" )
+                    if message.startswith("coder:"):
+                        print(f"{Fore.BLUE}Coder's response: {response}{Style.RESET_ALL}")
+                    elif message.startswith("planner:"):
+                        print(f"{Fore.YELLOW}Planner's response: {response}{Style.RESET_ALL}")
+                    else:
+                        print(f"Collaborator's response: {response}")
+                    print ( "\n" )
                 except Exception as e:
                     print(f"Failed to send message: {e}")
     except Exception as e:
