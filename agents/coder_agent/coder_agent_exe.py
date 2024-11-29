@@ -44,38 +44,33 @@ class CoderAgent(BaseAgent):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
         """
-        try:  
-            message = self.client.beta.threads.messages.create( # Add the incoming message to the thread
+        try:
+            # Add the incoming message to the thread
+            message = self.client.beta.threads.messages.create(
                 thread_id=self.thread.id,
                 role="user",
                 content=new_message["message"]
             )
 
-            run = self.client.beta.threads.runs.create( # Start a run with the assistant
+            # Start a run with the assistant
+            run = self.client.beta.threads.runs.create(
                 thread_id=self.thread.id,
                 assistant_id=self.assistant.id
             )
 
-            self.run_spinner.spin(run, self.thread) # Wait for the run to complete
+            # Wait for the run to complete
+            self.run_spinner.spin(run, self.thread)
 
             # Fetch messages from the thread
             messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
-
-            # Return the content of the last message
-            # Get the last message from reversed messages
             response = reversed_messages[len(reversed_messages) - 1]
-            # self.send_message( {"command": command_packaged_message }, collaborator_url )
-            with xmlrpc.client.ServerProxy( self.collaborator_url ) as proxy:      
-                # Send the message as a command to the collaborator
-                command_packaged_message = { "command": response.content[0].text.value }
-                try:
-                    print ( proxy.receive_message( command_packaged_message ))  # invoke the recieving agent's receive_message   
-                    print(f"Message sent to collaborator: {message}")           # method `agent.receive_message(message)`
-                except Exception as e:
-                    print(f"Failed to send message: {e}")
-        
+
+            # Extract the content from the response
+            response_content = response.content[0].text.value
+            return response_content
+
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"

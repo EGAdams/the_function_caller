@@ -10,6 +10,9 @@ def main():
     # URL of the collaborator's RPC server
     collaborator_url = "http://localhost:8001"
 
+    from colorama import init
+    init(autoreset=True)  # Initialize colorama
+
     try:
         # Create a proxy for the collaborator's server
         with xmlrpc.client.ServerProxy(collaborator_url) as proxy:
@@ -27,11 +30,18 @@ def main():
                 # Send the message as a command to the collaborator
                 command_packaged_message = {"command": message}
                 try:
-                    # invoke the recieving agent's receive_message method `agent.receive_message(message)`
-                    # in the collaborator's receive_message method, it will unpack the message and call the
-                    # process_message method with the message as an argument.
-                    proxy.receive_message( command_packaged_message ) # this prints `None` so instead of returning, 
-                    print(f"Message sent to collaborator: {message}") # have the proxy ()
+                    # Capture the response from the collaborator
+                    response = proxy.receive_message(command_packaged_message)
+                    
+                    # Color the response based on the agent
+                    print ( "\n" )
+                    if message.startswith("coder:"):
+                        print(f"{Fore.BLUE}Coder's response: {response}{Style.RESET_ALL}")
+                    elif message.startswith("planner:"):
+                        print(f"{Fore.YELLOW}Planner's response: {response}{Style.RESET_ALL}")
+                    else:
+                        print(f"Collaborator's response: {response}")
+                    print ( "\n" )
                 except Exception as e:
                     print(f"Failed to send message: {e}")
     except Exception as e:
@@ -50,7 +60,6 @@ class BaseAgentLogger:          # create a generic logger out
         print( f"*** ERROR: {message} ***" )
 ```
 
-# Base Agent
 ```python
 class BaseAgent:
     def __init__(self, agent_id: str, server_port: int):
@@ -82,7 +91,6 @@ class BaseAgent:
         raise NotImplementedError("Subclasses should implement this method.")
 ```
 
-# Coder Agent
 ```python
 class CoderAgent(BaseAgent):
     def __init__(self, agent_id: str, server_port: int, collaborator_url: str):
@@ -112,42 +120,39 @@ class CoderAgent(BaseAgent):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
         """
-        try:  
-            message = self.client.beta.threads.messages.create( # Add the incoming message to the thread
+        try:
+            # Add the incoming message to the thread
+            message = self.client.beta.threads.messages.create(
                 thread_id=self.thread.id,
                 role="user",
                 content=new_message["message"]
             )
 
-            run = self.client.beta.threads.runs.create( # Start a run with the assistant
+            # Start a run with the assistant
+            run = self.client.beta.threads.runs.create(
                 thread_id=self.thread.id,
                 assistant_id=self.assistant.id
             )
 
-            self.run_spinner.spin(run, self.thread) # Wait for the run to complete
+            # Wait for the run to complete
+            self.run_spinner.spin(run, self.thread)
 
             # Fetch messages from the thread
             messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
-
-            # Return the content of the last message
-            # Get the last message from reversed messages
             response = reversed_messages[len(reversed_messages) - 1]
-            # self.send_message( {"command": command_packaged_message }, collaborator_url )
-            with xmlrpc.client.ServerProxy( self.collaborator_url ) as proxy:      
-                # Send the message as a command to the collaborator
-                command_packaged_message = { "command": response.content[0].text.value }
-                try:
-                    print ( proxy.receive_message( command_packaged_message ))  # invoke the recieving agent's receive_message   
-                    print(f"Message sent to collaborator: {message}")           # method `agent.receive_message(message)`
-                except Exception as e:
-                    print(f"Failed to send message: {e}")
-        
+
+            # Extract the content from the response
+            response_content = response.content[0].text.value
+            return response_content
+
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
+```
 
+```python
 def main():
     """
     Main entry point for the CoderAgent.
@@ -162,7 +167,6 @@ def main():
         coder_agent.logger.info("Shutting down...")
 ```
 
-# Planner Agent
 ```python
 class PlannerAgent( BaseAgent ):
     def __init__(self, agent_id: str, server_port: int):
@@ -213,12 +217,17 @@ class PlannerAgent( BaseAgent ):
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
             response = reversed_messages[len(reversed_messages) - 1]
-            return response
-        
+
+            # Extract the content from the response
+            response_content = response.content[0].text.value
+            return response_content
+
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
+```
 
+```python
 def main():
     """
     Main entry point for the PlannerAgent.
@@ -232,7 +241,6 @@ def main():
         planner_agent.logger.info("Shutting down...")
 ```
 
-# Message Collaborator Agent
 ```python
 class MessageCollaboratorAgent(BaseAgent):
     def __init__(self, agent_id: str, server_port: int, agents_urls: dict):
@@ -256,14 +264,17 @@ class MessageCollaboratorAgent(BaseAgent):
         if recipient_url:
             try:
                 with xmlrpc.client.ServerProxy(recipient_url) as proxy:
-                    print( f"Sending message to { recipient_id }: { message } with the proxy.receive_message(message)" )
-                    proxy.receive_message(message)
+                    print(f"Sending message to {recipient_id}: {message}")
+                    response = proxy.receive_message(message)
                     self.logger.info(f"Message sent to {recipient_id}: {message}")
                     self.message_logs.append({"to": recipient_id, "message": message})
+                    return response  # Return the response from the recipient
             except Exception as e:
                 self.logger.error(f"Failed to send message to {recipient_id}: {e}")
+                return f"Error: {str(e)}"
         else:
             self.logger.error(f"Unknown recipient: {recipient_id}")
+            return f"Error: Unknown recipient {recipient_id}"
 
     def process_message( self, message: dict ):
         """
@@ -274,19 +285,22 @@ class MessageCollaboratorAgent(BaseAgent):
             command = message.get( "command" )
             if not command:
                 self.logger.error("Invalid message format. Missing 'command'.")
-                return
+                return "Invalid message format. Missing 'command'."
             
             # Example command parsing for routing
             if command.startswith("coder:"):
-                self.send_message("coder", {"message": command[len("coder:"):].strip()})
+                response = self.send_message("coder", {"message": command[len("coder:"):].strip()})
+                return response
             elif command.startswith("planner:"):
-                self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                return response
             else:
                 # Handle other commands or respond directly
-                # self.logger.info(f"Unknown command: {command}")
-                print( command )
+                self.logger.info(f"Unknown command: {command}")
+                return "Unknown command"
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
+            return f"Error: {str(e)}"
 
     def log_message_activity(self):
         """
@@ -312,7 +326,9 @@ class MessageCollaboratorAgent(BaseAgent):
         Stub: Implement periodic checks of agent availability via their RPC endpoints.
         """
         pass
+```
 
+```python
 def main():
     """
     Main entry point for the MessageCollaboratorAgent.
@@ -334,9 +350,30 @@ def main():
     except KeyboardInterrupt:
         collaborator.logger.info("Shutting down...")
 ```
+# Tree structure of system
+```bash
+(open-interpreter-env) adamsl@DESKTOP-2OBSQMC:~/the_function_caller/agents$ tree | grep .py
+├── __init__.py
+├── __pycache__
+│   └── __init__.cpython-312.pyc
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   └── base_agent.cpython-312.pyc
+│   └── base_agent.py
+│   ├── __init__.py
+│   ├── coder_agent_exe.py
+│   └── message_broker_agent.py
+│   ├── collaborator.py
+│   ├── planner_agent_exe.py
+├── start_collaborating.py
+├── test_two_agents.py
+(open-interpreter-env) adamsl@DESKTOP-2OBSQMC:~/the_function_caller/agents$ 
+```
 
 # The problem
-When a message is sent from the user to the collaborator like: "planner: whats on the agenda today", the collaborator correctly sends that message to the planner and the planner processes the message correctly.  However, the planner does not seem to be sending the response back to the collaborator.  Also, the collaborator is overriding the base agent's send_message method and I am not sure if this is correct.  
+The system takes too long to set up and run.  I need a more automated process.
 
 # Your Task
-Show me how to modify the code so that the planner sends a response back to the collaborator somehow.  Fix anything else that you see that might be a problem.  Make sure the code is working correctly.
+Write a Python script that can run a command in a directory called start_system.py.
+This script should be designed to run in one terminal window.  Every time it runs, it will check to see who is running and start the one that is not running.  So for example, when it starts, if the Planner Agent is running, it will start the Coder Agent.  If the Coder Agent is running, it will start the Planner Agent.  If both are running, it will run the start_collaborating.py script.  Use the given linux tree structure to create the paths to the scripts.
