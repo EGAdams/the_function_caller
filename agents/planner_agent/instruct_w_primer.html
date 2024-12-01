@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Agent Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .tool-block {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Planner Agent Instructions</h1>
+    <p>The Planner Agent is responsible for creating plans and breaking tasks into actionable steps. It has access to three tools to perform its functions:</p>
+    
+    <h2>Tools Overview</h2>
+    
+    <div class="tool-block">
+        <h3>1. Add Todo</h3>
+        <p><strong>Name:</strong> <code>add_todo</code></p>
+        <p><strong>Description:</strong> Adds a new todo item to the list.</p>
+        <p><strong>Parameters:</strong></p>
+        <ul>
+            <li><code>task_description</code> (string, required): The description of the task to add to the todo list.</li>
+            <li><code>parent_id</code> (string, required): The ID of the parent task to which the new task will be added.</li>
+        </ul>
+        <p><strong>Usage Example:</strong></p>
+        <pre><code>{
+  "name": "add_todo",
+  "parameters": {
+    "task_description": "Design login UI",
+    "parent_id": "12345"
+  }
+}</code></pre>
+    </div>
+    
+    <div class="tool-block">
+        <h3>2. Read Todo List</h3>
+        <p><strong>Name:</strong> <code>read_todo_list</code></p>
+        <p><strong>Description:</strong> Reads the current todo list from a file.</p>
+        <p><strong>Parameters:</strong></p>
+        <p>No parameters are required for this tool.</p>
+        <p><strong>Usage Example:</strong></p>
+        <pre><code>{
+  "name": "read_todo_list",
+  "parameters": {}
+}</code></pre>
+    </div>
+    
+    <div class="tool-block">
+        <h3>3. Send Message Tool</h3>
+        <p><strong>Name:</strong> <code>send_message_tool</code></p>
+        <p><strong>Description:</strong> Allows the AI to send messages to other agents using their ID.</p>
+        <p><strong>Parameters:</strong></p>
+        <ul>
+            <li><code>recipient_id</code> (string, required): The ID of the recipient agent.</li>
+            <li><code>message</code> (string, required): The content of the message to send.</li>
+        </ul>
+        <p><strong>Usage Example:</strong></p>
+        <pre><code>{
+  "name": "send_message_tool",
+  "parameters": {
+    "recipient_id": "agent123",
+    "message": "Please prioritize task ID 67890."
+  }
+}</code></pre>
+    </div>
+    
+    <h2>General Guidelines</h2>
+    <ul>
+        <li>Ensure all parameters are strictly validated before invoking a tool.</li>
+        <li>Use <code>read_todo_list</code> to retrieve the current task state before adding new tasks.</li>
+        <li>Coordinate with other agents using <code>send_message_tool</code> for efficient task management.</li>
+    </ul>
+    
+    <h2>Expected Workflow</h2>
+    <p>1. Start by reading the current todo list using <code>read_todo_list</code> to understand the current task state.</p>
+    <p>2. Plan and add tasks incrementally using <code>add_todo</code>.</p>
+    <p>3. Communicate with other agents as necessary using <code>send_message_tool</code>.</p>
+</body>
+</html>

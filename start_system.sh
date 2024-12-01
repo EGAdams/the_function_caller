@@ -6,7 +6,7 @@
 
 
 # define the aliases used in this script
-source ~/.bashrc
+source ~/.bashrc;
 
 # go into the correct environment
 so;
@@ -15,6 +15,6 @@ so;
 oai;
 
 # run the Python start system script
-python3 start_system.py;
+python3 ~/the_function_caller/start_system.py;
 
 # the end; hello first friday

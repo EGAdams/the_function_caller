@@ -1,4 +1,5 @@
 from read_file_tool.read_file_tool      import ReadFileTool
+from send_message_tool.send_message_tool import SendMessageTool
 from todo_list_tools.add_todo_subtask_tool.add_todo_subtask_tool import AddTodoSubtaskTool
 from todo_list_tools.read_todo_tool import ReadTodoTool
 from write_file_tool.write_file_tool    import WriteFileTool
@@ -14,6 +15,10 @@ class FileSystemMappedFunctions:
         self.function_map = FunctionMap()
         print("initializing file system mapped functions...")
         storage_handler = StorageHandler("todo_list.json")
+        self.agents_urls = {
+            "collaborator"  : "http://localhost:8001",
+            "planner"       : "http://localhost:8002",
+            "coder"         : "http://localhost:8003" }
         
         # Create instances of the tools
         write_file_tool = WriteFileTool()
@@ -24,6 +29,7 @@ class FileSystemMappedFunctions:
         linux_command_tool = LinuxCommandTool()
         add_todo_subtask_tool = AddTodoSubtaskTool( storage_handler )
         read_todo_tool = ReadTodoTool()
+        send_message_tool = SendMessageTool( self.agents_urls )
 
         # Add bound methods to the function map
         self.function_map.add_function( "write_file", write_file_tool.write_file )
@@ -34,5 +40,7 @@ class FileSystemMappedFunctions:
         self.function_map.add_function( "execute_command", linux_command_tool.execute_command )
         self.function_map.add_function( "add_todo", add_todo_subtask_tool.add_todo_subtask )
         self.function_map.add_function( "read_todo_list", read_todo_tool.read_todo_list )
+        self.function_map.add_function( "send_message", send_message_tool.send_message )
+        
     def get_function_map(self):
         return self.function_map

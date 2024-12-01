@@ -10,12 +10,13 @@ def main():
     init(autoreset=True)  # Initialize colorama
 
     try:
-        # Create a proxy for the collaborator's server
-        with xmlrpc.client.ServerProxy(collaborator_url) as proxy:
+        # Create the collaborator for the collaborator's server
+        with xmlrpc.client.ServerProxy( collaborator_url ) as collaborator:
             print("Chat client for MessageCollaboratorAgent")
             print("Type your message and press Enter. Type 'exit' to quit.")
             
             while True:
+
                 # Get input from the user
                 message = input( "input command for collaborator: " )
                 
@@ -26,8 +27,8 @@ def main():
                 # Send the message as a command to the collaborator
                 command_packaged_message = {"command": message}
                 try:
-                    # Capture the response from the collaborator
-                    response = proxy.receive_message(command_packaged_message)
+                    # Capture the response from the collaborator.
+                    response = collaborator.receive_message( command_packaged_message )
                     
                     # Color the response based on the agent
                     print ( "\n" )
@@ -39,7 +40,8 @@ def main():
                         print(f"Collaborator's response: {response}")
                     print ( "\n" )
                 except Exception as e:
-                    print(f"Failed to send message: {e}")
+                    print( f"{ Fore.RED }Failed to send message: { e }" )
+
     except Exception as e:
         print(f"Error connecting to collaborator: {e}")
 

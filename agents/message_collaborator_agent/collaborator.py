@@ -53,17 +53,22 @@ class MessageCollaboratorAgent(BaseAgent):
                 self.logger.error("Invalid message format. Missing 'command'.")
                 return "Invalid message format. Missing 'command'."
             
-            # Example command parsing for routing
+            # Coder Agent
             if command.startswith("coder:"):
                 response = self.send_message("coder", {"message": command[len("coder:"):].strip()})
                 return response
+            
+            # Planner Agent
             elif command.startswith("planner:"):
                 response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
                 return response
+            
+            # Unknown Agent
             else:
                 # Handle other commands or respond directly
                 self.logger.info(f"Unknown command: {command}")
                 return "Unknown command"
+            
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
@@ -100,9 +105,9 @@ def main():
     """
     # Define RPC URLs for other agents
     agents_urls = {
-        "planner":      "http://localhost:8002",
-        "coder":        "http://localhost:8003",
-        "collaborator": "http://localhost:8001",
+        "collaborator"  : "http://localhost:8001",
+        "planner"       : "http://localhost:8002",
+        "coder"         : "http://localhost:8003",
     }
 
     # Create the MessageCollaboratorAgent
@@ -114,7 +119,6 @@ def main():
         collaborator.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         collaborator.logger.info("Shutting down...")
-
 
 if __name__ == "__main__":
     main()

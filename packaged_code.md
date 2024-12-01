@@ -1,5 +1,7 @@
 # Persona
-You are an expert Python Developer
+* You are an expert Python Developer
+* You are a world-class builder of AI Autonomous Software Agents
+* You are a seasoned user of the GoF Design Patterns
 
 # Background
 We are developing autonomous agents that can collaborate and communicate with each other.
@@ -48,6 +50,7 @@ def main():
         print(f"Error connecting to collaborator: {e}")
 ```
 
+# The Base Agent Logger
 ```python
 class BaseAgentLogger:          # create a generic logger out
     def __init__( self ):       # of thin air here.. time is burning...
@@ -60,6 +63,7 @@ class BaseAgentLogger:          # create a generic logger out
         print( f"*** ERROR: {message} ***" )
 ```
 
+# The Base Agent
 ```python
 class BaseAgent:
     def __init__(self, agent_id: str, server_port: int):
@@ -91,6 +95,7 @@ class BaseAgent:
         raise NotImplementedError("Subclasses should implement this method.")
 ```
 
+# The Coder Agent
 ```python
 class CoderAgent(BaseAgent):
     def __init__(self, agent_id: str, server_port: int, collaborator_url: str):
@@ -150,9 +155,7 @@ class CoderAgent(BaseAgent):
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
-```
 
-```python
 def main():
     """
     Main entry point for the CoderAgent.
@@ -167,6 +170,7 @@ def main():
         coder_agent.logger.info("Shutting down...")
 ```
 
+# The Planner Agent
 ```python
 class PlannerAgent( BaseAgent ):
     def __init__(self, agent_id: str, server_port: int):
@@ -225,9 +229,7 @@ class PlannerAgent( BaseAgent ):
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
-```
 
-```python
 def main():
     """
     Main entry point for the PlannerAgent.
@@ -241,6 +243,7 @@ def main():
         planner_agent.logger.info("Shutting down...")
 ```
 
+# The Message Collaborator Agent
 ```python
 class MessageCollaboratorAgent(BaseAgent):
     def __init__(self, agent_id: str, server_port: int, agents_urls: dict):
@@ -291,9 +294,11 @@ class MessageCollaboratorAgent(BaseAgent):
             if command.startswith("coder:"):
                 response = self.send_message("coder", {"message": command[len("coder:"):].strip()})
                 return response
+            
             elif command.startswith("planner:"):
                 response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
                 return response
+            
             else:
                 # Handle other commands or respond directly
                 self.logger.info(f"Unknown command: {command}")
@@ -326,9 +331,7 @@ class MessageCollaboratorAgent(BaseAgent):
         Stub: Implement periodic checks of agent availability via their RPC endpoints.
         """
         pass
-```
 
-```python
 def main():
     """
     Main entry point for the MessageCollaboratorAgent.
@@ -350,30 +353,67 @@ def main():
     except KeyboardInterrupt:
         collaborator.logger.info("Shutting down...")
 ```
-# Tree structure of system
-```bash
-(open-interpreter-env) adamsl@DESKTOP-2OBSQMC:~/the_function_caller/agents$ tree | grep .py
-├── __init__.py
-├── __pycache__
-│   └── __init__.cpython-312.pyc
-│   ├── __init__.py
-│   ├── __pycache__
-│   │   ├── __init__.cpython-312.pyc
-│   │   └── base_agent.cpython-312.pyc
-│   └── base_agent.py
-│   ├── __init__.py
-│   ├── coder_agent_exe.py
-│   └── message_broker_agent.py
-│   ├── collaborator.py
-│   ├── planner_agent_exe.py
-├── start_collaborating.py
-├── test_two_agents.py
-(open-interpreter-env) adamsl@DESKTOP-2OBSQMC:~/the_function_caller/agents$ 
-```
 
+
+The agents have the ability to write files using this tool:
+## Tool to write files
+```python
+class WriteFileTool:
+    """
+    Provides a tool for writing the contents of a file.
+    The `WriteFileTool` class exposes a `write_file` function that can be used to write a string to a file with the specified filename.
+    The `schema` method returns a JSON schema that describes the parameters expected by the `write_file` function.
+    """
+    
+    def __init__( self ):
+        print ( "initialaizing" )
+
+    @staticmethod
+    def schema():
+        return {
+            "name": "write_file",
+            "description": "Allows you to write new files.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "chain_of_thought": {
+                    "description": "Please think step-by-step about what needs to be written to the file in order for the program to match the requirements.",
+                    "title": "Chain Of Thought",
+                    "type": "string"
+                },
+                "file_path": {
+                    "description": "The full path of the file to write.",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "The full content of the file to write. Content must not be truncated and must represent a correct functioning program with all the imports defined.",
+                    "type": "string"
+                }
+                },
+                "required": [
+                "file_path",
+                "content"
+                ],
+                "type": "object"
+            }
+        }
+    
+    def write_file( self, file_path, content ):
+        """Writes content to a specified file.
+        
+        Args:
+            file_path (str): The full path of the file to write to.
+            content (str): The content to write to the file.
+        """
+        
+        print ( "opening file with arguments: " + file_path + " and " + content )
+        with open( file_path, 'w' ) as file:
+            file.write( content )
+
+        return "File written successfully."
+```
 # The problem
-The system takes too long to set up and run.  I need a more automated process.
+The Agents in this system need a tool to communicate with each other.  Right now there is no way for the Agents to send messages because they are running in a diferent part of the world.  The receive part is easy, it is already "wired in" to the Base Agent.
 
 # Your Task
-Write a Python script that can run a command in a directory called start_system.py.
-This script should be designed to run in one terminal window.  Every time it runs, it will check to see who is running and start the one that is not running.  So for example, when it starts, if the Planner Agent is running, it will start the Coder Agent.  If the Coder Agent is running, it will start the Planner Agent.  If both are running, it will run the start_collaborating.py script.  Use the given linux tree structure to create the paths to the scripts.
+Using the `WriteFileTool` as a guide, create a `SendMessageTool` that will allow the Agents to send messages to each other.
