@@ -9,9 +9,9 @@ import json
 from time import sleep
 from openai import OpenAI
 
+PORT = 8002
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
-from mailboxes.file_mailbox.file_mailbox import FileMailbox
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
@@ -65,11 +65,12 @@ class PlannerAgent( BaseAgent ):
             messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
             messages_list = list(messages)
             reversed_messages = messages_list[::-1]
+            response = reversed_messages[len(reversed_messages) - 1]
 
-            # Return the content of the last message
-            response = reversed_messages[0].content[0].text.value
-            self.pretty_print.execute(response)
-            return response
+            # Extract the content from the response
+            response_content = response.content[0].text.value
+            return response_content
+
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
@@ -79,10 +80,10 @@ def main():
     """
     Main entry point for the PlannerAgent.
     """
-    planner_agent = PlannerAgent(agent_id="planner_agent", server_port=8002)
+    planner_agent = PlannerAgent( agent_id="planner_agent", server_port=PORT )
 
     try:
-        planner_agent.logger.info("PlannerAgent is starting...")
+        planner_agent.logger.info("PlannerAgent is starting in port " + str( PORT ) + "...")
         planner_agent.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         planner_agent.logger.info("Shutting down...")

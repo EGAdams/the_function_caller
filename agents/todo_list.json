@@ -1,0 +1,132 @@
+[
+  {
+    "id": "0",
+    "parent_id": null,
+    "priority": 1,
+    "born_on": "2024-11-04T22:58:47.112459",
+    "description": "root",
+    "status": null,
+    "subtasks": [
+      {
+        "id": "28",
+        "parent_id": "0",
+        "priority": 1,
+        "born_on": "2024-11-19T11:25:25.416888",
+        "description": "Airport Project",
+        "status": "born_status",
+        "subtasks": [
+          {
+            "id": "31",
+            "parent_id": "28",
+            "priority": 1,
+            "born_on": "2024-11-19T11:28:21.094948",
+            "description": "reply to apple",
+            "status": "born_status",
+            "subtasks": [
+              {
+                "id": "32",
+                "parent_id": "31",
+                "priority": 1,
+                "born_on": "2024-11-19T11:29:21.644815",
+                "description": "make screenshots for all of the sections that we have.",
+                "status": "born_status",
+                "subtasks": []
+              },
+              {
+                "id": "33",
+                "parent_id": "31",
+                "priority": 1,
+                "born_on": "2024-11-19T11:30:02.886261",
+                "description": "put all of those screenshots into one document",
+                "status": "born_status",
+                "subtasks": []
+              },
+              {
+                "id": "34",
+                "parent_id": "31",
+                "priority": 1,
+                "born_on": "2024-11-19T12:02:13.472275",
+                "description": "Create an email for the stakeholders",
+                "status": "born_status",
+                "subtasks": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29",
+        "parent_id": "0",
+        "priority": 1,
+        "born_on": "2024-11-19T11:26:17.492871",
+        "description": "largo spa",
+        "status": "born_status",
+        "subtasks": []
+      },
+      {
+        "id": "30",
+        "parent_id": "0",
+        "priority": 1,
+        "born_on": "2024-11-19T11:27:00.732028",
+        "description": "mcba",
+        "status": "born_status",
+        "subtasks": []
+      },
+      {
+        "id": "35",
+        "parent_id": "0",
+        "priority": 1,
+        "born_on": "2024-11-22T16:34:50.950873",
+        "description": "Build a coding agent",
+        "status": "born_status",
+        "subtasks": [
+          {
+            "id": "36",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.920320",
+            "description": "Create directories for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "37",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.922490",
+            "description": "Create source files for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "38",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.923145",
+            "description": "Create test files for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "39",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.923774",
+            "description": "Create __init__.py file for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          },
+          {
+            "id": "40",
+            "parent_id": "35",
+            "priority": 1,
+            "born_on": "2024-11-22T16:52:37.924560",
+            "description": "Write documentation for coding agent",
+            "status": "born_status",
+            "subtasks": []
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -28,3 +28,6 @@ class StorageHandler:
     def save(self, todo_list):
         with open(self.filename, 'w') as file:
             json.dump(todo_list, file, indent=2)
+        
+        with open( self.filename + ".bak", 'w' ) as file:
+            json.dump( todo_list, file, indent=2 )

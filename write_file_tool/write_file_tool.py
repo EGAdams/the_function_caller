@@ -11,38 +11,46 @@ class WriteFileTool:
     def __init__( self ):
         print ( "initialaizing" )
 
+    @staticmethod
     def schema():
         return {
-                "type": "function",
-                "function": {
-                    "name": "write_file",
-                    "description": "Write the contents of a file",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "filename": {
-                                "type": "string",
-                                "description": "The name of the file to write.",
-                            },
-                            "content": {
-                                "type": "string",
-                                "description": "The content to write to the file.",
-                            }
-                        },
-                        "required": ["filename", "content"],
-                    },
+            "name": "write_file",
+            "description": "Allows you to write new files.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "chain_of_thought": {
+                    "description": "Please think step-by-step about what needs to be written to the file in order for the program to match the requirements.",
+                    "title": "Chain Of Thought",
+                    "type": "string"
+                },
+                "file_path": {
+                    "description": "The full path of the file to write.",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "The full content of the file to write. Content must not be truncated and must represent a correct functioning program with all the imports defined.",
+                    "type": "string"
                 }
+                },
+                "required": [
+                "file_path",
+                "content"
+                ],
+                "type": "object"
             }
+        }
     
-    def write_file( filename, content ):
+    def write_file( self, file_path, content ):
         """Writes content to a specified file.
         
         Args:
-            filename (str): The name of the file to write to.
+            file_path (str): The full path of the file to write to.
             content (str): The content to write to the file.
         """
         
-        with open( filename, 'w' ) as file:
+        print ( "opening file with arguments: " + file_path + " and " + content )
+        with open( file_path, 'w' ) as file:
             file.write( content )
 
         return "File written successfully."

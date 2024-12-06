@@ -32,47 +32,48 @@ def display_and_select(self, menu_manager):
 ```python
 #!/bin/bash
 
-# while-menu-dialog: a menu driven system information program
+# while-menu-dialog: A menu-driven system information program
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
-HEIGHT=0
-WIDTH=0
-NUMBER_OF_OPTIONS=9
+HEIGHT=0        # Let dialog calculate the height
+WIDTH=0         # Let dialog calculate the width
+MENU_HEIGHT=0   # Let dialog calculate the menu height
 CURRENT_WORKSPACE='/mnt/c/Users/EG/march/fresh_electron'
 LATEST_SOURCE='/mnt/c/Users/EG/electron-vue-example'
 
+# Function to display results (currently unused)
 display_result() {
   dialog --title "$1" \
     --no-collapse \
     --msgbox "$result" 0 0
 }
 
-echo "entering while loop... "
-echo;
-
+# Infinite loop to display the menu until the user exits
 while true; do
+  # Capture the user's selection using 'dialog'
   exec 3>&1
-  echo "decalring selection... "
   selection=$(dialog \
     --backtitle "Main Directory Menu" \
     --title "Menu" \
     --clear \
     --cancel-label "Exit" \
-    --menu "Please select:" $HEIGHT $WIDTH $NUMBER_OF_OPTIONS \
-    "0" "exit this menu" \
-    "p" "open pickleball dashboard" \
+    --menu "Please select:" $HEIGHT $WIDTH $MENU_HEIGHT \
+    "0" "Exit this menu" \
+    "p" "Open Pickleball Dashboard" \
     "1" "Clean all but users" \
-    "f" "open flash menu ( includes matrix project with fonts )" \
+    "f" "Open Flash Menu (includes matrix project with fonts)" \
     "2" "Edit this menu" \
-    "j" "vscode projects" \
+    "j" "VSCode projects" \
     "k" "MCBA System Dashboard" \
-    "a" "clean all but admin"\
-    "c" "clean keep users and conversations"\
-    "m" "start monitor"\
+    "a" "Clean all but admin" \
+    "c" "Clean keep users and conversations" \
+    "m" "Start monitor" \
     2>&1 1>&3)
   exit_status=$?
   exec 3>&-
+
+  # Handle exit conditions from 'dialog'
   case $exit_status in
     $DIALOG_CANCEL)
       clear
@@ -85,89 +86,71 @@ while true; do
       exit 1
       ;;
   esac
+
+  # Exit if selection is empty (prevents infinite loop)
+  if [ -z "$selection" ]; then
+    clear
+    echo "No selection made. Exiting."
+    exit
+  fi
+
+  # Process the user's selection
   case $selection in
-    0 )
+    0)
       clear
+      echo "Exiting the menu. Goodbye!"
       break
       ;;
-    1 )
+    1)
+      echo "Cleaning all but users..."
       cd /mnt/c/Users/EG/Desktop/2022/july/1st_week/vite-vue-electron/src/typescript_source/concrete/commands/delete_html_logs/
       ./clean_but_keep_users.sh
-      #display_result "clean all but users"
-      cd -
+      cd - >/dev/null
       ;;
-    f )
+    f)
+      echo "Opening flash menu..."
       cd /home/adamsl/linuxBash
       ./flash_menu.sh
-      break
       ;;
-    2 )
+    2)
+      echo "Editing the menu in VSCode..."
       cd /home/adamsl/linuxBash
       code .
-      cd -
+      cd - >/dev/null
       ;;
-    j )
+    j)
+      echo "Opening VSCode projects..."
       cd /home/adamsl/linuxBash
       ./vscode_projects.sh
       ;;
-    k )
+    k)
+      echo "Starting MCBA System Dashboard..."
       cd /home/adamsl/linuxBash
       python3 mcba_system_dashboard.py
-      break
       ;;
-    a )
+    a)
+      echo "Cleaning all but admin..."
       cd /home/adamsl/linuxBash
       ./clean_all_but_admin.sh
       ;;
-    c )
+    c)
+      echo "Cleaning and keeping users and conversations..."
       cd /home/adamsl/linuxBash
       ./clean_keep_users_conversatons.sh
-    ;;
-
-    p )
+      ;;
+    m)
+      echo "Starting monitor..."
+      # Add the command to start monitor here
+      ;;
+    p)
+      echo "Starting Pickleball Dashboard..."
       cd /home/adamsl/linuxBash/pickle_ball
       python3 pickleball_dashboard.py
-      break
-    ;;  
-    7 )
-      clear
-      cp -fp $LATEST_SOURCE/src/components/* $CURRENT_WORKSPACE/src/components/
-      cp -rfp $LATEST_SOURCE/src/typescript_source $CURRENT_WORKSPACE/src/
-      cp -rfp $LATEST_SOURCE/src/views $CURRENT_WORKSPACE/src/
-      cp -fp $LATEST_SOURCE/src/router/*.ts $CURRENT_WORKSPACE/src/router/
-      cd $CURRENT_WORKSPACE
-      echo "yarn add electron-ssh2"
-      echo "npm install --save-dev @types/jquery"
-      echo "yarn add @types/jquery"
-      echo "yarn add jquery mysql --ignore-engines"
-
-      echo "npm install --save-dev @types/mysql"
-      echo "yarn add @types/mysql"
-      echo "yarn add mysql --ignore-engines"
-      echo "npm install --save-dev @types/socket.io-client"
-      echo "yarn add @types/socket.io-client"
-      echo "yarn add electron-ssh2"
-      echo "npm install --save-dev dns"
-      echo "yarn add dns --ignore-engines"
-      echo "npm install --save-dev cpu-features"
-      echo "npm install node-loader --save-dev"
-      echo "npm install https://github.com/mscdex/cpu-features.git"
-      echo "npm install https://github.com/mscdex/ssh2.git"
-      echo "npm install -g npm-install-peers"
-      echo "yarn add -D native-ext-loader --ignore-engines"
-
-      echo "npm install --save-dev node-loader@latest"
-      echo "npm install"
-      echo "yarn add node-loader@latest --ignore-engines"
-      echo "yarn add cpu-features --ignore-engines"
-      echo "yarn add vue@next"
-      echo "yarn add vue@next --ignore-engine"
-      echo "yarn add @vue/compiler-sfc -D"
-      echo "RUN THE INSTALLS IN WINDOWS ENV!"
-      break
-    ;;  
+      ;;
+    *)
+      echo "Invalid selection. Please try again."
+      ;;
   esac
-  echo "done with case selection."
 done
 ```
 
@@ -182,3 +165,4 @@ https://chat.openai.com/share/7ed5b449-cb78-428b-97ce-6ae11cd1a164
 anyways im using the one from the professional coder anyway, it is slightly better.
 
 
+# thanksgiving_blue.md

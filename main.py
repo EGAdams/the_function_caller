@@ -30,7 +30,7 @@ if __name__ == "__main__":
                 tools=tools,
                 tool_choice=tool_choice )
             
-            return response
+            return response   # no tool call check?
         except Exception as e:
             print( "Unable to generate ChatCompletion response" )
             print( f"Exception: {e}" )
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     messages = message_factory.create_initial_messages_object() # build the messages object.
     tools    = tool_manager.get_tool_schemas()                  # build the tools object array of schemas.
    
-    def run_conversation():
+    def run_conversation():                                     # main loop
         response = client.chat.completions.create(              # get the request from the model
             model=GPT_MODEL,                                    # Step 1: send the conversation 
             messages=messages,                                  # and available functions to the model

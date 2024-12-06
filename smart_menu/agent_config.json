@@ -1,0 +1,58 @@
+[
+    {
+        "title": "go into a new menu",
+        "action": "python3 CommandMenuApp.py config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "todo list",
+        "action": "python3 test_smart_menu_system.py todo_list.json",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "view current directory",
+        "action": "echo; pwd; echo;",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "launch an agent",
+        "action": "echo; pwd; sleep 3; echo;",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "ll",
+        "action": "ll -larth",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "test 1",
+        "action": "echo 'test 1 executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]

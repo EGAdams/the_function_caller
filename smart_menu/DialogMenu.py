@@ -3,9 +3,6 @@ from MenuItem import MenuItem
 # code to import pythondialog
 import dialog
 
-
-
-
 class DialogMenu:
     def __init__(self, items=None):
         self.items = items if items else []
@@ -27,6 +24,7 @@ class DialogMenu:
 
             if code == d.OK:
                 if tag == "Exit":
+                    exit(0)
                     break
                 elif tag == "Add":
                     menu_manager.add_menu_item()
@@ -39,9 +37,6 @@ class DialogMenu:
                 # This handles the case where the user presses 'Cancel' or closes the dialog
                 print( "Operation cancelled or closed. Exiting..." )
                 break
-
-    
-    
 
     def add_new_item(self):
         title = input("Enter title for new item: ")

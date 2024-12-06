@@ -5,7 +5,7 @@ from MenuItem import MenuItem  # Assuming MenuItem is defined in MenuItem.py
 class CommandExecutor:
     @staticmethod
     def execute_command(menu_item):
-        """Executes the command associated with a given MenuItem."""
+        """Executes the command associated with a given MenuItem and returns the output."""
         if not isinstance(menu_item, MenuItem):
             raise ValueError("menu_item must be an instance of MenuItem")
 
@@ -15,14 +15,15 @@ class CommandExecutor:
             if menu_item.working_directory:
                 os.chdir(menu_item.working_directory)
             
-            # Execute command in a subprocess or current process
-            if menu_item.open_in_subprocess:
-                subprocess.run(menu_item.action, shell=True, check=True)
-            else:
-                # This is a placeholder for executing the command without opening a new subprocess.
-                # In reality, this might involve more direct execution methods depending on the command.
-                os.system(menu_item.action)
+            # Execute command and capture output
+
+            result = subprocess.run(
+                menu_item.action, shell=True, check=True, capture_output=True, text=True
+            )
+            return result.stdout
+        except subprocess.CalledProcessError as e:
+            return f"Error executing command {menu_item.action}: {e.output}"
         except Exception as e:
-            print(f"Error executing command {menu_item.action}: {e}")
+            return f"Error: {str(e)}"
         finally:
-            os.chdir(original_dir)  # Restore the original directory
+            os.chdir(original_dir)

@@ -12,6 +12,12 @@
         "open_in_subprocess": false
     },
     {
+        "title": "agent menu",
+        "action": "python3 CommandMenuApp.py agent_config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
         "title": "todo list",
         "action": "python3 test_smart_menu_system.py todo_list.json",
         "working_directory": "",

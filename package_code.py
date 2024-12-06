@@ -61,25 +61,25 @@ task_finder_path       = os.path.join( base_dir, "todo_list_tools/task_finder/" 
 add_todo_subtask_path  = os.path.join( base_dir, "todo_list_tools/add_todo_subtask_tool"     )
 edit_todo_subtask_path = os.path.join( base_dir, "todo_list_tools/edit_todo_subtask_tool"    )
 
-# /home/adamsl/the_function_caller/todo_list_tools/add_todo_subtask_tool/add_todo_subtask_tool.py
-path = os.path.join( todo_list_tools_task, "task.py"                        )
+# Agents
+agents_file_path       = os.path.join( base_dir, "agents"                                    )
+base_agent_path        = os.path.join( base_dir, "agents/base_agent"                         )
+coder_agent_path       = os.path.join( base_dir, "agents/coder_agent"                        )
+planner_agent_path     = os.path.join( base_dir, "agents/planner_agent"                      )
+message_collab_path    = os.path.join( base_dir, "agents/message_collaborator_agent"         )
+
+
+path = os.path.join( agents_file_path, "start_collaborating.py"             )
 process_python_file( path, output_file_path, append_mode=False              )
 
-# path = os.path.join( task_iterator_path, "task_iterator.py"               )
-# process_python_file( path, output_file_path, append_mode=True             )   
-
-# path = os.path.join( task_finder_path, "task_finder.py"                     )
-# process_python_file( path, output_file_path, append_mode=True               )
-
-path = os.path.join( add_todo_subtask_path, "add_todo_subtask_tool.py"      )
+path = os.path.join( base_agent_path, "base_agent.py"                       )
 process_python_file( path, output_file_path, append_mode=True               )
 
-# path = os.path.join( add_todo_subtask_path, "add_todo_subtask_tool.py"      )
-# process_python_file( path, output_file_path, append_mode=True               )
+path = os.path.join( coder_agent_path, "coder_agent_exe.py"                 )
+process_python_file( path, output_file_path, append_mode=True               )
 
-# path = os.path.join( add_todo_subtask_path, "test_add_todo_subtask_tool.py" )
-# process_python_file( path, output_file_path, append_mode=True               )
+path = os.path.join( planner_agent_path, "planner_agent_exe.py"             )
+process_python_file( path, output_file_path, append_mode=True               )
 
-# path = os.path.join( edit_todo_subtask_path, "edit_todo_subtask_tool.py" )
-# process_python_file( path, output_file_path, append_mode=True            )
-
+path = os.path.join( message_collab_path, "collaborator.py"                 )
+process_python_file( path, output_file_path, append_mode=True               )

@@ -1,0 +1,9 @@
+[
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]

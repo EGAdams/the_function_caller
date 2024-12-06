@@ -5,7 +5,7 @@ class ReadFileTool:
     """
     Provides a tool for reading the contents of a file.
     
-    The `ReadFileTool` class exposes a `read_file` function that can be used to read the contents of a file. The function takes a `filename` parameter that specifies the name of the file to read.
+    The `ReadFileTool` class exposes a `read_file` function that can be used to read the contents of a file. The function takes a `file_path` parameter that specifies the path and the name of the file to read.
     
     The `schema` method returns a JSON schema that describes the `read_file` function, including its parameters and return value.
     """
@@ -15,22 +15,29 @@ class ReadFileTool:
 
     def schema( self ): 
         return {
-                "type": "function",
-                "function": {
-                    "name": "read_file",
-                    "description": "Read the contents of a file",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "filename": {
-                                "type": "string",
-                                "description": "The name of the file to read."
-                            }
-                        },
-                        "required": ["filename"]
-                    }
+            "name": "read_file_tool",
+            "description": "This tool reads a file and returns the contents.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "file_path": {
+                    "description": "Path to the file to read with extension.",
+                    "examples": [
+                    "/home/adamsl/the_function_caller/info.txt",
+                    "./file.txt",
+                    "./file.json",
+                    "../../file.py"
+                    ],
+                    "title": "File Path",
+                    "type": "string"
                 }
+                },
+                "required": [
+                "file_path"
+                ],
+                "type": "object"
             }
+        }
 
     def read_file( self, filename ):
         """Reads content from a specified file.

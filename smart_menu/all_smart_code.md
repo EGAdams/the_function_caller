@@ -1,17 +1,133 @@
 # Persona
-World-class Python Developer specialized with usning the Gang of Four design patterns.
+- World-class Object-Oriented Programmer 
+- Seasoned user of The Gang of Four Design Patterns
+- Expert Python Developer
 
-# Your task
-- In the source code below I want to be able to add MenuItem objects to the menu that not only builds executable actions but also can add another smart menu like the one depicted in the system below.
-- Don't worry about explaining the code, just focus on the task at hand.
-- You don't have to rewrite all of the source code below, just add another object that will perform the new features and show me what other modifications that we would need to do to the original source code to make it work.
+# The App that we want to modify for flexiibility
+We have the Python code for a command menu system that has an excellent user interface that we want to keep.  The problem is that the menu items need to be added manually and we want to be able to dynamically add menu items at runtime.  We also want the menu to be able to read a JSON configuration file to dynamically build the initial menu items.
 
-# Source code to use as a guide.
+# Source code for the command menu system that we want to modify for flexiibility
+The following is the Python code for the Objects that we want to use to enhance the command menu system to make it more flexiible.
+
+## CommandMenuApp
 ```python
+import npyscreen
 import subprocess
-import os
-from MenuItem import MenuItem  # Assuming MenuItem is defined in MenuItem.py
 
+class CommandMenuApp(npyscreen.NPSAppManaged):
+    def __init__(self, menu_items, menu_manager):
+        super().__init__()
+        self.menu_items = menu_items
+        self.menu_manager = menu_manager
+
+    def onStart(self):
+        # Add the main form to the application
+        self.addForm("MAIN", CommandMenuForm, name="Command Menu",
+                     menu_items=self.menu_items, menu_manager=self.menu_manager)
+
+class CommandMenuForm(npyscreen.FormBaseNew):
+    def create(self):
+        # Access menu items and manager from the parent application
+        self.menu_items = self.parentApp.menu_items
+        self.menu_manager = self.parentApp.menu_manager
+
+        # Create the menu widget using MultiLineAction
+        self.menu_box = self.add(MenuBoxWidget, name="Menu",
+                                 relx=2, rely=2, max_width=30, max_height=None)
+
+        # Populate the menu items
+        self.update_menu_items()
+
+        # Create the output box to display command outputs
+        self.output_box = self.add(npyscreen.MultiLineEditableBoxed,
+                                   name="Output",
+                                   relx=35, rely=2,
+                                   max_height=None)
+
+    def update_menu_items(self):
+        # Build the list of menu item titles
+        menu_titles = [item.title for item in self.menu_items]
+        menu_titles.append("Exit this menu")
+        menu_titles.append("Add a menu item")
+        # Update the menu box with the new values
+        self.menu_box.values = menu_titles
+        self.menu_box.display()
+
+    def afterEditing(self):
+        # Exit the application after editing is complete
+        self.parentApp.setNextForm(None)
+
+class MenuBoxWidget(npyscreen.MultiLineAction):
+    def actionHighlighted(self, act_on_this, keypress):
+        # This method is called when a menu item is selected
+        form = self.parent
+        index = self.values.index(act_on_this)
+        if index is not None:
+            if 0 <= index < len(form.menu_items):
+                # Execute the selected menu item's action and capture output
+                command_output = form.menu_items[index].execute()
+                # Display the output in the output box
+                form.output_box.values = command_output.split('\n')
+                form.output_box.display()
+            elif index == len(form.menu_items):
+                # Exit this menu
+                form.parentApp.setNextForm(None)
+                form.editing = False
+            elif index == len(form.menu_items) + 1:
+                # Add a new menu item
+                form.menu_manager.add_menu_item()
+                # Update the menu items
+                form.update_menu_items()
+            else:
+                # Invalid selection
+                npyscreen.notify_confirm("Invalid selection. Please try again.", title="Error")
+        else:
+            # No selection made
+            npyscreen.notify_confirm("No selection made. Please try again.", title="Error")
+
+# MenuItem class representing individual menu items
+class MenuItem:
+    def __init__(self, title, command):
+        self.title = title
+        self.command = command  # Command to execute
+
+    def execute(self):
+        # Execute the command and return the output
+        try:
+            output = subprocess.check_output(self.command, shell=True, stderr=subprocess.STDOUT)
+            return output.decode('utf-8')
+        except subprocess.CalledProcessError as e:
+            return e.output.decode('utf-8')
+
+# MenuManager class to manage the list of menu items
+class MenuManager:
+    def __init__(self):
+        self.items = []
+
+    def add_menu_item(self):
+        # Logic to add a new menu item
+        # For demonstration, we'll add a dummy item
+        new_item = MenuItem("New Item", "echo 'New item executed'")
+        self.items.append(new_item)
+
+# Main execution block
+if __name__ == '__main__':
+    # Create an instance of MenuManager and add initial menu items
+    menu_manager = MenuManager()
+    menu_manager.items = [
+        MenuItem("List Files", "ls -l"),
+        MenuItem("Show Date", "date"),
+        MenuItem("Print Working Directory", "pwd")
+    ]
+
+    # Start the application
+    app = CommandMenuApp(menu_manager.items, menu_manager)
+    app.run()
+```
+
+# Existing Python code to use in our system
+## CommandExecutor class
+```python
 class CommandExecutor:
     @staticmethod
     def execute_command(menu_item):
@@ -35,10 +151,11 @@ class CommandExecutor:
         except Exception as e:
             print(f"Error executing command {menu_item.action}: {e}")
         finally:
-            os.chdir(original_dir)  # Restore the original directory
+            os.chdir(original_dir)
+```
 
-import json
-
+## ConfigReader class
+```python
 class ConfigReader:
     @staticmethod
     def read_config(file_path):
@@ -72,16 +189,10 @@ class ConfigReader:
         except json.JSONDecodeError:
             print("Error decoding the configuration file. Please ensure it is valid JSON.")
             return []
+```
 
-
-# import MenuItem
-from MenuItem import MenuItem
-# code to import pythondialog
-import dialog
-
-
-
-
+# DialogMenu class
+```python
 class DialogMenu:
     def __init__(self, items=None):
         self.items = items if items else []
@@ -116,9 +227,6 @@ class DialogMenu:
                 print( "Operation cancelled or closed. Exiting..." )
                 break
 
-    
-    
-
     def add_new_item(self):
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")
@@ -137,12 +245,10 @@ def main():
     # Example adding initial menu items
     menu.add_item(MenuItem("List current directory", "ls"))
     menu.display_and_select()
+```
 
-if __name__ == "__main__":
-    main()
-# import MenuItem
-from MenuItem import MenuItem
-
+## Menu class
+```python
 class Menu:
     def __init__(self, items=None):
         self.items = items if items else []
@@ -150,24 +256,52 @@ class Menu:
     def add_item(self, item):
         self.items.append(item)
 
-    def display_and_select(self, menu_manager):
-        while True:
-            for index, item in enumerate(self.items, start=1):
-                print(f"{index}. {item.title}")
-            print(f"{len(self.items) + 1}. Exit this menu")
-            print(f"{len(self.items) + 2}. Add a menu item")
 
-            choice = input("Please select an option: ")
-            if choice.isdigit():
-                choice = int(choice)
-                if 1 <= choice <= len(self.items):   #
-                    self.items[choice - 1].execute() # Shabaaam! This is the line that executes the command
-                elif choice == len(self.items) + 1:  #
-                    break
-                elif choice == len(self.items) + 2:
-                    menu_manager.add_menu_item()
+    def display_and_select(self, menu_manager):
+        # Initialize Dialog object
+        d = Dialog(dialog="dialog")  # You can specify the path to the 'dialog' executable if needed
+
+        while True:
+            # Build the menu items list
+            menu_items = []
+            for index, item in enumerate(self.items, start=1):
+                menu_items.append((str(index), item.title))
+            # Add exit and add item options
+            menu_items.append((str(len(self.items) + 1), "Exit this menu"))
+            menu_items.append((str(len(self.items) + 2), "Add a menu item"))
+
+            # Display the menu
+            code, tag = d.menu("Please select an option:",
+                            choices=menu_items,
+                            title="Menu",
+                            cancel_label="Exit",
+                            ok_label="Select")
+
+            if code == d.CANCEL or code == d.ESC:
+                # User chose to exit the menu
+                break
+            elif code == d.OK:
+                try:
+                    choice = int(tag)
+                    if 1 <= choice <= len(self.items):
+                        # Execute the selected menu item's action
+                        self.items[choice - 1].execute()
+                    elif choice == len(self.items) + 1:
+                        # Exit this menu
+                        break
+                    elif choice == len(self.items) + 2:
+                        # Add a new menu item
+                        menu_manager.add_menu_item()
+                    else:
+                        # Invalid selection
+                        d.msgbox("Invalid selection. Please try again.", title="Error")
+                except ValueError:
+                    # Non-integer input captured
+                    d.msgbox("Invalid input. Please select a valid option.", title="Error")
             else:
-                print("Invalid selection. Please try again.")
+                # Handle any other dialog return codes if necessary
+                d.msgbox("An unexpected error occurred.", title="Error")
+
     
     
 
@@ -175,7 +309,7 @@ class Menu:
         title = input("Enter title for new item: ")
         command = input("Enter command to execute: ")
         working_directory = input("Enter the working directory (optional): ")
-        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'yes'
+        open_in_subprocess = input("Open in a subprocess? (yes/no): ").lower() == 'no'
         use_expect_library = input("Use the expect library? (yes/no): ").lower() == 'yes'
         new_item = MenuItem( title, command, working_directory, open_in_subprocess, use_expect_library )
         self.add_item( new_item )
@@ -189,12 +323,26 @@ def main():
     # Example adding initial menu items
     menu.add_item(MenuItem("List current directory", "ls"))
     menu.display_and_select()
+```
 
-if __name__ == "__main__":
-    main()
-import os
-import subprocess
+## MenuItem class
+```python
 class MenuItem:
+    """
+    Represents a menu item that can be executed, with options to change the working directory, open in a subprocess, and use the expect library.
+
+    The `MenuItem` class provides a way to encapsulate a command or action that can be executed, with various options to control how the command is run. The class has the following attributes:
+
+    - `title`: The title or label of the menu item.
+    - `action`: The command or action to be executed.
+    - `working_directory`: The working directory to change to before executing the action.
+    - `open_in_subprocess`: A boolean indicating whether to open the command in a new subprocess.
+    - `use_expect_library`: A boolean indicating whether to use the expect library to handle the command.
+
+    The `execute()` method is responsible for running the command or action, with the specified options. It changes the working directory if necessary, and then either runs the command in a new subprocess or in the current process, depending on the `open_in_subprocess` option. If an error occurs during execution, it is caught and printed.
+
+    The `to_dict()` method serializes the `MenuItem` instance into a dictionary, which can be useful for storing or transmitting the menu item data.
+    """
     def __init__(self, title, action, working_directory, open_in_subprocess, use_expect_library):
         self.title = title
         self.action = action
@@ -232,21 +380,14 @@ class MenuItem:
             "action": self.action,
             "working_directory": self.working_directory,
             "open_in_subprocess": self.open_in_subprocess,
-            "open_in_subprocess": self.use_expect_library
+            "use_expect_library": self.use_expect_library
         }
-from ConfigReader import ConfigReader
-from Menu import Menu
-# from DialogMenu import DialogMenu
-from MenuItem import MenuItem
-from CommandExecutor import CommandExecutor
-import json
+```
 
-# and for the DialogMenu...
-import shutil
-import os
-
+## MenuManager class
+```python
 class MenuManager:
-    def __init__(self, menu, config_path):
+    def __init__(self, menu: Menu, config_path: str):
         self.menu = menu
         self.config_path = config_path
 
@@ -254,12 +395,13 @@ class MenuManager:
         """Loads the menu items from the configuration file."""
         config_data = ConfigReader.read_config(self.config_path)
         for item_config in config_data:
+            print( item_config.get('working_directory', '' ))
             menu_item = MenuItem(
                 title=item_config['title'],
                 action=item_config['action'],
-                working_directory=item_config.get('workingDirectory', ''),
-                open_in_subprocess=item_config.get('openInSubprocess', False),
-                use_expect_library=item_config.get('useExpectLibrary', False)
+                working_directory=item_config.get('working_directory', ''),
+                open_in_subprocess=item_config.get('open_in_subprocess', False),
+                use_expect_library=item_config.get('use_expect_library', False)
             )
             self.menu.add_item(menu_item)
 
@@ -280,18 +422,20 @@ class MenuManager:
                 print("Invalid selection. Please try again.")
 
     def add_menu_item(self):
-        """Collects information from the user to add a new menu item."""
         print("Adding a new menu item...")
         title = input("Enter the title for the new menu item: ")
-        action = input("Enter the command to execute: ")
-        working_directory = input("Enter the full path to the directory: ")
-        open_in_subprocess_str = input("Should this command open in a separate window (yes/no)? ")
-        use_expect_library_str = input("Should use the Expect library (yes/no)? ")
+        is_submenu = input("Is this a submenu? (yes/no): ").lower() == 'yes'
 
-        open_in_subprocess = open_in_subprocess_str.lower() == 'yes'
-        use_expect_library = use_expect_library_str.lower() == 'yes'
+        if is_submenu:
+            new_menu_item = SmartMenuItem(title, sub_menu=Menu())
+            print("Submenu added. Remember to add items to this submenu.")
+        else:
+            action = input("Enter the command to execute: ")
+            working_directory = input("Enter the full path to the directory: ")
+            open_in_subprocess = input("Should this command open in a separate window (yes/no)? ").lower() == 'yes'
+            use_expect_library = input("Should use the Expect library (yes/no)? ").lower() == 'yes'
+            new_menu_item = SmartMenuItem(title, action, working_directory, open_in_subprocess, use_expect_library)
 
-        new_menu_item = MenuItem(title, action, working_directory, open_in_subprocess, use_expect_library)
         self.menu.add_item(new_menu_item)
         print("New menu item added successfully.")
         self.save_menus_to_config()
@@ -308,32 +452,32 @@ class MenuManager:
         with open(self.config_path, 'w') as config_file:
             json.dump(self.menu.to_dict_list(), config_file, indent=4)
         print("Menu configuration saved.")
-        
-    # def add_new_item(self):
-    #     # Existing code to add a new item
-    #     self.menu.add_item(new_item)
-    #     print("New menu item added successfully.")
-    #     # Save the updated menu configuration
-    #     self.save_to_config()
 
 def main():
     menu = Menu()
     menu_manager = MenuManager(menu, "path_to_config.json")
     menu_manager.load_menus()
     menu.display_and_select(menu_manager)
-
-if __name__ == "__main__":
-    main()
-
-
-from MenuManager import MenuManager
-# from Menu import Menu
-from Menu import Menu
-if __name__ == "__main__":
-    config_path = "/home/adamsl/linuxBash/python_menus/smart_menu/config.json"
-
-    menu = Menu()
-    menu_manager = MenuManager(menu, config_path )
-    menu_manager.load_menus()
-    menu.display_and_select(menu_manager)
 ```
+
+## SmartMenuItem class
+```python
+class SmartMenuItem( MenuItem ):
+    def __init__(self, title, action=None, working_directory='', open_in_subprocess=False, use_expect_library=False, sub_menu=None):
+        super().__init__(title, action, working_directory, open_in_subprocess, use_expect_library)
+        self.sub_menu = sub_menu  # This can be another Menu object or None
+
+    def execute(self):
+        if self.sub_menu:
+            self.sub_menu.display_and_select()
+        else:
+            super().execute()
+
+    def to_dict(self):
+        item_dict = super().to_dict()
+        # Optionally add serialization for sub_menu if needed
+        return item_dict
+```
+
+# Your Task
+Rewrite the original CommandMenuApp to use the new Objects like Menu and MenuItem to make the system more modular, flexible, and easier to test and maintain.
