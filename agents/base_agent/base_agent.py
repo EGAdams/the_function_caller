@@ -7,6 +7,12 @@ import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
 
+class Logger:
+    __init__( self ):
+        print( "initialized..." )
+    def info( self, message ):
+        print( message )
+
 class BaseAgent:
     def __init__(self, agent_id: str, server_port: int):
         self.agent_id = agent_id
@@ -34,5 +40,5 @@ class BaseAgent:
         raise NotImplementedError("Subclasses should implement this method.")
 
     def initialize_logger(self):
-        # Replace this with a proper logging setup
+        self.logger = Logger()
         return None
