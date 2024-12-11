@@ -13,7 +13,7 @@ class ReadFileTool:
     def __init__( self ):
         print ( "initialaizing" )
 
-    def schema( self ): 
+    def schema(): 
         return {
             "name": "read_file_tool",
             "description": "This tool reads a file and returns the contents.",

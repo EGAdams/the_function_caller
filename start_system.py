@@ -1,4 +1,3 @@
-
 import os
 import socket
 import subprocess
@@ -35,35 +34,45 @@ def main():
     collaborator_port   = 8001
     planner_port        = 8002
     coder_port          = 8003
+    prompt_port         = 8004
 
     # Define paths to agent scripts
-    planner_script       = os.path.join( 'the_function_caller/agents/planner_agent/'            , 'planner_agent_exe.py'   )
-    coder_script         = os.path.join( 'the_function_caller/agents/coder_agent'               , 'coder_agent_exe.py'     )
-    collaborator_script  = os.path.join( 'the_function_caller/agents/message_collaborator_agent', 'collaborator.py'        )
-    collaboration_script = os.path.join( 'the_function_caller/agents'                           , 'start_collaborating.py' )
+    planner_script       = os.path.join( 'agents/planner_agent/'            , 'planner_agent_exe.py'   )
+    coder_script         = os.path.join( 'agents/coder_agent'               , 'coder_agent_exe.py'     )
+    collaborator_script  = os.path.join( 'agents/message_collaborator_agent', 'collaborator.py'        )
+    prompt_script        = os.path.join( 'agents/prompt_agent'              , 'prompt_agent_exe.py'    )
+    collaboration_script = os.path.join( 'agents'                           , 'start_collaborating.py' )
 
     # Define named pipe paths
     planner_pipe        = 'planner_agent.pipe'
     coder_pipe          = 'coder_agent.pipe'
     collaborator_pipe   = 'collaborator.pipe'
+    prompt_pipe         = 'prompt_agent.pipe'
 
     # Check if agents are currently running
-    planner_running = is_port_in_use( planner_port )
-    coder_running   = is_port_in_use( coder_port   )
+    planner_running = is_port_in_use( planner_port  )
+    coder_running   = is_port_in_use( coder_port    )
+    prompt_running  = is_port_in_use( prompt_port   )
 
     # Logic to start agents based on their running status
     collaborator_running = is_port_in_use(collaborator_port)
     if not collaborator_running:
         print("Starting CollaboratorAgent first.")
         start_agent_in_foreground("CollaboratorAgent", collaborator_script)
-    elif not planner_running and not coder_running:
-        print("Neither PlannerAgent nor CoderAgent are running. Starting PlannerAgent.")
+    elif not planner_running and not coder_running and not prompt_running:
+        print("Neither PlannerAgent, CoderAgent, nor PromptAgent are running. Starting PlannerAgent.")
         start_agent_in_foreground("PlannerAgent", planner_script)
-    elif planner_running and not coder_running:
+    elif planner_running and not coder_running and not prompt_running:
         print("PlannerAgent is running. Starting CoderAgent.")
         start_agent_in_foreground("CoderAgent", coder_script)
+    elif planner_running and coder_running and not prompt_running:
+        print("PlannerAgent and CoderAgent are running. Starting PromptAgent.")
+        start_agent_in_foreground("PromptAgent", prompt_script)
     elif not planner_running and coder_running:
         print("CoderAgent is running. Starting PlannerAgent.")
+        start_agent_in_foreground("PlannerAgent", planner_script)
+    elif not planner_running and prompt_running:
+        print("PromptAgent is running. Starting PlannerAgent.")
         start_agent_in_foreground("PlannerAgent", planner_script)
     else:
         print("All agents are running.")

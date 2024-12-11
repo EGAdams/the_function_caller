@@ -6,11 +6,13 @@ import json
 from time import sleep
 from openai import OpenAI
 import xmlrpc.client
+import os
 
 collaborator_url = "http://localhost:8001" # URL of the collaborator's RPC server
 PORT = 8003
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
@@ -29,7 +31,7 @@ class CoderAgent(BaseAgent):
         self.message = self.client.beta.threads.messages.create(  # Add a message to the thread
             thread_id=self.thread.id,
             role="user",
-            content="Make sure to write good code for our project."
+            content="Make sure to write testable, modular, reuseable code for our project."
         )
 
     def show_json(self, obj):

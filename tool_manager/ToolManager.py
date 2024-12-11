@@ -6,6 +6,10 @@ from write_file_tool.write_file_tool import WriteFileTool
 
 
 class ToolManager:
+    # constructor
+    def __init__( self ):
+        pass
+    
     def get_tool_schemas( self ):
         #
         # we start with giving the model the ability to read and write files

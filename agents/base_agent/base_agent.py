@@ -2,7 +2,6 @@
 # Base Agent
 #
 import time
-from mailboxes.imailbox import IMailbox
 import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication

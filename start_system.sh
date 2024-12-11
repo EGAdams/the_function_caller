@@ -6,13 +6,13 @@
 
 
 # define the aliases used in this script
-source ~/.bashrc;
+# source ~/.bashrc;
 
 # go into the correct environment
-so;
+# so;
 
 # set the OPENAI_API_KEY
-oai;
+# oai;
 
 # run the Python start system script
 python3 ~/the_function_caller/start_system.py;

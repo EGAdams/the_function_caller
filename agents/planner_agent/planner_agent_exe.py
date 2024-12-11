@@ -12,6 +12,12 @@ from openai import OpenAI
 PORT = 8002
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
+# from agents.planner_agent.AssistantFactory import AssistantFactory
+
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint

@@ -1,15 +1,18 @@
+# goal: fix the error that occurs when the agent is not found
+
+# Python Source Code
+```python
 #
 # Message Collaborator Agent
 #
 import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-
-from agents.base_agent.base_agent import BaseAgent
-
+sys.path.append('/home/adamsl/the_function_caller')
+# from agents.base_agent import BaseAgent
 import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 PORT = 8001
+
+from agents.base_agent import BaseAgent
 
 class MessageCollaboratorAgent(BaseAgent):
     def __init__(self, agent_id: str, server_port: int, agents_urls: dict):
@@ -125,3 +128,78 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
+
+
+# `tree agents` output
+```bash
+(aider_environment) eg1972@penguin:~/the_function_caller$ tree agents
+agents
+├── agent_based_comm.md
+├── autonomous_agents_sequence_diagram.md
+├── base_agent
+│   ├── base_agent.py
+│   └── __init__.py
+├── coder_agent
+│   ├── coder_agent_exe.py
+│   ├── coder_instructions.html
+│   ├── coder_instructions.md
+│   ├── __init__.py
+│   └── test_instructions.html
+├── hello_world.cpp
+├── __init__.py
+├── message_broker_agent
+│   ├── mailboxes
+│   │   ├── Agent2.mbox
+│   │   └── MessageBroker.mbox
+│   └── message_broker_agent.py
+├── message_collaborator_agent
+│   ├── collaborator_flow.md
+│   ├── collaborator.py
+│   └── prettier_flow.md
+├── november_24_plan.md
+├── planner_agent
+│   ├── instructions_w_send.md
+│   ├── instruct_w_primer.html
+│   ├── planner_agent_exe.py
+│   ├── planner_instructions.html
+│   ├── planner_no_primer.html
+│   ├── third_attempt_w_primer.html
+│   └── todo_list.json
+├── prompt_agent
+│   ├── client.py
+│   ├── __init__.py
+│   ├── prompt_agent_exe.py
+│   ├── prompt_agent_mcp.py
+│   └── prompt_agent_stdio.py
+├── start_collaborating.py
+├── test_two_agents.py
+└── todo_list.json
+```
+
+# Error when running the Python script
+```bash
+(aider_environment) eg1972@penguin:~/the_function_caller$ python3 start_system.py 
+Starting CollaboratorAgent first.
+Starting CollaboratorAgent in the foreground.
+Traceback (most recent call last):
+  File "/home/eg1972/the_function_caller/agents/message_collaborator_agent/collaborator.py", line 11, in <module>
+    from agents.base_agent import BaseAgent
+ModuleNotFoundError: No module named 'agents'
+(aider_environment) eg1972@penguin:~/the_function_caller$ 
+```
+
+# agents/__init__.py
+```python
+# todo_list_tools/__init__.py
+import sys
+sys.path.append('/home/adamsl/the_function_caller/')
+from agents.base_agent import BaseAgent
+
+__all__ = [
+    "BaseAgent"
+]
+```
+
+# Your task
+Please help me fix the error
