@@ -50,12 +50,12 @@ def main():
     prompt_pipe         = 'prompt_agent.pipe'
 
     # Check if agents are currently running
-    planner_running = is_port_in_use( planner_port  )
-    coder_running   = is_port_in_use( coder_port    )
-    prompt_running  = is_port_in_use( prompt_port   )
+    planner_running         = is_port_in_use( planner_port      )
+    coder_running           = is_port_in_use( coder_port        )
+    prompt_running          = is_port_in_use( prompt_port       )
+    collaborator_running    = is_port_in_use( collaborator_port )
 
     # Logic to start agents based on their running status
-    collaborator_running = is_port_in_use(collaborator_port)
     if not collaborator_running:
         print("Starting CollaboratorAgent first.")
         start_agent_in_foreground("CollaboratorAgent", collaborator_script)
@@ -68,11 +68,8 @@ def main():
     elif planner_running and coder_running and not prompt_running:
         print("PlannerAgent and CoderAgent are running. Starting PromptAgent.")
         start_agent_in_foreground("PromptAgent", prompt_script)
-    elif not planner_running and coder_running:
-        print("CoderAgent is running. Starting PlannerAgent.")
-        start_agent_in_foreground("PlannerAgent", planner_script)
-    elif not planner_running and prompt_running:
-        print("PromptAgent is running. Starting PlannerAgent.")
+    elif planner_running and coder_running and prompt_running:
+        print("Planner Agent, CoderAgent and PromptAgent is running. Starting PlannerAgent.")
         start_agent_in_foreground("PlannerAgent", planner_script)
     else:
         print("All agents are running.")

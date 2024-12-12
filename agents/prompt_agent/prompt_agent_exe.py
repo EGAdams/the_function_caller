@@ -4,12 +4,10 @@
 import sys
 import json
 from time import sleep
+from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
 from openai import OpenAI
 import xmlrpc.client
 import os
-
-
-
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from tool_manager.ToolManager import ToolManager
@@ -36,10 +34,10 @@ class PromptAgent( BaseAgent ):
         self.pretty_print       = PrettyPrint()
         message_factory         = MessageFactory()
         tool_manager            = ToolManager()
-        # fs_mapped_funcs         = FileSystemMappedFunctions()
-        # function_map            = fs_mapped_funcs.get_function_map() # populate for file system tools
-        # string_to_function      = StringToFunction( function_map )
-        # self.function_executor  = function_executor.FunctionExecutor( string_to_function )
+        fs_mapped_funcs         = FileSystemMappedFunctions()
+        function_map            = fs_mapped_funcs.get_function_map() # populate for file system tools
+        string_to_function      = StringToFunction( function_map )
+        self.function_executor  = function_executor.FunctionExecutor( string_to_function )
         self.messages           = message_factory.create_initial_messages_object() # build the messages object.
         self.tools              = tool_manager.get_tool_schemas()                  # build the tools object array of schemas.
         print("PromptAgent initialization complete")
@@ -72,15 +70,15 @@ class PromptAgent( BaseAgent ):
         response_message = response.choices[ 0 ].message
         tool_calls = response_message.tool_calls
        
-        if tool_calls:                                              # Step 2: check if the model wanted to call a function
+        if tool_calls:              # Step 2: check if the model wanted to call one or more functions
             print(f"Model requested {len(tool_calls)} tool calls")
-            self.messages.append( response_message )                # extend conversation with assistant's reply
+            self.messages.append( response_message )    # extend conversation with assistant's reply
             for tool_call in tool_calls:
                 function_name = tool_call.function.name
                 function_args = json.loads( tool_call.function.arguments )
                 print(f"Executing function: {function_name}")
                 print(f"With arguments: {function_args}")
-                function_response = function_executor.execute_function( function_name, function_args ) #3: call func
+                function_response = self.function_executor.execute_function( function_name, function_args ) #3: call func
                 print(f"Function response received: {function_response[:100]}...")  # Print first 100 chars
                 self.messages.append(
                     {
@@ -92,7 +90,7 @@ class PromptAgent( BaseAgent ):
                 ) # extend conversation with function response
             print("Sending second request to OpenAI...")
             second_response = self.client.chat.completions.create(   # Step 4: send the info for each 
-                model=GPT_MODEL,                                # function call and function response
+                model=GPT_MODEL,                                     # function call and function response
                 messages=self.messages,                              # to the model
             ) # get a new response from the model where it can see the function response
             print("Received second response from OpenAI")
