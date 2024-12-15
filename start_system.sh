@@ -12,7 +12,7 @@
 # so;
 
 # set the OPENAI_API_KEY
-# oai;
+export OPENAI_API_KEY=`cat little_panera_cold`
 
 # run the Python start system script
 python3 ~/the_function_caller/start_system.py;

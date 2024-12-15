@@ -1,79 +1,76 @@
 import os
 import sys
-import time
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
 from mailboxes.rpc_mailbox.threaded_rpc import ThreadingXMLRPCServer
+from agents.base_agent.base_agent import BaseAgent
 from chromadb import Client
 from chromadb.config import Settings
-from teachability import MemoStore
-from agents.base_agent.base_agent import BaseAgent
+import pickle
 
 class MemoryAgent(BaseAgent):
-    def __init__(self, agent_id: str, server_port: int):
+    def __init__(self, agent_id: str, server_port: int, db_path: str = "./tmp/memory_agent_db"):
         super().__init__(agent_id, server_port)
-        self.memo_store = MemoStore(
-            verbosity=1,
-            reset_db=False,
-            path_to_db_dir="./memory_agent_db"
-        )
-        self.logger.info(f"MemoryAgent {self.agent_id} initialized.")
+        self.db_path = db_path
+        self.db_client = Client(Settings(
+            anonymized_telemetry=False, allow_reset=True, is_persistent=True, persist_directory=db_path
+        ))
+        self.memo_store = self.db_client.create_collection("memos", get_or_create=True)
+        self.memo_dict = {}
+        self.load_memos()
 
     def process_message(self, message: dict):
         command = message.get("command")
-        content = message.get("content")
-
         if command == "store":
-            return self.store_memory(content)
+            input_text = message.get("input_text", "")
+            output_text = message.get("output_text", "")
+            self.store_memo(input_text, output_text)
+            return f"Stored: {input_text} -> {output_text}"
         elif command == "retrieve":
-            return self.retrieve_memory(content)
+            query_text = message.get("query_text", "")
+            results = self.retrieve_memo(query_text)
+            return results
         else:
-            self.logger.info(f"Unknown command received: {command}")
-            return {"status": "error", "message": "Unknown command."}
+            return "Unknown command."
 
-    def store_memory(self, content: dict):
-        input_text = content.get("input_text")
-        output_text = content.get("output_text")
+    def store_memo(self, input_text: str, output_text: str):
+        memo_id = str(len(self.memo_dict) + 1)
+        self.memo_store.add(documents=[input_text], ids=[memo_id])
+        self.memo_dict[memo_id] = (input_text, output_text)
+        self.save_memos()
 
-        if input_text and output_text:
-            self.memo_store.add_input_output_pair(input_text, output_text)
-            self.memo_store._save_memos()
-            self.logger.info(f"Stored memory: {input_text} -> {output_text}")
-            return {"status": "success", "message": "Memory stored."}
-        else:
-            return {"status": "error", "message": "Invalid memory format."}
+    def retrieve_memo(self, query_text: str):
+        results = self.memo_store.query(query_texts=[query_text], n_results=5)
+        retrieved_memos = []
+        for idx, memo_id in enumerate(results['ids'][0]):
+            input_text, output_text = self.memo_dict[memo_id]
+            distance = results['distances'][0][idx]
+            retrieved_memos.append({
+                "input_text": input_text,
+                "output_text": output_text,
+                "distance": distance
+            })
+        return retrieved_memos
 
-    def retrieve_memory(self, input_text: str):
-        memos = self.memo_store.get_related_memos(
-            query_text=input_text, 
-            n_results=5, 
-            threshold=1.5
-        )
+    def save_memos(self):
+        path = os.path.join(self.db_path, "memo_dict.pkl")
+        with open(path, "wb") as file:
+            pickle.dump(self.memo_dict, file)
 
-        if memos:
-            formatted_memos = [
-                {"input_text": memo[0], "output_text": memo[1], "distance": memo[2]} for memo in memos
-            ]
-            self.logger.info(f"Retrieved memories for '{input_text}': {formatted_memos}")
-            return {"status": "success", "memos": formatted_memos}
-        else:
-            self.logger.info(f"No relevant memories found for '{input_text}'.")
-            return {"status": "error", "message": "No relevant memories found."}
+    def load_memos(self):
+        path = os.path.join(self.db_path, "memo_dict.pkl")
+        if os.path.exists(path):
+            with open(path, "rb") as file:
+                self.memo_dict = pickle.load(file)
 
-
-def main():
-    print("\n=== Starting MemoryAgent ===")
-    memory_agent = MemoryAgent(agent_id="memory_agent", server_port=8005)
-
+if __name__ == "__main__":
+    PORT = 8005
+    memory_agent = MemoryAgent(agent_id="memory_agent", server_port=PORT)
     try:
-        memory_agent.logger.info("MemoryAgent is starting...")
-        print("Starting XML-RPC server on port 8005")
-        memory_agent.run()
+        memory_agent.logger.info(f"MemoryAgent starting on port {PORT}...")
+        print(f"Starting XML-RPC server on port {PORT}")
+        memory_agent.run()  # Start the XML-RPC server
     except KeyboardInterrupt:
         print("\nReceived keyboard interrupt")
         memory_agent.logger.info("Shutting down...")
         print("=== MemoryAgent shutdown complete ===")
-
-
-if __name__ == "__main__":
-    main()
