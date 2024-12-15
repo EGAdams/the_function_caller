@@ -5,14 +5,10 @@
 # script to start the agent communication system
 
 
-# define the aliases used in this script
-# source ~/.bashrc;
+source ~/the_function_caller/set_openai_key.sh
 
 # go into the correct environment
 # so;
-
-# set the OPENAI_API_KEY
-export OPENAI_API_KEY=`cat little_panera_cold`
 
 # run the Python start system script
 python3 ~/the_function_caller/start_system.py;
