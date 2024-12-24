@@ -54,10 +54,10 @@ class SendMessageTool:
             message (str): The content of the message to send.
 
         Returns:
-            str: The response from the recipient agent, or an error message.   
+            nothing: The function does not return anything.
             
             
-        note: the collaborator should get this and route it.
+        note: the collaborator may get this and route it, we'll see...
         """
         recipient_url = self.agents_urls.get(recipient_id)
         if not recipient_url:
@@ -66,15 +66,14 @@ class SendMessageTool:
         try:
             with xmlrpc.client.ServerProxy(recipient_url) as receiving_agent: # send the message to the recipient agent
                 print(f"Sending message to {recipient_id} at {recipient_url}: {message}")
-                receiving_agent_response = receiving_agent.receive_message({"message": message})
+                receiving_agent_response = receiving_agent.receive_message({"message": message}) # invoke receive_message
 
                 with xmlrpc.client.ServerProxy(self.agents_urls["collaborator"]) as collaborator: # assign collaborator
 
                     # prepend the message with `{recipient_id}:` so that the collaborator knows who sent the message.
-                    message = f"{recipient_id}: { receiving_agent_response }"
-
-                    command_packaged_message = {"command": message} # pack the message as a command to the collaborator
-                    collaborator.receive_message( command_packaged_message ) # just like it is done in the main chat...
+                    message = f"{recipient_id}: { receiving_agent_response }" # it's like putting an address on an envelope
+                                                                              # before sending it to the post office
+                    collaborator.receive_message( message )                   
 
         except Exception as e:
             return f"Error: Failed to send message to {recipient_id}: {e}"

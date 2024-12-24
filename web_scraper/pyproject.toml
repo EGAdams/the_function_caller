@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "web_scraper"
+version = "0.0.1"
+description = "This is the start of your AgentStack project."
+authors = ["Name <Email>"]
+license = "MIT"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<=3.13"
+agentstack = {extras = ["crewai"], version="0.2.2.2"}
+firecrawl-py = "^1.6.8"
+
+[project.scripts]
+web_scraper = "web_scraper.main:run"
+run_crew = "web_scraper.main:run"
+train = "web_scraper.main:train"
+replay = "web_scraper.main:replay"
+test = "web_scraper.main:test"

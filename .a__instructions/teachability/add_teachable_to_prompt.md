@@ -1,15 +1,78 @@
+Here is the Base Agent that I want you to use in our system:
+```python
+#
+# Base Agent
+#
+import os
+import sys
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
+
+from abc import ABC, abstractmethod
+import time
+from xmlrpc.server import SimpleXMLRPCServer
+from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
+from mailboxes.rpc_mailbox.threaded_rpc import ThreadingXMLRPCServer
+ 
+class Logger:
+    def __init__(self):                 # create a generic logger out
+        print("initialized...")         # of thin air here.. time is burning...
+
+    def info( self, message ):
+        print( message )
+
+class BaseAgent( ABC ):
+    def __init__(self, agent_id: str, server_port: int):
+        self.agent_id = agent_id
+        self.server_port = server_port
+        self.rpc_communication = IRPCCommunication()
+        self.logger = BaseAgentLogger()
+
+    def run(self):
+        self.logger.info(f"Agent {self.agent_id} started.")
+
+        # Start the Threading XML-RPC server
+        with ThreadingXMLRPCServer(("localhost", self.server_port), allow_none=True) as server:
+            server.register_instance(self)
+            self.logger.info(f"Agent {self.agent_id} listening on port {self.server_port}.")
+            print(f"Agent {self.agent_id} listening on port {self.server_port}.")
+            server.serve_forever()
+
+    def send_message(self, message: dict, recipient_url: str):
+        self.rpc_communication.send(message, recipient_url)
+        self.logger.info(f"Sent message to {recipient_url}: {message}")
+
+    def receive_message(self, message: dict):
+        self.logger.info(f"{self.agent_id} received message: {message}")
+        return self.process_message(message)
+
+    @abstractmethod
+    def process_message(self, message: dict):
+        pass
+
+    def initialize_logger(self):
+        self.logger = Logger()
+        return None
+```
+
+Here is the Prompt Agent that I want you to create a Memory Agent assistant class for:
+```python
 # The Prompt Agent
 # first Saturday
 # @retry( wait=wait_random_exponential( multiplier=1, max=40 ), stop=stop_after_attempt( 3 ))
 import sys
 import json
-from time import sleep
-from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
 from openai import OpenAI
 import xmlrpc.client
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))) # doesn't work!
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
+from time import sleep
+from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
+
+
 from tool_manager.ToolManager import ToolManager
 # from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
 from function_executor import function_executor
@@ -17,7 +80,7 @@ from message_factory import MessageFactory
 from string_to_function.string_to_function import StringToFunction
 
 collaborator_url = "http://localhost:8001" # URL of the collaborator's RPC server
-PORT = 8003
+PORT = 8004
 GPT_MODEL = "gpt-3.5-turbo-0125"
 sys.path.append( '/home/adamsl/the_function_caller' )
 from AssistantFactory import AssistantFactory
@@ -119,3 +182,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
+
+Please create the Memory Agent assistant class for the Prompt Agent that we were discussing earlier.  Use the Teachability Agent code as a guide for the memory part.  Use the Prompt Agent and Base Agent code as a guide for building the Memory assistant.  Make sure that the new Agent has the ability to communicate on a TCP/IP socket as we have discussed before.  

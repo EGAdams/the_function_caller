@@ -1,6 +1,12 @@
 #
 # Base Agent
 #
+import os
+import sys
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
+
+from abc import ABC, abstractmethod
 import time
 import socket
 import psutil
@@ -42,7 +48,7 @@ def kill_process_on_port(port):
         except psutil.NoSuchProcess:
             print(f"Process on port {port} no longer exists")
 
-class BaseAgent:
+class BaseAgent( ABC ):
     def __init__(self, agent_id: str, server_port: int):
         self.agent_id = agent_id
         self.server_port = server_port
@@ -71,12 +77,12 @@ class BaseAgent:
         self.logger.info(f"Sent message to {recipient_url}: {message}")
 
     def receive_message(self, message: dict):
-        print(f"{self.agent_id} received message: {message}")
-        self.logger.info(f"Received message: {message}")
-        return self.process_message( message )
+        self.logger.info(f"{self.agent_id} received message: {message}")
+        return self.process_message(message)
 
+    @abstractmethod
     def process_message(self, message: dict):
-        raise NotImplementedError("Subclasses should implement this method.")
+        pass
 
     def initialize_logger(self):
         self.logger = Logger()

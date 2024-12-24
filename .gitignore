@@ -1,9 +1,8 @@
 the_function_caller_environment
 __pycache__
 the_function_caller/bin
-
 the_function_caller/lib/python3.9
-
 the_function_caller/share
-
 curlew_chrome
+set_openai_key.sh
+open_door.sh

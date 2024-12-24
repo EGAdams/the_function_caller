@@ -1,20 +1,32 @@
 [
     {
-        "title": "ll",
-        "action": "ls -larth",
+        "title": "start collaborator",
+        "action": "python3 /home/adamsl/the_function_caller/agents/message_collaborator_agent/collaborator.py",
         "working_directory": ".",
         "open_in_subprocess": false
     },
     {
-        "title": "test smart menu system",
-        "action": "python3 test_smart_menu_system.py config.json",
+        "title": "start planner",
+        "action": "python3 /home/adamsl/the_function_caller/agents/planner_agent/planner_agent_exe.py",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "enter chat with agents",
+        "action": "python3 /home/adamsl/the_function_caller/agents/start_collaborating.py",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "start coder",
+        "action": "python3 /home/adamsl/the_function_caller/agents/coder_agent/coder_agent_exe.py",
         "working_directory": ".",
         "open_in_subprocess": false
     },
     {
         "title": "agent menu",
-        "action": "python3 CommandMenuApp.py agent_config.json",
-        "working_directory": ".",
+        "action": "python3 test_smart_menu_system.py agent_config.json",
+        "working_directory": "/home/adamsl/the_function_caller/smart_menu/",
         "open_in_subprocess": false
     },
     {

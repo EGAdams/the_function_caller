@@ -1,0 +1,6 @@
+{
+    "title": "agent menu",
+    "action": "python3 test_smart_menu_system.py agent_config.json",
+    "working_directory": "/home/adamsl/the_function_caller/smart_menu/",
+    "open_in_subprocess": false
+}
