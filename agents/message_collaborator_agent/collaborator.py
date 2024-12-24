@@ -52,6 +52,7 @@ class MessageCollaboratorAgent(BaseAgent):
         """
         try:
             command = message.get( "command" )
+            print ( "got command in collaborator: ", command )
             if not command:
                 self.logger.error("Invalid message format. Missing 'command'.")
                 return "Invalid message format. Missing 'command'."
@@ -64,6 +65,11 @@ class MessageCollaboratorAgent(BaseAgent):
             # Planner Agent
             elif command.startswith("planner:"):
                 response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                return response
+
+            # Prompt Agent
+            elif command.startswith("prompt:"):
+                response = self.send_message("prompt", {"message": command[len("prompt:"):].strip()})
                 return response
             
             # Unknown Agent
@@ -111,6 +117,7 @@ def main():
         "collaborator"  : "http://localhost:8001",
         "planner"       : "http://localhost:8002",
         "coder"         : "http://localhost:8003",
+        "prompt"        : "http://localhost:8004",
     }
 
     # Create the MessageCollaboratorAgent
