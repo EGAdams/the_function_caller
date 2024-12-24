@@ -1,3 +1,5 @@
+# Example Todo List
+```json
 [
   {
     "id": "0",
@@ -125,43 +127,8 @@
         "description": "Fix coder agent send message tool issue",
         "status": "born_status",
         "subtasks": []
-      },
-      {
-        "id": "41",
-        "parent_id": "0",
-        "priority": 1,
-        "born_on": "2024-12-20T10:12:20.412104",
-        "description": "Create change_todo_status.py tool",
-        "status": "born_status",
-        "subtasks": []
-      },
-      {
-        "id": "42",
-        "parent_id": "0",
-        "priority": 1,
-        "born_on": "2024-12-20T10:22:16.791775",
-        "description": "Create change_todo_status.py tool with status property",
-        "status": "born_status",
-        "subtasks": []
-      },
-      {
-        "id": "43",
-        "parent_id": "0",
-        "priority": 1,
-        "born_on": "2024-12-20T10:38:11.038255",
-        "description": "Create change_todo_status tool with status property",
-        "status": "born_status",
-        "subtasks": []
-      },
-      {
-        "id": "44",
-        "parent_id": "0",
-        "priority": 1,
-        "born_on": "2024-12-20T10:38:11.061731",
-        "description": "Add change_todo_status tool to the Planner Agent workflow",
-        "status": "born_status",
-        "subtasks": []
       }
     ]
   }
 ]
+```

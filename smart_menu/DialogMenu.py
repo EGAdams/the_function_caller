@@ -2,6 +2,7 @@
 from MenuItem import MenuItem
 # code to import pythondialog
 import dialog
+from smart_menu import Menu
 
 class DialogMenu:
     def __init__(self, items=None):

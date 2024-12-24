@@ -1,0 +1,24 @@
+hello_world:
+  description: >
+    As is tradition in software, let's start by saying 'Hello, World!'. Then, pick
+    one or two tasks that they should try to do next with AgentStack.
+  expected_output: >
+    The sentence Hello, World! followed by two things the user should try to customize
+    their agent further.
+  agent: alex
+
+web_scraper_task:
+  description: >-
+    Scrape the page at `https://docs.crewai.com/introduction` and return the markdown.
+  expected_output: >-
+    To give the markdown of the page.
+  agent: >-
+    web_scraper
+
+summarizer_task:
+  description: >-
+    Write a summary of the text and give key points and takeaways.
+  expected_output: >-
+    To give the summary, key points, and takeaways of  the text.
+  agent: >-
+    summarizer

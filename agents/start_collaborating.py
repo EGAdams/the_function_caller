@@ -25,10 +25,9 @@ def main():
                     break
                 
                 # Send the message as a command to the collaborator
-                command_packaged_message = {"command": message}
                 try:
                     # Capture the response from the collaborator.
-                    response = collaborator.receive_message( command_packaged_message )
+                    response = collaborator.receive_message( message )
                     
                     # Color the response based on the agent
                     print ( "\n" )

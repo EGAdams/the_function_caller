@@ -14,6 +14,7 @@ class Menu:
     def display_and_select(self, menu_manager):
         # Initialize Dialog object
         d = Dialog(dialog="dialog")  # Specify the path to the 'dialog' executable if needed
+        from time import sleep  # Import sleep function
 
         while True:
             # Build the menu items list
@@ -45,7 +46,8 @@ class Menu:
                         output = "executing command: " + menu_item.title
                         sleep(0.5)
                         output = CommandExecutor.execute_command(menu_item)
-                        d.msgbox(output, title="Command Output")
+                        print(output)
+                        d.msgbox(output, title="Command Output", width=80)
                     elif choice == len(self.items) + 1:
                         # Exit this menu
                         break
@@ -62,7 +64,6 @@ class Menu:
             else:
                 # Handle any other dialog return codes if necessary
                 d.msgbox("An unexpected error occurred.", title="Error")
-
     def add_new_item(self):
         print("Adding a new menu item...")
         title = input("Enter title for new item: ")

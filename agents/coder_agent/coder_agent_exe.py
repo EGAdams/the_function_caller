@@ -8,9 +8,11 @@ from openai import OpenAI
 import xmlrpc.client
 import os
 
-collaborator_url = "http://localhost:8001" # URL of the collaborator's RPC server
-PORT = 8003
-GPT_MODEL = "gpt-3.5-turbo-0125"
+# collaborator_url    = "http://localhost:8001" # URL of the collaborator's RPC server
+
+PORT                = 8003
+CHEAP_GPT_MODEL     = "gpt-3.5-turbo-0125"
+GPT_MODEL           = "gpt-4o-mini"
 sys.path.append( '/home/adamsl/the_function_caller' )
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from AssistantFactory import AssistantFactory
@@ -74,7 +76,7 @@ class CoderAgent(BaseAgent):
             return response_content
 
         except Exception as e:
-            self.logger.error(f"Error processing message: {e}")
+            self.logger.error(f"Coder Agent Error processing message: {e}")
             return f"Error: {str(e)}"
 
 def main():

@@ -1,71 +1,87 @@
-import os
-import socket
-import subprocess
 import sys
-from abc import ABC, abstractmethod
+import json
+from time import sleep
+from openai import OpenAI
 
-# Ensure the BaseAgent is in the path
-home_directory = os.path.expanduser("~")
-sys.path.append(os.path.join(home_directory, "the_function_caller/agents"))
-from base_agent.base_agent import BaseAgent
+PORT = 8001
+GPT_MODEL = "gpt-3.5-turbo-0125"
+sys.path.append('/home/adamsl/the_function_caller')
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-class AgentManager:
-    """Manages starting agents based on their running status."""
+from AssistantFactory import AssistantFactory
+from run_spinner.run_spinner import RunSpinner
+from pretty_print.pretty_print import PrettyPrint
+from agents.base_agent.base_agent import BaseAgent
 
-    def __init__(self):
-        self.agents = {
-            "CollaboratorAgent": AgentConfig(8001, "message_collaborator_agent/collaborator.py"),
-            "PlannerAgent": AgentConfig(8002, "planner_agent/planner_agent_exe.py"),
-            "CoderAgent": AgentConfig(8003, "coder_agent/coder_agent_exe.py"),
-            "PromptAgent": AgentConfig(8004, "prompt_agent/prompt_agent_exe.py"),
-        }
-        self.collaboration_script = os.path.join(
-            home_directory, "the_function_caller/agents/start_collaborating.py"
+class CollaboratorAgent( BaseAgent ):
+    def __init__(self, agent_id: str, server_port: int):
+        super().__init__(agent_id, server_port)
+        self.client = OpenAI()                                      # Create the OpenAI client
+        self.pretty_print = PrettyPrint()
+        self.assistant_factory = AssistantFactory()                 # This is an OpenAI Assistant
+        self.assistant = self.assistant_factory.getExistingAssistant( assistant_id="asst_lRPtbKUVMJPAXt0RttAU8EHg" )
+        self.run_spinner = RunSpinner(self.client)                  # this "absorbs" the messages and/or tool calls
+        self.thread = self.client.beta.threads.create()             # Create a thread so that we can use the id
+        self.message = self.client.beta.threads.messages.create(    # Add a message to the thread
+            thread_id=self.thread.id,
+            role="user",
+            content="How can I assist with collaboration?"
         )
 
-    def is_port_in_use(self, port):
-        """Check if a specific port is in use on localhost."""
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            return s.connect_ex(("localhost", port)) == 0
+    def show_json(self, obj):
+        """
+        Pretty print a JSON object for debugging purposes.
+        """
+        json_obj = json.loads(obj.model_dump_json())
+        pretty_json = json.dumps(json_obj, indent=4)
+        print(pretty_json)
 
-    def start_agent(self, agent_name):
-        """Start an agent based on its configuration."""
-        config = self.agents[agent_name]
-        script_path = os.path.join(home_directory, "the_function_caller/agents", config.script_path)
-        
-        if not self.is_port_in_use(config.port):
-            subprocess.Popen(
-                [sys.executable, script_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                preexec_fn=os.setpgrp,
-            )
-            print(f"{agent_name} started on port {config.port}.")
-        else:
-            print(f"{agent_name} is already running on port {config.port}.")
+    def process_message(self, new_message: dict):
+        """
+        Process incoming messages, interact with OpenAI assistant, and respond.
+        """
+        print( "Collaborator Agent received message:", new_message[ "message" ])
+        # try:
+        #     message = self.client.beta.threads.messages.create(
+        #         self.thread.id,
+        #         role="user",
+        #         content=new_message["message"]
+        #     )
 
-    def start_collaboration(self):
-        """Start the collaboration process."""
-        subprocess.call([sys.executable, self.collaboration_script])
+        #     print ( "Start a run with the assistant" )
+        #     run = self.client.beta.threads.runs.create(
+        #         thread_id=self.thread.id,
+        #         assistant_id=self.assistant.id
+        #     )
 
-    def run(self):
-        """Main function to orchestrate agent startup."""
-        startup_sequence = ["CollaboratorAgent", "PlannerAgent", "CoderAgent", "PromptAgent"]
-        
-        for agent_name in startup_sequence:
-            self.start_agent(agent_name)
+        #     print( "Wait for the run to complete..." )
+        #     self.run_spinner.spin(run, self.thread)
 
-        if all(self.is_port_in_use(config.port) for config in self.agents.values()):
-            print("All agents are running. Starting collaboration.")
-            self.start_collaboration()
+        #     print( "Fetch messages from the thread..." )
+        #     messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
+        #     messages_list = list(messages)
+        #     reversed_messages = messages_list[::-1]
+        #     response = reversed_messages[len(reversed_messages) - 1]
+        #     response_content = response.content[0].text.value           # Extract the content from the response
+        #     return response_content
 
+        # except Exception as e:
+        #     self.logger.error(f"Collaborator Error processing message: {e}")
+        #     print (f"Collaborator Error processing message: {e}")
+        #     return f"Error: {str(e)}"
 
-class AgentConfig:
-    """Stores configuration for an agent."""
-    def __init__(self, port, script_path):
-        self.port = port
-        self.script_path = script_path
+def main():
+    """
+    Main entry point for the CollaboratorAgent.
+    """
+    collaborator_agent = CollaboratorAgent(agent_id="collaborator_agent", server_port=PORT)
+
+    try:
+        collaborator_agent.logger.info("CollaboratorAgent is starting on port " + str(PORT) + "...")
+        collaborator_agent.run()  # Start the XML-RPC server
+    except KeyboardInterrupt:
+        collaborator_agent.logger.info("Shutting down...")
 
 if __name__ == "__main__":
-    manager = AgentManager()
-    manager.run()
+    main()

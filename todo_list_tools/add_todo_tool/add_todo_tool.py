@@ -1,11 +1,8 @@
 import os
 import sys
 # 110424
-
-# Add the parent directory of the current file (task_list) to the system path
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Add the parent directory of the current file ( task_list) to the system path
-sys.path.append( '/home/eg1972/the_function_caller/todo_list_tools' )
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller/todo_list_tools' )
 
 # import Task
 from task import Task

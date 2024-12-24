@@ -18,7 +18,8 @@ class FileSystemMappedFunctions:
         self.agents_urls = {
             "collaborator"  : "http://localhost:8001",
             "planner"       : "http://localhost:8002",
-            "coder"         : "http://localhost:8003" }
+            "coder"         : "http://localhost:8003",
+            "prompt"        : "http://localhost:8004" }
         
         # Create instances of the tools
         write_file_tool = WriteFileTool()
