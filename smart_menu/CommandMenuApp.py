@@ -1,7 +1,7 @@
 from CommandExecutor import CommandExecutor
 from Menu import Menu
 from MenuManager import MenuManager
-import npyscreen
+# import npyscreen
 import subprocess
 import sys
 

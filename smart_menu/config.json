@@ -24,12 +24,6 @@
         "open_in_subprocess": false
     },
     {
-        "title": "show port status",
-        "action": "python3 /home/adamsl/the_function_caller/agents/check_port_status.py",
-        "working_directory": ".",
-        "open_in_subprocess": false
-    },
-    {
         "title": "agent menu",
         "action": "python3 test_smart_menu_system.py agent_config.json",
         "working_directory": "/home/adamsl/the_function_caller/smart_menu/",

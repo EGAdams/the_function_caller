@@ -1,3 +1,4 @@
+from time import sleep
 from MenuItem import MenuItem
 from dialog import Dialog
 import sys
@@ -12,9 +13,7 @@ class Menu:
         self.items.append(item)
 
     def display_and_select(self, menu_manager):
-        # Initialize Dialog object
-        d = Dialog(dialog="dialog")  # Specify the path to the 'dialog' executable if needed
-        from time import sleep  # Import sleep function
+        d = Dialog(dialog="dialog")  # Or the path to your `dialog` program
 
         while True:
             # Build the menu items list
@@ -25,7 +24,6 @@ class Menu:
             menu_items.append((str(len(self.items) + 1), "Exit this menu"))
             menu_items.append((str(len(self.items) + 2), "Add a menu item"))
 
-            # Display the menu
             code, tag = d.menu(
                 "Please select an option:",
                 choices=menu_items,
@@ -41,29 +39,36 @@ class Menu:
                 try:
                     choice = int(tag)
                     if 1 <= choice <= len(self.items):
-                        # Execute the selected menu item's action using CommandExecutor
+                        # Execute the selected menu item’s action
                         menu_item = self.items[choice - 1]
-                        output = "executing command: " + menu_item.title
-                        sleep(0.5)
-                        output = CommandExecutor.execute_command(menu_item)
-                        print(output)
-                        d.msgbox(output, title="Command Output", width=80)
+                        sleep(0.5)  # Slight delay if needed
+
+                        # -- NO VARIABLE CAPTURE --
+                        # Just call the CommandExecutor. 
+                        # If CommandExecutor uses os.system or similar, 
+                        # it will print to stdout as it runs.
+                        CommandExecutor.execute_command(menu_item)
+                        
+                        # If you want to pause after the command finishes
+                        # so the user can see the output, you could do something like:
+                        input("Press Enter to return to the menu...")
+
                     elif choice == len(self.items) + 1:
                         # Exit this menu
                         break
+
                     elif choice == len(self.items) + 2:
                         # Add a new menu item
                         menu_manager.add_menu_item()
-                        # Update the menu items after adding a new one
+                        # Then loop again with the updated list
                     else:
-                        # Invalid selection
                         d.msgbox("Invalid selection. Please try again.", title="Error")
                 except ValueError:
-                    # Non-integer input captured
                     d.msgbox("Invalid input. Please select a valid option.", title="Error")
             else:
                 # Handle any other dialog return codes if necessary
                 d.msgbox("An unexpected error occurred.", title="Error")
+        
     def add_new_item(self):
         print("Adding a new menu item...")
         title = input("Enter title for new item: ")

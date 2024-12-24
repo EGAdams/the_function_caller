@@ -1,0 +1,32 @@
+[
+    {
+        "title": "kill PID using port 8001",
+        "action": "python3 /home/adamsl/the_function_caller/agents/kill_port.py 8001",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "kill PID using port 8002",
+        "action": "python3 /home/adamsl/the_function_caller/agents/kill_port.py 8002",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "kill PID using port 8003",
+        "action": "python3 /home/adamsl/the_function_caller/agents/kill_port.py 8003",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "kill PID using port 8004",
+        "action": "python3 /home/adamsl/the_function_caller/agents/kill_port.py 8004",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    },
+    {
+        "title": "show port status",
+        "action": "python3 /home/adamsl/the_function_caller/agents/check_port_status.py",
+        "working_directory": ".",
+        "open_in_subprocess": false
+    }
+]

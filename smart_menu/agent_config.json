@@ -28,15 +28,15 @@
         "use_expect_library": false
     },
     {
-        "title": "ll",
-        "action": "ll -larth",
+        "title": "kill ports",
+        "action": "python3 test_smart_menu_system.py kill_ports.json",
         "working_directory": "",
         "open_in_subprocess": false,
         "use_expect_library": false
     },
     {
-        "title": "test 1",
-        "action": "echo 'test 1 executed'",
+        "title": "Start Collaborator",
+        "action": "echo 'New item executed'",
         "working_directory": "",
         "open_in_subprocess": false,
         "use_expect_library": false
