@@ -52,7 +52,7 @@ class BaseAgent( ABC ):
         self.logger.info(f"Sent message to {recipient_url}: {message}")
 
     def receive_message(self, message: dict):
-        self.logger.info(f"{self.agent_id} received message: {message}")
+        # self.logger.info(f"{self.agent_id} received message: {message}")
         return self.process_message(message)
 
     @abstractmethod

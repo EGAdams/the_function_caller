@@ -28,7 +28,7 @@
         "use_expect_library": false
     },
     {
-        "title": "kill ports",
+        "title": "manage ports",
         "action": "python3 test_smart_menu_system.py kill_ports.json",
         "working_directory": "",
         "open_in_subprocess": false,

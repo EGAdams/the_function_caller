@@ -40,8 +40,11 @@ class CollaboratorAgent( BaseAgent ):
     def process_message(self, new_message: dict):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
+
+        note Error: Failed to send message: <Fault 1: "<class 'TypeError'>:string indices must be integers"> means
+        that new_message["message"] is not a string, but a dict.
         """
-        print( "Collaborator Agent received message:", new_message[ "message" ])
+        print(f"Collaborator Agent received message: {new_message}")
         # try:
         #     message = self.client.beta.threads.messages.create(
         #         self.thread.id,
