@@ -1,12 +1,13 @@
 import os
 import sys
+import json
 
 home_directory = os.path.expanduser("~")
 sys.path.append( home_directory + '/the_function_caller' )
 
 from agents.base_agent.base_agent import BaseAgent
 
-class FileManagerAgent( BaseAgent ):
+class FileManagerAgent(BaseAgent):
     def __init__(self, agent_id, server_port, mcp_server_command):
         super().__init__(agent_id, server_port, communication_mode="stdio", mcp_server_command=mcp_server_command)
 
@@ -27,6 +28,7 @@ class FileManagerAgent( BaseAgent ):
             return {"error": f"Unknown operation: {operation}"}
 
     def send_mcp_request(self, method, params):
+        """Send a request to the MCP server via stdio."""
         payload = {
             "jsonrpc": "2.0",
             "method": method,
@@ -37,3 +39,4 @@ class FileManagerAgent( BaseAgent ):
         self.mcp_process.stdin.flush()
         response_str = self.mcp_process.stdout.readline().strip()
         return json.loads(response_str)
+
