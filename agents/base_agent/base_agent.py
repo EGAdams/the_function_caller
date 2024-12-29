@@ -1,16 +1,17 @@
 #
-# Base Agent
+# /** @class BaseAgent */
 #
 import os
 import sys
+import json
+import socket
+import subprocess
+import psutil
+
 home_directory = os.path.expanduser("~")
 sys.path.append( home_directory + '/the_function_caller' )
 
 from abc import ABC, abstractmethod
-import time
-import socket
-import psutil
-import xmlrpc.client
 from xmlrpc.server import SimpleXMLRPCServer
 from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
 from mailboxes.rpc_mailbox.threaded_rpc import ThreadingXMLRPCServer
@@ -49,14 +50,26 @@ def kill_process_on_port(port):
             print(f"Process on port {port} no longer exists")
 
 class BaseAgent( ABC ):
-    def __init__(self, agent_id: str, server_port: int):
+    def __init__(self, agent_id: str, server_port: int, communication_mode="rpc", mcp_server_command=None):
         self.agent_id = agent_id
         self.server_port = server_port
+        self.communication_mode = communication_mode  # "rpc" or "stdio"
         self.rpc_communication = IRPCCommunication()
         self.logger = BaseAgentLogger()
 
+        # MCP Server for stdio mode
+        self.mcp_process = None
+        if communication_mode == "stdio" and mcp_server_command:
+            self.mcp_process = subprocess.Popen(
+                mcp_server_command,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+
     def run(self):
-        self.logger.info(f"Agent {self.agent_id} starting on port {self.server_port}.")
+        self.logger.info(f"Agent {self.agent_id} started in {self.communication_mode} mode.")
 
         if is_port_in_use(self.server_port):
             self.logger.info(f"Port {self.server_port} is in use. Killing the process...")
@@ -66,11 +79,32 @@ class BaseAgent( ABC ):
             self.logger.error(f"Port {self.server_port} is still in use after attempting to kill the process.")
             return
 
-        with ThreadingXMLRPCServer(("localhost", self.server_port), allow_none=True) as server:
-            server.register_instance(self)
-            self.logger.info(f"Agent {self.agent_id} listening on port {self.server_port}.")
-            print(f"Agent {self.agent_id} listening on port {self.server_port}.")
-            server.serve_forever()
+        if self.communication_mode == "rpc":
+            # Start the Threading XML-RPC server
+            with ThreadingXMLRPCServer(("localhost", self.server_port), allow_none=True) as server:
+                server.register_instance(self)
+                self.logger.info(f"Agent {self.agent_id} listening on port {self.server_port}.")
+                server.serve_forever()
+        elif self.communication_mode == "stdio":
+            self.logger.info(f"Agent {self.agent_id} ready to process stdio requests.")
+            self.process_stdio_requests()
+
+    def process_stdio_requests(self):
+        """Continuously read from the MCP server process and process messages."""
+        if not self.mcp_process:
+            self.logger.error("MCP process not initialized for stdio communication.")
+            return
+
+        try:
+            while True:
+                line = self.mcp_process.stdout.readline().strip()
+                if line:
+                    message = json.loads(line)
+                    response = self.process_message(message)
+                    self.mcp_process.stdin.write(json.dumps(response) + "\n")
+                    self.mcp_process.stdin.flush()
+        except Exception as e:
+            self.logger.error(f"Error during stdio processing: {e}")
 
     def send_message(self, message: dict, recipient_url: str):
         self.rpc_communication.send(message, recipient_url)
