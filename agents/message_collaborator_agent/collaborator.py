@@ -44,12 +44,12 @@ class CollaboratorAgent( BaseAgent ):
         note Error: Failed to send message: <Fault 1: "<class 'TypeError'>:string indices must be integers"> means
         that new_message["message"] is not a string, but a dict.
         """
-        print(f"Collaborator Agent received message: {new_message}")
+        print( f"Collaborator Agent received message: {new_message}" )
         # try:
         #     message = self.client.beta.threads.messages.create(
         #         self.thread.id,
         #         role="user",
-        #         content=new_message["message"]
+        #         content=new_message["message"] 
         #     )
 
         #     print ( "Start a run with the assistant" )
@@ -78,7 +78,13 @@ def main():
     """
     Main entry point for the CollaboratorAgent.
     """
-    collaborator_agent = CollaboratorAgent(agent_id="collaborator_agent", server_port=PORT)
+    # Define RPC URLs for other agents
+    agents_urls = {
+        "collaborator"  : "http://localhost:8001",
+        "planner"       : "http://localhost:8002",
+        "coder"         : "http://localhost:8003",
+        "prompt"        : "http://localhost:8004",
+    }
 
     try:
         collaborator_agent.logger.info("CollaboratorAgent is starting on port " + str(PORT) + "...")
