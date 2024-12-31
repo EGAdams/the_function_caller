@@ -9,6 +9,7 @@ from agents.base_agent.base_agent import BaseAgent
 
 class FileManagerAgent(BaseAgent):
     def __init__(self, agent_id, server_port, mcp_server_command):
+        print("Initializing super (BaseAgent)...")
         super().__init__(agent_id, server_port, communication_mode="stdio", mcp_server_command=mcp_server_command)
 
     def process_message(self, message):
@@ -39,4 +40,19 @@ class FileManagerAgent(BaseAgent):
         self.mcp_process.stdin.flush()
         response_str = self.mcp_process.stdout.readline().strip()
         return json.loads(response_str)
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) != 4:
+        print("Usage: python3 file_manager_agent.py <agent_id> <server_port> <mcp_server_command>")
+        sys.exit(1)
+
+    agent_id = sys.argv[1]
+    server_port = int(sys.argv[2])
+    mcp_server_command  = sys.argv[3].split()
+    print ( "creating file manager agent with agent_id: " + agent_id )
+    agent = FileManagerAgent(agent_id, server_port, mcp_server_command)
+    agent.run()
+
 

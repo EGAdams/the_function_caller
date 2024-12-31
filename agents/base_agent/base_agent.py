@@ -57,6 +57,9 @@ class BaseAgent( ABC ):
         self.rpc_communication = IRPCCommunication()
         self.logger = BaseAgentLogger()
 
+        print ( "communication mode: " + communication_mode )
+        print ( "initializing base agent... " )
+
         # MCP Server for stdio mode
         self.mcp_process = None
         if communication_mode == "stdio" and mcp_server_command:
@@ -96,6 +99,7 @@ class BaseAgent( ABC ):
             return
 
         try:
+            print( "starting while loop in process_stdio_requests()..." )
             while True:
                 line = self.mcp_process.stdout.readline().strip()
                 if line:
