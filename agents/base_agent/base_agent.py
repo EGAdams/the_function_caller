@@ -1,6 +1,4 @@
-#
-# /** @class BaseAgent */
-#
+from abc import ABC, abstractmethod
 import os
 import sys
 import json
@@ -8,119 +6,153 @@ import socket
 import subprocess
 import psutil
 
-home_directory = os.path.expanduser("~")
-sys.path.append( home_directory + '/the_function_caller' )
-
-from abc import ABC, abstractmethod
-from xmlrpc.server import SimpleXMLRPCServer
-from mailboxes.rpc_mailbox.rpc_mailbox import IRPCCommunication
-from mailboxes.rpc_mailbox.threaded_rpc import ThreadingXMLRPCServer
-
-class BaseAgentLogger:
-    def __init__(self):
+# Define Interfaces
+class ILogger(ABC):
+    @abstractmethod
+    def info(self, message: str):
         pass
 
-    def info(self, message):
+    @abstractmethod
+    def error(self, message: str):
+        pass
+
+
+class IPortHandler(ABC):
+    @abstractmethod
+    def is_port_in_use(self, port: int) -> bool:
+        pass
+
+    @abstractmethod
+    def kill_process_on_port(self, port: int):
+        pass
+
+
+class IRPCServer(ABC):
+    @abstractmethod
+    def start_server(self, instance, port: int):
+        pass
+
+
+class IMCPProcessManager(ABC):
+    @abstractmethod
+    def start_process(self, command: list):
+        pass
+
+    @abstractmethod
+    def read_output(self):
+        pass
+
+    @abstractmethod
+    def write_input(self, response: dict):
+        pass
+
+
+# Implementations
+class ConsoleLogger(ILogger):
+    def info(self, message: str):
         print(f"INFO: {message}")
 
-    def error(self, message):
+    def error(self, message: str):
         print(f"*** ERROR: {message} ***")
 
-class Logger:
+
+class DefaultPortHandler(IPortHandler):
+    def is_port_in_use(self, port: int) -> bool:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(('localhost', port)) == 0
+
+    def kill_process_on_port(self, port: int):
+        for proc in psutil.process_iter(['pid', 'name']):
+            try:
+                for conn in proc.connections(kind='inet'):
+                    if conn.laddr.port == port:
+                        print(f"Killing process {proc.info['name']} (PID: {proc.info['pid']}) on port {port}")
+                        proc.kill()
+            except psutil.AccessDenied:
+                print(f"Access denied when attempting to kill process on port {port}")
+            except psutil.NoSuchProcess:
+                print(f"Process on port {port} no longer exists")
+
+
+class XMLRPCServer(IRPCServer):
+    def start_server(self, instance, port: int):
+        from xmlrpc.server import SimpleXMLRPCServer
+        server = SimpleXMLRPCServer(("localhost", port), allow_none=True)
+        server.register_instance(instance)
+        print(f"RPC Server started on port {port}")
+        server.serve_forever()
+
+
+class MCPProcessManager(IMCPProcessManager):
     def __init__(self):
-        print("initialized...")
+        self.process = None
 
-    def info(self, message):
-        print(message)
+    def start_process(self, command: list):
+        self.process = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
-def is_port_in_use(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('localhost', port)) == 0
+    def read_output(self):
+        return self.process.stdout.readline().strip()
 
-def kill_process_on_port(port):
-    for proc in psutil.process_iter(['pid', 'name']):
-        try:
-            for conn in proc.connections(kind='inet'):
-                if conn.laddr.port == port:
-                    print(f"Killing process {proc.info['name']} (PID: {proc.info['pid']}) on port {port}")
-                    proc.kill()
-        except psutil.AccessDenied:
-            print(f"Access denied when attempting to kill process on port {port}")
-        except psutil.NoSuchProcess:
-            print(f"Process on port {port} no longer exists")
+    def write_input(self, response: dict):
+        self.process.stdin.write(json.dumps(response) + "\n")
+        self.process.stdin.flush()
 
-class BaseAgent( ABC ):
-    def __init__(self, agent_id: str, server_port: int, communication_mode="rpc", mcp_server_command=None):
+
+# Refactored BaseAgent
+class BaseAgent(ABC):
+    def __init__(self, agent_id: str, server_port: int, communication_mode="rpc",
+                 mcp_server_command=None, logger: ILogger = ConsoleLogger(),
+                 port_handler: IPortHandler = DefaultPortHandler(),
+                 rpc_server: IRPCServer = XMLRPCServer(),
+                 mcp_manager: IMCPProcessManager = MCPProcessManager()):
         self.agent_id = agent_id
         self.server_port = server_port
-        self.communication_mode = communication_mode  # "rpc" or "stdio"
-        self.rpc_communication = IRPCCommunication()
-        self.logger = BaseAgentLogger()
+        self.communication_mode = communication_mode
+        self.logger = logger
+        self.port_handler = port_handler
+        self.rpc_server = rpc_server
+        self.mcp_manager = mcp_manager
 
-        print ( "communication mode: " + communication_mode )
-        print ( "initializing base agent... " )
-
-        # MCP Server for stdio mode
-        self.mcp_process = None
+        self.logger.info(f"Initializing BaseAgent with mode: {communication_mode}")
         if communication_mode == "stdio" and mcp_server_command:
-            self.mcp_process = subprocess.Popen(
-                mcp_server_command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
+            self.mcp_manager.start_process(mcp_server_command)
 
     def run(self):
         self.logger.info(f"Agent {self.agent_id} started in {self.communication_mode} mode.")
-
-        if is_port_in_use(self.server_port):
+        if self.port_handler.is_port_in_use(self.server_port):
             self.logger.info(f"Port {self.server_port} is in use. Killing the process...")
-            kill_process_on_port(self.server_port)
+            self.port_handler.kill_process_on_port(self.server_port)
 
-        if is_port_in_use(self.server_port):
+        if self.port_handler.is_port_in_use(self.server_port):
             self.logger.error(f"Port {self.server_port} is still in use after attempting to kill the process.")
             return
 
         if self.communication_mode == "rpc":
-            # Start the Threading XML-RPC server
-            with ThreadingXMLRPCServer(("localhost", self.server_port), allow_none=True) as server:
-                server.register_instance(self)
-                self.logger.info(f"Agent {self.agent_id} listening on port {self.server_port}.")
-                server.serve_forever()
+            self.rpc_server.start_server(self, self.server_port)
         elif self.communication_mode == "stdio":
-            self.logger.info(f"Agent {self.agent_id} ready to process stdio requests.")
             self.process_stdio_requests()
 
     def process_stdio_requests(self):
-        """Continuously read from the MCP server process and process messages."""
-        if not self.mcp_process:
-            self.logger.error("MCP process not initialized for stdio communication.")
+        if not self.mcp_manager:
+            self.logger.error("MCP process manager not initialized for stdio communication.")
             return
 
         try:
-            print( "starting while loop in process_stdio_requests()..." )
             while True:
-                line = self.mcp_process.stdout.readline().strip()
+                line = self.mcp_manager.read_output()
                 if line:
                     message = json.loads(line)
                     response = self.process_message(message)
-                    self.mcp_process.stdin.write(json.dumps(response) + "\n")
-                    self.mcp_process.stdin.flush()
+                    self.mcp_manager.write_input(response)
         except Exception as e:
             self.logger.error(f"Error during stdio processing: {e}")
-
-    def send_message(self, message: dict, recipient_url: str):
-        self.rpc_communication.send(message, recipient_url)
-        self.logger.info(f"Sent message to {recipient_url}: {message}")
-
-    def receive_message(self, message: dict):
-        # self.logger.info(f"{self.agent_id} received message: {message}")
-        return self.process_message(message)
 
     @abstractmethod
     def process_message(self, message: dict):
         pass
-
-    def initialize_logger(self):
-        self.logger = Logger()
