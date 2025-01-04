@@ -1,10 +1,10 @@
+# https://chatgpt.com/share/6778c573-77d0-8006-abe3-e0a7b0512b79
 from abc import ABC, abstractmethod
-import os
-import sys
 import json
 import socket
 import subprocess
 import psutil
+
 
 # Define Interfaces
 class ILogger(ABC):
@@ -27,12 +27,6 @@ class IPortHandler(ABC):
         pass
 
 
-class IRPCServer(ABC):
-    @abstractmethod
-    def start_server(self, instance, port: int):
-        pass
-
-
 class IMCPProcessManager(ABC):
     @abstractmethod
     def start_process(self, command: list):
@@ -44,6 +38,20 @@ class IMCPProcessManager(ABC):
 
     @abstractmethod
     def write_input(self, response: dict):
+        pass
+
+
+class ICommunicationStrategy(ABC):
+    @abstractmethod
+    def start(self):
+        pass
+
+    @abstractmethod
+    def receive_message(self, message: dict) -> dict:
+        pass
+
+    @abstractmethod
+    def send_message(self, message: dict, recipient_url: str = None):
         pass
 
 
@@ -74,13 +82,51 @@ class DefaultPortHandler(IPortHandler):
                 print(f"Process on port {port} no longer exists")
 
 
-class XMLRPCServer(IRPCServer):
-    def start_server(self, instance, port: int):
+class RPCCommunicationStrategy(ICommunicationStrategy):
+    def __init__(self, port: int, logger: ILogger):
+        self.port = port
+        self.logger = logger
+
+    def start(self):
+        self.logger.info(f"Starting RPC communication on port {self.port}.")
         from xmlrpc.server import SimpleXMLRPCServer
-        server = SimpleXMLRPCServer(("localhost", port), allow_none=True)
-        server.register_instance(instance)
-        print(f"RPC Server started on port {port}")
+        server = SimpleXMLRPCServer(("localhost", self.port), allow_none=True)
+        server.register_instance(self)
         server.serve_forever()
+
+    def receive_message(self, message: dict) -> dict:
+        # Logic to process RPC message
+        return {"status": "received"}
+
+    def send_message(self, message: dict, recipient_url: str):
+        # Logic to send RPC message
+        self.logger.info(f"Sent RPC message to {recipient_url}: {message}")
+
+
+class StdioCommunicationStrategy(ICommunicationStrategy):
+    def __init__(self, process_manager: IMCPProcessManager, logger: ILogger):
+        self.process_manager = process_manager
+        self.logger = logger
+
+    def start(self):
+        self.logger.info("Starting Stdio communication...")
+        while True:
+            try:
+                line = self.process_manager.read_output()
+                if line:
+                    message = json.loads(line)
+                    response = self.receive_message(message)
+                    self.process_manager.write_input(response)
+            except Exception as e:
+                self.logger.error(f"Error during Stdio communication: {e}")
+
+    def receive_message(self, message: dict) -> dict:
+        # Logic to process stdio message
+        return {"status": "received"}
+
+    def send_message(self, message: dict, recipient_url: str = None):
+        # Not applicable for stdio mode
+        self.logger.info("Send message not supported in stdio mode.")
 
 
 class MCPProcessManager(IMCPProcessManager):
@@ -103,56 +149,78 @@ class MCPProcessManager(IMCPProcessManager):
         self.process.stdin.write(json.dumps(response) + "\n")
         self.process.stdin.flush()
 
+class ICommunicationStrategyFactory(ABC):
+    @abstractmethod
+    def create(self) -> ICommunicationStrategy:
+        pass
+
+class RPCCommunicationStrategyFactory(ICommunicationStrategyFactory):
+    def __init__(self, port: int, logger: ILogger):
+        self.port = port
+        self.logger = logger
+
+    def create(self) -> ICommunicationStrategy:
+        return RPCCommunicationStrategy(port=self.port, logger=self.logger)
+    
+class ICommand(ABC):
+    @abstractmethod
+    def execute(self, message: dict) -> dict:
+        pass
+
+class DefaultCommand(ICommand):
+    def execute(self, message: dict) -> dict:
+        # Default processing logic
+        return {"status": "processed"}
+
+class CustomCommand(ICommand):
+    def execute(self, message: dict) -> dict:
+        # Custom processing logic
+        return {"status": "custom_processed"}
+
 
 # Refactored BaseAgent
 class BaseAgent(ABC):
-    def __init__(self, agent_id: str, server_port: int, communication_mode="rpc",
-                 mcp_server_command=None, logger: ILogger = ConsoleLogger(),
-                 port_handler: IPortHandler = DefaultPortHandler(),
-                 rpc_server: IRPCServer = XMLRPCServer(),
-                 mcp_manager: IMCPProcessManager = MCPProcessManager()):
+    def __init__(self, agent_id: str, strategy_factory: ICommunicationStrategyFactory, logger: ILogger = ConsoleLogger()):
         self.agent_id = agent_id
-        self.server_port = server_port
-        self.communication_mode = communication_mode
+        self.communication_strategy = strategy_factory.create()
+        self.commands = {}
         self.logger = logger
-        self.port_handler = port_handler
-        self.rpc_server = rpc_server
-        self.mcp_manager = mcp_manager
 
-        self.logger.info(f"Initializing BaseAgent with mode: {communication_mode}")
-        if communication_mode == "stdio" and mcp_server_command:
-            self.mcp_manager.start_process(mcp_server_command)
+        self.logger.info(f"Initializing BaseAgent with strategy from factory: {type(strategy_factory).__name__}")
 
     def run(self):
-        self.logger.info(f"Agent {self.agent_id} started in {self.communication_mode} mode.")
-        if self.port_handler.is_port_in_use(self.server_port):
-            self.logger.info(f"Port {self.server_port} is in use. Killing the process...")
-            self.port_handler.kill_process_on_port(self.server_port)
+        self.logger.info(f"Agent {self.agent_id} is starting...")
+        self.communication_strategy.start()
 
-        if self.port_handler.is_port_in_use(self.server_port):
-            self.logger.error(f"Port {self.server_port} is still in use after attempting to kill the process.")
-            return
+    def register_command(self, key: str, command: ICommand):
+        """
+        Register a command with a specific key.
+        """
+        self.commands[key] = command
+        self.logger.info(f"Registered command: {key} with {type(command).__name__}")
 
-        if self.communication_mode == "rpc":
-            self.rpc_server.start_server(self, self.server_port)
-        elif self.communication_mode == "stdio":
-            self.process_stdio_requests()
+    def process_message(self, message: dict) -> dict:
+        """
+        Process a received message by finding and executing the appropriate command.
+        If the command is not found, use DefaultCommand().
+        """
+        command = self.commands.get(message.get("command"), DefaultCommand())
+        self.logger.info(f"Processing message with command: {message.get('command', 'default')}")
+        return command.execute(message)
 
-    def process_stdio_requests(self):
-        if not self.mcp_manager:
-            self.logger.error("MCP process manager not initialized for stdio communication.")
-            return
+    def send_message(self, message: dict, recipient_url: str = None):
+        """
+        Send a message using the communication strategy.
+        """
+        self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
+        self.communication_strategy.send_message(message, recipient_url)
 
-        try:
-            while True:
-                line = self.mcp_manager.read_output()
-                if line:
-                    message = json.loads(line)
-                    response = self.process_message(message)
-                    self.mcp_manager.write_input(response)
-        except Exception as e:
-            self.logger.error(f"Error during stdio processing: {e}")
+    def receive_message(self, message: dict):
+        """
+        Receive a message and process it, then send a response.
+        """
+        self.logger.info(f"Received message: {message}")
+        response = self.process_message(message)
+        self.logger.info(f"Processed message with response: {response}")
+        self.send_message(response)
 
-    @abstractmethod
-    def process_message(self, message: dict):
-        pass
