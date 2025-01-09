@@ -170,6 +170,7 @@ class ICommand(ABC):
 class DefaultCommand(ICommand):
     def execute(self, message: dict) -> dict:
         # Default processing logic
+        print ( "Default processing logic" )
         return {"status": "processed"}
 
 class CustomCommand(ICommand):
@@ -204,8 +205,10 @@ class BaseAgent(ABC):
         Process a received message by finding and executing the appropriate command.
         If the command is not found, use DefaultCommand().
         """
+        print(f"Processing message: {message}")
         command = self.commands.get(message.get("command"), DefaultCommand())
         self.logger.info(f"Processing message with command: {message.get('command', 'default')}")
+        print( f"returning command.execute(message)...")
         return command.execute(message)
 
     def send_message(self, message: dict, recipient_url: str = None):
@@ -219,6 +222,7 @@ class BaseAgent(ABC):
         """
         Receive a message and process it, then send a response.
         """
+        print(f"Received message: {message}")
         self.logger.info(f"Received message: {message}")
         response = self.process_message(message)
         self.logger.info(f"Processed message with response: {response}")

@@ -127,3 +127,27 @@ class BaseAgent( ABC ):
     def initialize_logger(self):
         self.logger = Logger()
 ```
+
+# output
+```bash
+[15:59:00] [ScoreBoard/ScoreBoard.cpp] [: 181] [update()] blink: 1
+[15:59:00] [ScoreBoard/ScoreBoard.cpp] [: 185] [update()] playerToBlink: 0
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 48] [drawBlinkSets()] drawing blink sets...
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 51] [drawBlinkSets()] current aciton: player1 blink
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 58] [drawBlinkSets()] player one set string after cloaker: [  ]
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 147] [drawSetsWithSpacing()] drawing sets with spacing...
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 148] [drawSetsWithSpacing()] playerOneSetString:
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 149] [drawSetsWithSpacing()] playerTwoSetString: 0
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 162] [drawSetsWithSpacing()] drawing player one sets...
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 131] [drawPlayerSets()] before for loop in drawPlayerSets sets.size(): 0
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 132] [drawPlayerSets()] current set: 1
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 133] [drawPlayerSets()] sets.size(): 0
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 164] [drawSetsWithSpacing()] drawing player two sets...
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 131] [drawPlayerSets()] before for loop in drawPlayerSets sets.size(): 1
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 132] [drawPlayerSets()] current set: 1
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 133] [drawPlayerSets()] sets.size(): 1
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 138] [drawPlayerSets()] drawing set: [0]
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 18] [drawTextOnCanvas()] drawing text on canvas: 0 at x: 7 y: 108
+
+[15:59:00] [SetDrawer/SetDrawer.cpp] [: 166] [drawSetsWithSpacing()] done drawing sets with spacing...
+```
