@@ -35,13 +35,13 @@ class CommandExecutor:
             else:
                 print("DEBUG: No working directory specified. Staying put.")
 
-            # Clean up any leftover FIFO or PID file
-            if os.path.exists(fifo_path):
-                print(f"DEBUG: Removing existing FIFO {fifo_path}")
-                os.system(f"rm -f {fifo_path}")
-            if os.path.exists(pid_file):
-                print(f"DEBUG: Removing existing PID file {pid_file}")
-                os.system(f"rm -f {pid_file}")
+            # # Clean up any leftover FIFO or PID file
+            # if os.path.exists(fifo_path):
+            #     print(f"DEBUG: Removing existing FIFO {fifo_path}")
+            #     os.system(f"rm -f {fifo_path}")
+            # if os.path.exists(pid_file):
+            #     print(f"DEBUG: Removing existing PID file {pid_file}")
+            #     os.system(f"rm -f {pid_file}")
 
             # Create the FIFO
             # print("DEBUG: Creating FIFO.")
@@ -126,14 +126,14 @@ class CommandExecutor:
             except Exception as exc:
                 print(f"DEBUG: Could not change back to original directory: {exc}")
             
-            # Remove the FIFO
-            if os.path.exists(fifo_path):
-                print(f"DEBUG: Removing FIFO {fifo_path}")
-                os.system(f"rm -f {fifo_path}")
+            # # Remove the FIFO
+            # if os.path.exists(fifo_path):
+            #     print(f"DEBUG: Removing FIFO {fifo_path}")
+            #     os.system(f"rm -f {fifo_path}")
             
             # Remove the PID file
-            if os.path.exists(pid_file):
-                print(f"DEBUG: Removing PID file {pid_file}")
-                os.system(f"rm -f {pid_file}")
+            # if os.path.exists(pid_file):
+            #     print(f"DEBUG: Removing PID file {pid_file}")
+            #     os.system(f"rm -f {pid_file}")
 
             print("DEBUG: Done cleaning up resources. Exiting execute_command method.")

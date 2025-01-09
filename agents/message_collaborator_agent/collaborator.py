@@ -75,12 +75,13 @@ class CollaboratorAgent( BaseAgent ):
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
         
-        # print( "Collaborator Agent received message:", new_message[ "message" ])
+        print( "Collaborator Agent received message:", new_message[ "message" ])
+
         # try:
         #     message = self.client.beta.threads.messages.create(
         #         self.thread.id,
         #         role="user",
-        #         content=new_message["message"]
+        #         content=new_message["message"] 
         #     )
 
         #     print ( "Start a run with the assistant" )
