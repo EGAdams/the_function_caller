@@ -4,8 +4,8 @@ import os
 import json
 from datetime import datetime
 
-
-sys.path.append('/home/adamsl/the_function_caller/')
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller/' )
 from todo_list_tools.add_todo_subtask_tool.add_todo_subtask_tool import AddTodoSubtaskTool
 from todo_list_tools.storage_handler.storage_handler import StorageHandler
 from todo_list_tools.task.task import Task

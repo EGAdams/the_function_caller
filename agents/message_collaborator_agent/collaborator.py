@@ -5,8 +5,10 @@ from openai import OpenAI
 
 PORT = 8001
 GPT_MODEL = "gpt-3.5-turbo-0125"
-sys.path.append('/home/adamsl/the_function_caller')
 import os
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from AssistantFactory import AssistantFactory
@@ -42,7 +44,7 @@ class CollaboratorAgent( BaseAgent ):
         Process incoming messages, interact with OpenAI assistant, and respond.
         """
         try:
-            command = message.get( "command" )
+            command = self.message.get( "command" )
             print ( "got command in collaborator: ", command )
             if not command:
                 self.logger.error("Invalid message format. Missing 'command'.")
@@ -72,7 +74,8 @@ class CollaboratorAgent( BaseAgent ):
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
-        print( "Collaborator Agent received message:", new_message[ "message" ])
+        
+        # print( "Collaborator Agent received message:", new_message[ "message" ])
         # try:
         #     message = self.client.beta.threads.messages.create(
         #         self.thread.id,
