@@ -82,21 +82,28 @@ class DefaultPortHandler(IPortHandler):
                 print(f"Process on port {port} no longer exists")
 
 
+from xmlrpc.server import SimpleXMLRPCServer
+
+
 class RPCCommunicationStrategy(ICommunicationStrategy):
-    def __init__(self, port: int, logger: ILogger):
+    def __init__(self, agent, port: int, logger: ILogger):
+        self.agent = agent
         self.port = port
         self.logger = logger
 
     def start(self):
         self.logger.info(f"Starting RPC communication on port {self.port}.")
-        from xmlrpc.server import SimpleXMLRPCServer
         server = SimpleXMLRPCServer(("localhost", self.port), allow_none=True)
-        server.register_instance(self)
+
+        # Register the agent as the handler
+        server.register_instance(self.agent)
+        self.logger.info("XML-RPC server is now running.")
         server.serve_forever()
 
     def receive_message(self, message: dict) -> dict:
-        # Logic to process RPC message
-        return {"status": "received"}
+        # Delegate to the agent's receive_message method
+        self.logger.info("RPCCommunicationStrategy received a message.")
+        return self.agent.receive_message(message)
 
     def send_message(self, message: dict, recipient_url: str):
         # Logic to send RPC message
@@ -159,8 +166,8 @@ class RPCCommunicationStrategyFactory(ICommunicationStrategyFactory):
         self.port = port
         self.logger = logger
 
-    def create(self) -> ICommunicationStrategy:
-        return RPCCommunicationStrategy(port=self.port, logger=self.logger)
+    def create(self, agent) -> ICommunicationStrategy:
+        return RPCCommunicationStrategy(agent=agent, port=self.port, logger=self.logger)
     
 class ICommand(ABC):
     @abstractmethod
@@ -183,7 +190,7 @@ class CustomCommand(ICommand):
 class BaseAgent(ABC):
     def __init__(self, agent_id: str, strategy_factory: ICommunicationStrategyFactory, logger: ILogger = ConsoleLogger()):
         self.agent_id = agent_id
-        self.communication_strategy = strategy_factory.create()
+        self.communication_strategy = strategy_factory.create( self )
         self.commands = {}
         self.logger = logger
 

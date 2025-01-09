@@ -5,29 +5,33 @@ import xmlrpc.client
 CODER_AGENT_URL = "http://localhost:8003"
 
 def chat_with_coder_agent():
+    """
+    Chat with the CoderAgent via XML-RPC.
+    """
     try:
         # Connect to the CoderAgent's XML-RPC server
-        remote_agent = xmlrpc.client.ServerProxy( CODER_AGENT_URL )
-
-        print( "Connected to CoderAgent at:", CODER_AGENT_URL )
+        remote_agent = xmlrpc.client.ServerProxy(CODER_AGENT_URL)
+        print(f"Connected to CoderAgent at: {CODER_AGENT_URL}")
 
         while True:
             # Get user input
-            user_message = input( "You: " )
+            user_message = input("You: ").strip()
             if user_message.lower() in {"exit", "quit"}:
                 print( "Exiting chat." )
                 break
 
             # Send the message to the agent
             message = { "command": "process_message", "message": user_message }
-            print ( "Sending message:", message )
-            response = remote_agent.receive_message( message )
+            print( f"Sending message: {message}" )
+            # Get and display the response
+            response = remote_agent.receive_message(message)
+            agent_response = response.get("response", "No response")
+            print(f"CoderAgent: {agent_response}")
 
-            # Display the agent's response
-            print( "CoderAgent:", response.get("response", "No response" ))
-
+    except xmlrpc.client.Fault as fault:
+        print(f"XML-RPC Fault: {fault}")
     except Exception as e:
-        print( "Error during chat:", e )
+        print(f"Error during chat: {e}")
 
 if __name__ == "__main__":
     chat_with_coder_agent()
