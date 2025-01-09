@@ -1,17 +1,26 @@
-# https://chatgpt.com/share/6778c573-77d0-8006-abe3-e0a7b0512b79
+import os, sys
+home_directory = os.path.expanduser( "~" )
+sys.path.append( home_directory + '/the_function_caller' )
 import xmlrpc.client
+from threading import Thread
+from test_agent import run_test_agent  # Import the TestAgent runner
 
-# Replace with the CoderAgent's server details
 CODER_AGENT_URL = "http://localhost:8003"
+TEST_AGENT_URL = "http://localhost:8004"  # URL of the TestAgent
 
 def chat_with_coder_agent():
     """
-    Chat with the CoderAgent via XML-RPC.
+    Chat with the CoderAgent via XML-RPC and allow receiving messages via TestAgent.
     """
     try:
         # Connect to the CoderAgent's XML-RPC server
-        remote_agent = xmlrpc.client.ServerProxy(CODER_AGENT_URL, allow_none=True)
+        coder_agent = xmlrpc.client.ServerProxy(CODER_AGENT_URL, allow_none=True)
         print(f"Connected to CoderAgent at: {CODER_AGENT_URL}")
+
+        # Start the TestAgent in a separate thread
+        test_agent_thread = Thread(target=run_test_agent, daemon=True)
+        test_agent_thread.start()
+        print(f"TestAgent is running at: {TEST_AGENT_URL}")
 
         while True:
             # Get user input
@@ -20,26 +29,18 @@ def chat_with_coder_agent():
                 print("Exiting chat.")
                 break
 
-            # Send the message to the agent
+            # Send the message to the CoderAgent
             message = {"command": "process_message", "message": user_message}
             print(f"Sending message: {message}")
-
             try:
-                # Get and display the response
-                response = remote_agent.receive_message(message)
-                if isinstance(response, dict):
-                    agent_response = response.get("response", "No response")
-                else:
-                    agent_response = str(response)  # Ensure any unexpected response is displayed as a string
+                response = coder_agent.receive_message(message)
+                agent_response = response.get("response", "No response")
                 print(f"CoderAgent: {agent_response}")
-
             except xmlrpc.client.Fault as fault:
                 print(f"CoderAgent returned an XML-RPC Fault: {fault}")
             except Exception as e:
                 print(f"Error while sending message to CoderAgent: {e}")
 
-    except xmlrpc.client.Fault as fault:
-        print(f"XML-RPC Fault: {fault}")
     except Exception as e:
         print(f"Error during chat setup: {e}")
 
