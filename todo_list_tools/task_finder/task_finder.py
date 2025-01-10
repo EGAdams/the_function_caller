@@ -2,7 +2,8 @@ import sys
 import os
 
 # Add the parent directory of the current file ( task_list) to the system path
-sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools/' )
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller/todo_list_tools' )
 
 # Now you can import TaskList from task_list.py and Task from task.py
 from task_finder.task_iterator.task_iterator import TaskIterator

@@ -5,8 +5,10 @@ from openai import OpenAI
 
 PORT = 8001
 GPT_MODEL = "gpt-3.5-turbo-0125"
-sys.path.append('/home/adamsl/the_function_caller')
 import os
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from AssistantFactory import AssistantFactory
@@ -40,11 +42,41 @@ class CollaboratorAgent( BaseAgent ):
     def process_message(self, new_message: dict):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
-
-        note Error: Failed to send message: <Fault 1: "<class 'TypeError'>:string indices must be integers"> means
-        that new_message["message"] is not a string, but a dict.
         """
-        print( f"Collaborator Agent received message: {new_message}" )
+        try:
+            command = self.message.get( "command" )
+            print ( "got command in collaborator: ", command )
+            if not command:
+                self.logger.error("Invalid message format. Missing 'command'.")
+                return "Invalid message format. Missing 'command'."
+            
+            # Coder Agent
+            if command.startswith("coder:"):
+                response = self.send_message("coder", {"message": command[len("coder:"):].strip()})
+                return response
+            
+            # Planner Agent
+            elif command.startswith("planner:"):
+                response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
+                return response
+
+            # Prompt Agent
+            elif command.startswith("prompt:"):
+                response = self.send_message("prompt", {"message": command[len("prompt:"):].strip()})
+                return response
+            
+            # Unknown Agent
+            else:
+                # Handle other commands or respond directly
+                self.logger.info(f"Unknown command: {command}")
+                return "Unknown command"
+            
+        except Exception as e:
+            self.logger.error(f"Error processing message: {e}")
+            return f"Error: {str(e)}"
+        
+        print( "Collaborator Agent received message:", new_message[ "message" ])
+
         # try:
         #     message = self.client.beta.threads.messages.create(
         #         self.thread.id,

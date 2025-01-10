@@ -2,7 +2,9 @@
 # ShowTodoListCommand implements IMenuCommand
 #
 import sys
-sys.path.append('/home/adamsl/the_function_caller/')
+import os
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller' )
 from todo_list_tools.python_menu_interface.menu_command.i_menu_command import IMenuCommand
 from todo_list_tools.task.task import Task
 
@@ -35,7 +37,10 @@ class ShowTodoListCommand(IMenuCommand):
                 print(task.display_tree())
                 markdown_output = self.convert_tree_to_markdown( task.display_tree())
                 # put the markdown output in a file
-                with open( "/home/adamsl/the_function_caller/todo_list_tools/todo_list.md", "w" ) as f:
+                import os
+                home_directory = os.path.expanduser("~")
+                sys.path.append( home_directory + '/the_function_caller/todo_list_tools' )
+                with open( "todo_list.md", "w" ) as f:
                     f.write( markdown_output )
         else:
             print("No tasks in the TODO list.")

@@ -17,7 +17,7 @@ def main():
     if len(sys.argv) > 1:
         json_file_path = sys.argv[ 1 ]
     else:
-        json_file_path = "/home/adamsl/the_function_caller/todo_list_tools/task/task_config.json"
+        json_file_path = "/home/eg1972/the_function_caller/todo_list_tools/task/task_config.json"
         
     # Read the JSON file
     with open( json_file_path, 'r') as file:

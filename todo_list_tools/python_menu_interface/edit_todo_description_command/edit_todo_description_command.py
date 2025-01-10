@@ -3,7 +3,9 @@
 #
 import time
 import sys
-sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools' )
+import os
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller/todo_list_tools' )
 from python_menu_interface.menu_command.i_menu_command import IMenuCommand
 
 class EditTodoDescriptionCommand( IMenuCommand ):  # The command uses the tool

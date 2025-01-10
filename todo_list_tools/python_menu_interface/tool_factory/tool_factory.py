@@ -3,7 +3,8 @@
 #
 import sys
 import os
-PROJECT_ROOT = "/home/adamsl/the_function_caller/todo_list_tools"
+home_directory = os.path.expanduser("~")
+PROJECT_ROOT = home_directory + "/the_function_caller/todo_list_tools"
 
 # Add the parent directory of the current script to sys.path
 print( "appending path: " + PROJECT_ROOT)

@@ -1,7 +1,7 @@
 import sys
 import os
-
-sys.path.append( '/home/adamsl/the_function_caller/todo_list_tools' )
+home_directory = os.path.expanduser("~")
+sys.path.append( home_directory + '/the_function_caller/todo_list_tools' )
 
 class TaskIterator:
     """Iterates through the tasks based on task ID parts."""
