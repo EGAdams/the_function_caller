@@ -13,21 +13,22 @@ class EchoCommand(ICommand):
         Simple command to echo the received message back for testing.
         """
         print(f"TestAgent received message: {message}")
-        return {"status": "success", "response": f"Echo: {message.get('message', '')}"}
+        response = message.get('response', '')
+        return { "status": "success", "response": response }
 
 class TestAgent(BaseAgent):
     def __init__(self, agent_id: str, port: int, logger=None):
         strategy_factory = RPCCommunicationStrategyFactory(port=port, logger=logger)
         super().__init__(agent_id, strategy_factory, logger or ConsoleLogger())
         # Register commands
-        self.register_command("echo", EchoCommand())
+        self.register_command( "process_message", EchoCommand())
 
     def receive_message(self, message: dict) -> dict:
         """
         Handle incoming messages from other agents.
         """
         print(f"TestAgent received message: {message}")
-        return self.process_message(message)
+        return self.process_message(message) # Where does this go?
 
 def run_test_agent():
     """

@@ -4,7 +4,10 @@ import json
 import socket
 import subprocess
 import psutil
+import xmlrpc
 
+from commands.command.i_command import ICommand
+from xmlrpc.server import SimpleXMLRPCServer
 
 # Define Interfaces
 class ILogger(ABC):
@@ -16,7 +19,6 @@ class ILogger(ABC):
     def error(self, message: str):
         pass
 
-
 class IPortHandler(ABC):
     @abstractmethod
     def is_port_in_use(self, port: int) -> bool:
@@ -25,7 +27,6 @@ class IPortHandler(ABC):
     @abstractmethod
     def kill_process_on_port(self, port: int):
         pass
-
 
 class IMCPProcessManager(ABC):
     @abstractmethod
@@ -40,7 +41,6 @@ class IMCPProcessManager(ABC):
     def write_input(self, response: dict):
         pass
 
-
 class ICommunicationStrategy(ABC):
     @abstractmethod
     def start(self):
@@ -54,15 +54,12 @@ class ICommunicationStrategy(ABC):
     def send_message(self, message: dict, recipient_url: str = None):
         pass
 
-
-# Implementations
 class ConsoleLogger(ILogger):
     def info(self, message: str):
         print(f"INFO: {message}")
 
     def error(self, message: str):
         print(f"*** ERROR: {message} ***")
-
 
 class DefaultPortHandler(IPortHandler):
     def is_port_in_use(self, port: int) -> bool:
@@ -80,10 +77,6 @@ class DefaultPortHandler(IPortHandler):
                 print(f"Access denied when attempting to kill process on port {port}")
             except psutil.NoSuchProcess:
                 print(f"Process on port {port} no longer exists")
-
-
-from xmlrpc.server import SimpleXMLRPCServer
-
 
 class RPCCommunicationStrategy(ICommunicationStrategy):
     def __init__(self, agent, port: int, logger: ILogger):
@@ -107,8 +100,10 @@ class RPCCommunicationStrategy(ICommunicationStrategy):
 
     def send_message(self, message: dict, recipient_url: str):
         # Logic to send RPC message
+        # Connect to the CoderAgent's XML-RPC server
+        recipient_agent = xmlrpc.client.ServerProxy( recipient_url, allow_none=True )
+        recipient_agent.receive_message( message )
         self.logger.info(f"Sent RPC message to {recipient_url}: {message}")
-
 
 class StdioCommunicationStrategy(ICommunicationStrategy):
     def __init__(self, process_manager: IMCPProcessManager, logger: ILogger):
@@ -134,7 +129,6 @@ class StdioCommunicationStrategy(ICommunicationStrategy):
     def send_message(self, message: dict, recipient_url: str = None):
         # Not applicable for stdio mode
         self.logger.info("Send message not supported in stdio mode.")
-
 
 class MCPProcessManager(IMCPProcessManager):
     def __init__(self):
@@ -168,25 +162,18 @@ class RPCCommunicationStrategyFactory(ICommunicationStrategyFactory):
 
     def create(self, agent) -> ICommunicationStrategy:
         return RPCCommunicationStrategy(agent=agent, port=self.port, logger=self.logger)
-    
-class ICommand(ABC):
-    @abstractmethod
-    def execute(self, message: dict) -> dict:
-        pass
 
-class DefaultCommand(ICommand):
+class DefaultCommand( ICommand ):
     def execute(self, message: dict) -> dict:
         # Default processing logic
         print ( "Default processing logic" )
         return {"status": "processed"}
 
-class CustomCommand(ICommand):
+class CustomCommand( ICommand ):
     def execute(self, message: dict) -> dict:
         # Custom processing logic
         return {"status": "custom_processed"}
 
-
-# Refactored BaseAgent
 class BaseAgent(ABC):
     def __init__(self, agent_id: str, strategy_factory: ICommunicationStrategyFactory, logger: ILogger = ConsoleLogger()):
         self.agent_id = agent_id
@@ -216,22 +203,22 @@ class BaseAgent(ABC):
         command = self.commands.get(message.get("command"), DefaultCommand())
         self.logger.info(f"Processing message with command: {message.get('command', 'default')}")
         print( f"returning command.execute(message)...")
-        return command.execute(message)
+        return command.execute( message )
 
     def send_message(self, message: dict, recipient_url: str = None):
         """
         Send a message using the communication strategy.
         """
         self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
-        self.communication_strategy.send_message(message, recipient_url)
+        self.communication_strategy.send_message( message, recipient_url )
 
     def receive_message(self, message: dict):
         """
         Receive a message and process it, then send a response.
         """
         print(f"Received message: {message}")
-        self.logger.info(f"Received message: {message}")
+        # self.logger.info(f"Received message: {message}")
         response = self.process_message(message)
-        self.logger.info(f"Processed message with response: {response}")
-        self.send_message(response)
+        # self.logger.info(f"Processed message with response: {response}")
+        self.send_message( response, message.get( "author_url" ))
 

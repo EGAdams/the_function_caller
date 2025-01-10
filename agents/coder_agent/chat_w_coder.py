@@ -6,7 +6,7 @@ from threading import Thread
 from test_agent import run_test_agent  # Import the TestAgent runner
 
 CODER_AGENT_URL = "http://localhost:8003"
-TEST_AGENT_URL = "http://localhost:8004"  # URL of the TestAgent
+TEST_AGENT_URL  = "http://localhost:8004"  # URL of the TestAgent
 
 def chat_with_coder_agent():
     """
@@ -30,7 +30,7 @@ def chat_with_coder_agent():
                 break
 
             # Send the message to the CoderAgent
-            message = {"command": "process_message", "message": user_message}
+            message = {"command": "process_message", "author_url":TEST_AGENT_URL, "message": user_message}
             print(f"Sending message: {message}")
             try:
                 response = coder_agent.receive_message(message)

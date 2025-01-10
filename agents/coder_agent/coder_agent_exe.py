@@ -1,13 +1,16 @@
 # The Coder Agent
 # OpenAI Assistant address:
 # https://platform.openai.com/assistants/asst_MGrsitU5ZvgY530WDBLK3ZaS
-import sys
+import sys, os
 import json
+import xmlrpc.client
 from time import sleep
 from openai import OpenAI
 
-import xmlrpc.client
-import os
+import os, sys
+home_directory = os.path.expanduser( "~" )
+sys.path.append( home_directory + '/the_function_caller' )
+from commands.process_message_command.process_message_command import ProcessMessageCommand
 
 PORT                = 8003
 CHEAP_GPT_MODEL     = "gpt-3.5-turbo-0125"
@@ -19,58 +22,14 @@ sys.path.append( home_directory + '/the_function_caller' )
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
-from agents.base_agent.base_agent import BaseAgent, ICommand
+from agents.base_agent.base_agent import BaseAgent
 from agents.base_agent.base_agent import RPCCommunicationStrategyFactory
 from agents.base_agent.base_agent import ConsoleLogger
 
-class ProcessMessageCommand( ICommand ):
-    def __init__( self, coder_agent ):
-        self.coder_agent = coder_agent
-
-    def execute( self, message: dict ) -> dict:
-        """
-        Process incoming messages, interact with OpenAI assistant, and respond.
-        """
-        print( "Processing message for the CoderAgent..." )
-        try:
-            content = message.get( "message", "" )
-            print( f"Received message: {content}" )
-            # Add the incoming message to the thread
-            message = self.coder_agent.client.beta.threads.messages.create(
-                thread_id=self.coder_agent.thread.id,
-                role="user",
-                content=content
-            )
-            
-            print( f"Added message to thread: {message.id}" )
-            # Start a run with the assistant
-            run = self.coder_agent.client.beta.threads.runs.create(
-                thread_id=self.coder_agent.thread.id,
-                assistant_id=self.coder_agent.assistant.id )
-
-            print( f"Started run: {run.id}" )
-            # Wait for the run to complete
-            self.coder_agent.run_spinner.spin( run, self.coder_agent.thread )
-
-            print( f"Run completed: {run.status}" )
-            # Fetch messages from the thread
-            messages = self.coder_agent.client.beta.threads.messages.list( thread_id=self.coder_agent.thread.id )
-            messages_list = list( messages )
-            response = messages_list[-1]  # Get the last message as the response
-
-            # Extract the content from the response
-            response_content = response.content[ 0 ].text.value
-            return { "status": "success", "response": response_content }
-
-        except Exception as e:
-            self.coder_agent.logger.error( f"CoderAgent error processing message: {e}" )
-            return { "status": "error", "message": str( e )}
-
-
 class CoderAgent( BaseAgent ):
-    def __init__( self, agent_id: str, strategy_factory, collaborator_url: str, logger=None ):
+    def __init__( self, agent_id: str, strategy_factory, agent_url: str, logger=None ):
         super().__init__( agent_id, strategy_factory, logger or ConsoleLogger())
-        self.collaborator_url   = collaborator_url
+        self.url                = agent_url
         self.client             = OpenAI()                                  # Create the OpenAI client
         self.pretty_print       = PrettyPrint()
         self.assistant_factory  = AssistantFactory()
@@ -81,9 +40,8 @@ class CoderAgent( BaseAgent ):
             thread_id=self.thread.id,
             role="user",
             content="Make sure to write testable, modular, reusable code for our project." )
-
-        # Register the command to process incoming messages
-        self.register_command( "process_message", ProcessMessageCommand( self ))
+        
+        self.register_command( "process_message", ProcessMessageCommand( self )) # Register the command to process incoming messages
 
     def show_json( self, obj ):
         """
@@ -98,14 +56,14 @@ def main():
     """
     Main entry point for the CoderAgent.
     """
-    collaborator_url = "http://localhost:8001"
+    agent_url = "http://localhost:" + str( PORT )
     logger = ConsoleLogger()
     strategy_factory = RPCCommunicationStrategyFactory( port=PORT, logger=logger )
 
     coder_agent = CoderAgent(
         agent_id="coder_agent",
         strategy_factory=strategy_factory,
-        collaborator_url=collaborator_url,
+        agent_url=agent_url,
         logger=logger )
 
     try:
