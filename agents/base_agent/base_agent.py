@@ -101,9 +101,12 @@ class RPCCommunicationStrategy(ICommunicationStrategy):
     def send_message(self, message: dict, recipient_url: str):
         # Logic to send RPC message
         # Connect to the CoderAgent's XML-RPC server
+        print(f"Inside class: {self.__class__.__name__} send_message method" )
+        print(f"creating xmlrpc.client.ServerProxy for {recipient_url}")
         recipient_agent = xmlrpc.client.ServerProxy( recipient_url, allow_none=True )
+        print(f"calling receive_message on Agent with url: {recipient_url}")
         recipient_agent.receive_message( message )
-        self.logger.info(f"Sent RPC message to {recipient_url}: {message}")
+        self.logger.info(f"done sending RPC message to {recipient_url}: {message}")
 
 class StdioCommunicationStrategy(ICommunicationStrategy):
     def __init__(self, process_manager: IMCPProcessManager, logger: ILogger):
@@ -201,14 +204,17 @@ class BaseAgent(ABC):
         """
         print(f"Processing message: {message}")
         command = self.commands.get(message.get("command"), DefaultCommand())
+        print( f"Inheriting class: {self.__class__.__name__}" )
         self.logger.info(f"Processing message with command: {message.get('command', 'default')}")
         print( f"returning command.execute(message)...")
-        return command.execute( message )
+        return_message = command.execute( message )
+        return return_message
 
     def send_message(self, message: dict, recipient_url: str = None):
         """
         Send a message using the communication strategy.
         """
+        print(f"Inheriting class: {self.__class__.__name__}")
         self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
         self.communication_strategy.send_message( message, recipient_url )
 
@@ -217,8 +223,13 @@ class BaseAgent(ABC):
         Receive a message and process it, then send a response.
         """
         print(f"Received message: {message}")
+        # print the name of the class that is inheriting from BaseAgent
+        print(f"Inheriting class: {self.__class__.__name__}")
         # self.logger.info(f"Received message: {message}")
         response = self.process_message(message)
-        # self.logger.info(f"Processed message with response: {response}")
-        self.send_message( response, message.get( "author_url" ))
+        print(f"Inheriting class: {self.__class__.__name__}")
+        author_url = message.get( "author_url" )
+        next_command = message.get( "command" )
+        print( f"sending message from {self.agent_id} to {author_url} with command: {next_command}" )
+        self.send_message( response, author_url )
 

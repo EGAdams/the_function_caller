@@ -56,9 +56,9 @@ def main():
     """
     Main entry point for the CoderAgent.
     """
-    agent_url = "http://localhost:" + str( PORT )
-    logger = ConsoleLogger()
-    strategy_factory = RPCCommunicationStrategyFactory( port=PORT, logger=logger )
+    agent_url           = "http://localhost:" + str( PORT )
+    logger              = ConsoleLogger()
+    strategy_factory    = RPCCommunicationStrategyFactory( port=PORT, logger=logger )
 
     coder_agent = CoderAgent(
         agent_id="coder_agent",

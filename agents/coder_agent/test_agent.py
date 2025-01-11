@@ -12,9 +12,9 @@ class EchoCommand(ICommand):
         """
         Simple command to echo the received message back for testing.
         """
-        print(f"TestAgent received message: {message}")
         response = message.get('response', '')
-        return { "status": "success", "response": response }
+        # return { "status": "success", "response": response }
+        print(f"TestAgent received message: { response }")
 
 class TestAgent(BaseAgent):
     def __init__(self, agent_id: str, port: int, logger=None):

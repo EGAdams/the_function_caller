@@ -10,11 +10,11 @@ TEST_AGENT_URL  = "http://localhost:8004"  # URL of the TestAgent
 
 def chat_with_coder_agent():
     """
-    Chat with the CoderAgent via XML-RPC and allow receiving messages via TestAgent.
+    Chat with the remote CoderAgent via XML-RPC and allow receiving messages via TestAgent.
     """
     try:
-        # Connect to the CoderAgent's XML-RPC server
-        coder_agent = xmlrpc.client.ServerProxy(CODER_AGENT_URL, allow_none=True)
+        # Connect to the remote CoderAgent's XML-RPC server
+        remote_coder_agent = xmlrpc.client.ServerProxy(CODER_AGENT_URL, allow_none=True)
         print(f"Connected to CoderAgent at: {CODER_AGENT_URL}")
 
         # Start the TestAgent in a separate thread
@@ -33,7 +33,15 @@ def chat_with_coder_agent():
             message = {"command": "process_message", "author_url":TEST_AGENT_URL, "message": user_message}
             print(f"Sending message: {message}")
             try:
-                response = coder_agent.receive_message(message)
+                response = remote_coder_agent.receive_message(message)    # the coder agent receives the message
+                                                                          # the coder agent sends the message to the test agent
+                                                                          # using its send message tool.
+                # if the response is None, continue to the next iteration 
+                if response is None:                   # jan_11_53 response should not be none here. ## it is supposed to be because
+                                                       # we have no return address. jan_11_53
+
+                    # print( "*** ERROR: no response from Agent. Continuing anyway... ***" )
+                    continue
                 agent_response = response.get("response", "No response")
                 print(f"CoderAgent: {agent_response}")
             except xmlrpc.client.Fault as fault:

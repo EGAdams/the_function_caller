@@ -69,8 +69,26 @@ planner_agent_path     = os.path.join( base_dir, "agents/planner_agent"         
 message_collab_path    = os.path.join( base_dir, "agents/message_collaborator_agent"         )
 
 
-path = os.path.join( agents_file_path, "start_collaborating.py"             )
-process_python_file( path, output_file_path, append_mode=False              )
+
+# path = os.path.join( planner_agent_path, "planner_agent_exe.py"             )
+# process_python_file( path, output_file_path, append_mode=True               )
+
+# path = os.path.join( message_collab_path, "collaborator.py"                 )
+# process_python_file( path, output_file_path, append_mode=True               )
+
+# path = os.path.join( agents_file_path, "start_collaborating.py"             )
+# process_python_file( path, output_file_path, append_mode=False              )
+
+# Construct the full path
+path = os.path.join(agents_file_path, "package_code_begin.md")
+
+# Open the output file in write mode
+with open(output_file_path, 'w') as output_file:
+    # Read the contents of package_code_begin.md and write them to the output file
+    with open(path, 'r') as file:
+        output_file.write(file.read())
+        
+# process_python_file( path, output_file_path, append_mode=False              )
 
 path = os.path.join( base_agent_path, "base_agent.py"                       )
 process_python_file( path, output_file_path, append_mode=True               )
@@ -78,8 +96,8 @@ process_python_file( path, output_file_path, append_mode=True               )
 path = os.path.join( coder_agent_path, "coder_agent_exe.py"                 )
 process_python_file( path, output_file_path, append_mode=True               )
 
-path = os.path.join( planner_agent_path, "planner_agent_exe.py"             )
+path = os.path.join( coder_agent_path, "test_agent.py"                      )
 process_python_file( path, output_file_path, append_mode=True               )
 
-path = os.path.join( message_collab_path, "collaborator.py"                 )
+path = os.path.join( coder_agent_path, "chat_w_coder.py"                    )
 process_python_file( path, output_file_path, append_mode=True               )
