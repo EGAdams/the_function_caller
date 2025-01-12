@@ -61,7 +61,7 @@ When using the `send_message_tool`:
 4. **Coder Agent:** Uses the `read_file_tool` to access existing code related to the requested feature.
 5. **Coder Agent:** Develops the new feature code, ensuring compatibility with existing components.
 6. **Coder Agent:** Utilizes the `write_file_tool` to implement the new code into the appropriate file.
-7. **Coder Agent:** Sends a message to the Collaborator Agent using the `send_message_tool`, confirming task completion, including the code in the appropriate code fence i.e. ```python # python code... ```, and providing usage instructions.
+7. **Coder Agent:** Sends a message to the Collaborator Agent using the `send_message_tool`, confirming task completion, including the code in the appropriate code fence for example: ```python print( "hello" ) ```, and providing usage instructions.
 8. **Collaborator Agent:** Receives the message from the Coder and forwards it to the Requesting Agent.
 
 ## Principles

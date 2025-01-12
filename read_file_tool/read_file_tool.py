@@ -15,19 +15,13 @@ class ReadFileTool:
 
     def schema(): 
         return {
-            "name": "read_file_tool",
+            "name": "read_file",
             "description": "This tool reads a file and returns the contents.",
             "strict": False,
             "parameters": {
                 "properties": {
                 "file_path": {
                     "description": "Path to the file to read with extension.",
-                    "examples": [
-                    "/home/adamsl/the_function_caller/info.txt",
-                    "./file.txt",
-                    "./file.json",
-                    "../../file.py"
-                    ],
                     "title": "File Path",
                     "type": "string"
                 }
@@ -39,16 +33,22 @@ class ReadFileTool:
             }
         }
 
-    def read_file( self, filename ):
-        """Reads content from a specified file.
+    def read_file(self, file_path):
+        """
+        Reads content from a specified file.
         
         Args:
-            filename (str): The name of the file to read from.
+            file_path (str): The path of the file to read.
         
         Returns:
             str: The content of the file.
         """
-        # morph the file name since the assistant seems to be looking at it's sandbox
-        filename = filename.replace( '/mnt/data/', '' )
-        with open( filename, 'r' ) as file:
-            return file.read()
+        # Sanitize file path for sandbox environment
+        file_path = file_path.replace('/mnt/data/', '')
+        print(f"Debug: Sanitized file_path = {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                return file.read()
+        except Exception as e:
+            print(f"Error reading file: {e}")
+            return f"Error: {e}"

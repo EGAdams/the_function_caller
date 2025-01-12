@@ -28,18 +28,18 @@ class TestAgent(BaseAgent):
         Handle incoming messages from other agents.
         """
         print(f"TestAgent received message: {message}")
-        return self.process_message(message) # Where does this go?
+        return self.process_message(message)
 
-def run_test_agent():
-    """
-    Run the TestAgent to receive messages.
-    """
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the TestAgent.")
+    parser.add_argument("--port", type=int, default=8004, help="Port for the TestAgent.")
+    args = parser.parse_args()
+
     agent_id = "test_agent"
     port = 8004  # Port for the TestAgent
     logger = ConsoleLogger()
-    test_agent = TestAgent(agent_id=agent_id, port=port, logger=logger)
-    test_agent.logger.info("TestAgent is running...")
+    test_agent = TestAgent(agent_id=agent_id, port=args.port, logger=logger)
+    test_agent.logger.info(f"TestAgent is running on port {args.port}...")
     test_agent.run()
-
-if __name__ == "__main__":
-    run_test_agent()

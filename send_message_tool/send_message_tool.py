@@ -28,59 +28,27 @@ class SendMessageTool:
         """
         return {
             "name": "send_message",
-            "description": "Allows the AI to send messages to other agents using their ID.",
+            "description": "Sends a message to a specified agent by recipient URL.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "recipient_id": {
-                        "type": "string",
-                        "description": "The ID of the recipient agent."
-                    },
-                    "packaged_message": {
-                        "type": "object",
-                        "description": "The packaged message (Python dict) containing message details.",
-                        "properties": {
-                            "message": {
-                                "type": "string",
-                                "description": "The content of the message to send."
-                            },
-                            "author": {
-                                "type": "object",
-                                "description": "Details of the message's author.",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "The name of the author."
-                                    },
-                                    "url": {
-                                        "type": "string",
-                                        "description": "The URL of the author."
-                                    }
-                                },
-                                "required": ["name", "url"]
-                            },
-                            "recipient": {
-                                "type": "object",
-                                "description": "Details of the message's recipient.",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "The name of the recipient."
-                                    },
-                                    "url": {
-                                        "type": "string",
-                                        "description": "The URL of the recipient."
-                                    }
-                                },
-                                "required": ["name", "url"]
-                            }
-                        },
-                        "required": ["message", "author", "recipient"]
-                    }
+                "recipient_url": {
+                    "type": "string",
+                    "description": "The URL of the recipient agent."
                 },
-                "required": ["recipient_id", "packaged_message"]
+                "message": {
+                    "type": "string",
+                    "description": "The content of the message to send."
+                },
+                "author_url": {
+                    "type": "string",
+                    "description": "The URL of the author sending the message."
+                }
+                },
+                "required": ["recipient_url", "message", "author_url"]
             }
-        }   
+        }
+
     def send_message(self, recipient_id: str, packaged_message: dict):
         """
         Sends a packaged message (Python dict) to the specified recipient via their ID.
@@ -92,28 +60,25 @@ class SendMessageTool:
         Returns:
             str: Success or error message.
         """
+        # Lookup recipient URL
         recipient_url = self.agents_urls.get(recipient_id)
         if not recipient_url:
             return f"Error: Unknown recipient ID '{recipient_id}'."
 
         try:
+            # Create an XML-RPC connection to the recipient
             with xmlrpc.client.ServerProxy(recipient_url) as receiving_agent:
                 print(f"Sending message to {recipient_id} at {recipient_url}: {packaged_message}")
                 
-                # Send the packaged message (Python dict) to the recipient
-                receiving_agent_response = receiving_agent.receive_message(packaged_message)
-                
-                # Send the response to the collaborator, if needed
-                with xmlrpc.client.ServerProxy(self.agents_urls["collaborator"]) as collaborator:
-                    # Modify the message for the collaborator to include the recipient ID
-                    collaborator_message = {
-                        **packaged_message,
-                        "recipient": {"name": recipient_id, "response": receiving_agent_response}
-                    }
-                    collaborator.receive_message(collaborator_message)
+                # Send the message to the recipient
+                response = receiving_agent.receive_message(packaged_message)
 
-                return f"Message successfully sent to {recipient_id} and routed to collaborator."
+                # Log the response (for debugging)
+                print(f"Received response from {recipient_id}: {response}")
+
+                return f"Message successfully sent to {recipient_id}. Response: {response}"
 
         except Exception as e:
             return f"Error: Failed to send message to {recipient_id}: {e}"
+
 
