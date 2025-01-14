@@ -2,7 +2,7 @@
 You are an expert Python programmer.
 
 # Instructions
-
+Analyze the following code and pay particular attention to how tools are used.
 
 ```python
 class ILogger(ABC):
@@ -384,3 +384,170 @@ def chat_with_agents():
         print(f"Error during chat setup: {e}")
 ```
 
+```python
+class ICommand( ABC ):
+    @abstractmethod
+    def execute( self, message: dict ) -> dict:
+        pass
+```
+
+```python
+class ProcessMessageCommand( ICommand ):
+    def __init__( self, coder_agent ):
+        self.coder_agent = coder_agent
+
+    def execute( self, message: dict ) -> dict:
+        """
+        Process incoming messages, interact with OpenAI assistant, and respond.
+        """
+        print( "Processing message for the CoderAgent..." )
+        try:
+            author_url = message.get( "author_url", "" )
+            print( f"Author URL: {author_url}" )
+
+            content = message.get( "message", "" )
+            print( f"Received message: {content}" )
+            # Add the incoming message to the thread
+            message = self.coder_agent.client.beta.threads.messages.create(
+                thread_id=self.coder_agent.thread.id,
+                role="user",
+                content=content
+            )
+            
+            print( f"Added message to thread: {message.id}" )
+            # Start a run with the assistant
+            run = self.coder_agent.client.beta.threads.runs.create(
+                thread_id=self.coder_agent.thread.id,
+                assistant_id=self.coder_agent.assistant.id )
+
+            print( f"Started run: {run.id}" )
+            # Wait for the run to complete
+            self.coder_agent.run_spinner.spin( run, self.coder_agent.thread )
+
+            print( f"Run completed: {run.status}" )
+            # Fetch messages from the thread
+            messages = self.coder_agent.client.beta.threads.messages.list( thread_id=self.coder_agent.thread.id )
+            messages_list = list( messages )    # Get the last message as the response 
+            response = messages_list[ 0 ]       # now the last message is in the [ 0 ] position for some reason
+
+            # Extract the content from the response ## add "command": "process_message" back so that it is routed to the correct command!
+            response_content = response.content[ 0 ].text.value
+            return { "status": "success", "response": response_content, "author_url": author_url, "command": "process_message" }
+
+        except Exception as e:
+            self.coder_agent.logger.error( f"CoderAgent error processing message: {e}" )
+            return { "status": "error", "message": str( e )}
+```
+
+```python
+class ReadFileTool:
+    """
+    Provides a tool for reading the contents of a file.
+    
+    The `ReadFileTool` class exposes a `read_file` function that can be used to read the contents of a file. The function takes a `file_path` parameter that specifies the path and the name of the file to read.
+    
+    The `schema` method returns a JSON schema that describes the `read_file` function, including its parameters and return value.
+    """
+    
+    def __init__( self ):
+        print ( "initialaizing" )
+
+    def schema(): 
+        return {
+            "name": "read_file",
+            "description": "This tool reads a file and returns the contents.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "file_path": {
+                    "description": "Path to the file to read with extension.",
+                    "title": "File Path",
+                    "type": "string"
+                }
+                },
+                "required": [
+                "file_path"
+                ],
+                "type": "object"
+            }
+        }
+
+    def read_file(self, file_path):
+        """
+        Reads content from a specified file.
+        
+        Args:
+            file_path (str): The path of the file to read.
+        
+        Returns:
+            str: The content of the file.
+        """
+        # Sanitize file path for sandbox environment
+        file_path = file_path.replace('/mnt/data/', '')
+        print(f"Debug: Sanitized file_path = {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                return file.read()
+        except Exception as e:
+            print(f"Error reading file: {e}")
+            return f"Error: {e}"
+```
+
+```python
+class WriteFileTool:
+    """
+    Provides a tool for writing the contents of a file.
+    The `WriteFileTool` class exposes a `write_file` function that can be used to write a string to a file with the specified filename.
+    The `schema` method returns a JSON schema that describes the parameters expected by the `write_file` function.
+    """
+    
+    def __init__( self ):
+        print ( "initialaizing" )
+
+    @staticmethod
+    def schema():
+        return {
+            "name": "write_file",
+            "description": "Allows you to write new files.",
+            "strict": False,
+            "parameters": {
+                "properties": {
+                "chain_of_thought": {
+                    "description": "Please think step-by-step about what needs to be written to the file in order for the program to match the requirements.",
+                    "title": "Chain Of Thought",
+                    "type": "string"
+                },
+                "file_path": {
+                    "description": "The full path of the file to write.",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "The full content of the file to write. Content must not be truncated and must represent a correct functioning program with all the imports defined.",
+                    "type": "string"
+                }
+                },
+                "required": [
+                "file_path",
+                "content"
+                ],
+                "type": "object"
+            }
+        }
+    
+    def write_file( self, file_path, content ):
+        """Writes content to a specified file.
+        
+        Args:
+            file_path (str): The full path of the file to write to.
+            content (str): The content to write to the file.
+        """
+        
+        print ( "opening file with arguments: " + file_path + " and " + content )
+        with open( file_path, 'w' ) as file:
+            file.write( content )
+
+        return "File written successfully."
+```
+
+# Your Task
+We need a tool that will create directoriies.  Please create this tool for our Agents to use.
