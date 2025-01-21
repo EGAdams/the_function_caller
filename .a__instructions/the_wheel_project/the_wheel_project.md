@@ -16,7 +16,7 @@ what is the next fastest thing to do to make us more efficient?
 
 ### use a linux style menu to start the next task, spirialing our way out to more tasks.
 so we have already created a Linux style menu in Python that helps us quickly start a task.
-then we have a menu to start another task.  I'm pretty sure that I am faster on a terminal than i am a gui, that's why we are using this Linux style menu.   At this point, we would press something like "s" to start the coder agent or "e" to enter chat a chat with an agent that has already started."
+then we have a menu to start another task.  I'm pretty sure that I am faster on a terminal than i am a gui, that's why we are using this Linux style menu.   At this point, we would press something like "s" to start the coder agent or "e" to enter a chat with an agent that has already started."
 
 Now we have to ask ourselves, what other traits would there be to have in a system that is supposed to make us more efficient? 
 
