@@ -21,7 +21,7 @@ class CreateDirectoryTool:
             "parameters": {
                 "properties": {
                     "directory_path": {
-                        "description": "The complete path to the directory, including the file name and extension, to be created.",
+                        "description": "The complete path of the directory to be created.",
                         "title": "Directory Path",
                         "type": "string"
                     }

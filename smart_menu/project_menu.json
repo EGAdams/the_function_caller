@@ -1,0 +1,30 @@
+[
+    {
+        "title": "start collaborating",
+        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "o3_mini_chat_w_lance",
+        "action": "python3 ~/linuxBash/pinecone_chat_dave_s/o3_mini_chat_w_lance.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "lance_tree_sitter_chat",
+        "action": "python3 ~/linuxBash/agents/pinecone_chat_dave_s/lance_tree_sitter_chat.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start planner",
+        "action": "python3 ~/the_function_caller/agents/planner_agent/planner_agent_exe.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]

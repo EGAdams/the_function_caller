@@ -14,24 +14,23 @@ We need to answer questions like:
 The first one is easy to remember. for me its the easiest key to press.  That's why the project is named `k is the center of the wheel` because that's where we start. we now want to spiral out from there.  we make this selection because it is the fastest way for me.    some people are different.  so now we have easier and faster. 
 what is the next fastest thing to do to make us more efficient? 
 
-### use a linux style menu to start the next task, spirialing our way out to more tasks.
-so we have already created a Linux style menu in Python that helps us quickly start a task.
-then we have a menu to start another task.  I'm pretty sure that I am faster on a terminal than i am a gui, that's why we are using this Linux style menu.   At this point, we would press something like "s" to start the coder agent or "e" to enter a chat with an agent that has already started."
+### Use a Linux style menu to start the next task, spirialing our way out to more tasks.
+We have already created a Linux style menu in Python that helps us quickly start a task.  The main menu that we open will have choice that will have a menu to start another task or another menu.  I'm pretty sure that I am faster on a terminal than i am a gui, that's why we are using this Linux style menu.  Once we get to an Agent menu for example, we would press something like "s" to start the coder agent or "e" to enter a chat with an agent that has already started."
 
 Now we have to ask ourselves, what other traits would there be to have in a system that is supposed to make us more efficient? 
 
-## Where we are at now.
-### User Interface
+# The Current status of the project
+## User Interface
 Right now the selections don't really do anything that would be in the interest of starting on the next level of the wheel.
 we want to be able to start the planner in a separate process, start the collaborator for smoothing out communication processes.
 
-### Background Processes
+## Background Processes
 
-#### Agents that we have already created.
+### Agents that we have already created
 
-##### The Coder Agent
+#### The Coder Agent
 
-###### Python Source code for the Coder Agent
+##### Python Source code for the Coder Agent
 ```python
 # The Coder Agent
 # OpenAI Assistant address:
@@ -115,7 +114,7 @@ This agent has the ability to process messages and send them to the OpenAI API. 
 
 
 ## What I need you for
- Can you see how this is all coming together?  I need you to help us build this project.  Many people are counting on us to get this right.You are going to help us build something that will make us efficient programmers.  We need to be able to write code that is easy to understand, test, debug, deploy and maintain.  We need to be able to write code that is easy to test.
+ Can you see how this is all coming together?  I need you to help us build this project.  Many people are counting on us to get this right.  You are going to help us build something that will make us efficient programmers.  We need to be able to write code that is easy to understand, test, debug, deploy and maintain.  We need to be able to write code that is easy to test.
 
 ## What I need you to do now
 Help me plan the next steps.

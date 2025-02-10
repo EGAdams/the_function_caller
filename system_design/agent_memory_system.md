@@ -117,9 +117,3 @@ graph TD
    - Plan additional capabilities based on user requirements.
 
 ---
-
-## Contact
-
-For further questions or suggestions, please reach out to the development team.
-
----

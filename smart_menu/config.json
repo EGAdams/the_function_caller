@@ -1,44 +1,79 @@
 [
     {
-        "title": "start collaborator",
-        "action": "python3 /home/eg1972/the_function_caller/agents/message_collaborator_agent/collaborator.py",
+        "title": "project menu",
+        "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/project_menu.json",
         "working_directory": ".",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start test coder agent",
+        "action": "python3 ~/the_function_caller/agents/coder_agent/test_coder_agent.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start collaborator",
+        "action": "python3 ~/the_function_caller/agents/message_collaborator_agent/collaborator.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "start planner",
-        "action": "python3 /home/eg1972/the_function_caller/agents/planner_agent/planner_agent_exe.py",
+        "action": "python3 ~/the_function_caller/agents/planner_agent/planner_agent_exe.py",
         "working_directory": ".",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "enter chat with agents",
-        "action": "python3 /home/eg1972/the_function_caller/agents/start_collaborating.py",
+        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
         "working_directory": ".",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "start coder",
-        "action": "python3 /home/eg1972/the_function_caller/agents/coder_agent/coder_agent_exe.py",
+        "action": "python3 ~/the_function_caller/agents/coder_agent/coder_agent_exe.py",
         "working_directory": ".",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "agent menu",
         "action": "python3 test_smart_menu_system.py agent_config.json",
-        "working_directory": "/home/eg1972/the_function_caller/smart_menu/",
-        "open_in_subprocess": false
+        "working_directory": "~/the_function_caller/smart_menu/",
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "todo list",
         "action": "python3 test_smart_menu_system.py todo_list.json",
         "working_directory": "",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
     },
     {
         "title": "view current directory",
         "action": "echo; pwd; echo;",
         "working_directory": "",
-        "open_in_subprocess": false
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
     }
 ]

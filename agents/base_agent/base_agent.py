@@ -216,6 +216,10 @@ class BaseAgent(ABC):
         """
         print(f"Inheriting class: {self.__class__.__name__}")
         self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
+        if ( recipient_url ):
+            print(f"calling send_message on Agent with url: {recipient_url}")
+        else:
+            print(f"*** Warning: calling send_message on Agent without url ***")
         self.communication_strategy.send_message( message, recipient_url )
 
     def receive_message(self, message: dict):
@@ -228,8 +232,8 @@ class BaseAgent(ABC):
         # self.logger.info(f"Received message: {message}")
         response = self.process_message(message)
         print(f"Inheriting class: {self.__class__.__name__}")
-        author_url = message.get( "author_url" )
+        author_url = message.get("author", {}).get("url")
         next_command = message.get( "command" )
         print( f"sending message from {self.agent_id} to {author_url} with command: {next_command}" )
         self.send_message( response, author_url )
-
+        # we don't come back here.  we will be tunning in though.

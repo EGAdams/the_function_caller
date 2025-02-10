@@ -67,7 +67,7 @@ class SendMessageTool:
 
         try:
             # Create an XML-RPC connection to the recipient
-            with xmlrpc.client.ServerProxy(recipient_url) as receiving_agent:
+            with xmlrpc.client.ServerProxy( recipient_url ) as receiving_agent:
                 print(f"Sending message to {recipient_id} at {recipient_url}: {packaged_message}")
                 
                 # Send the message to the recipient

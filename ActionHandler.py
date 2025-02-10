@@ -22,6 +22,7 @@ class ActionHandler:
             for tool_call in tool_calls:  # for each tool call in tool calls
                 function_name = tool_call.function.name  # get the function name & arguments
                 arguments = JSONArgumentParser.parse_arguments(tool_call.function.arguments)
+                print(f"tool call Function name: {function_name}, tool call Arguments: {arguments}")
                 output = self.function_executor.execute_function(function_name, arguments)
                 tool_output = {"tool_call_id": tool_call.id, "output": output}
                 tools_outputs_array.append(tool_output)  # now continue until all tool calls completed

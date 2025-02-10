@@ -16,7 +16,7 @@ def chat_with_coder_agent():
         while True:
             # Get user input
             user_message = input("You: ").strip()
-            if user_message.lower() in {"exit", "quit"}:
+            if user_message.lower() in {"exit", "quit", "bye", "kk", "x", "q"}:
                 print("Exiting chat.")
                 break
 

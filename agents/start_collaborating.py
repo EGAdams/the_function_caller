@@ -33,6 +33,7 @@ def send_message(collaborator, message: str, author_name: str, recipient_name: s
 
         # Package the message as a Python dictionary
         packaged_message = {
+            "command": "process_message",
             "message": message,
             "author": {
                 "name": author_name,
@@ -82,13 +83,13 @@ def main():
                 print("3. ExpertPrompter")
                 recipient_choice = input( "Enter the Agent to send the message to: " )
                 if recipient_choice == "1":
-                    recipient_name = "Coder"
+                    recipient_name = "coder"
                     recipient_url = "http://localhost:8003"
                 elif recipient_choice == "2":
-                    recipient_name = "Planner"
+                    recipient_name = "planner"
                     recipient_url = "http://localhost:8002"
                 elif recipient_choice == "3":
-                    recipient_name = "ExpertPrompter"
+                    recipient_name = "prompter"
                     recipient_url = "http://localhost:8004"
                 else:
                     print("Invalid choice. Please select a valid option.")
@@ -104,11 +105,12 @@ def main():
                 
                 # Send the message as a command to the collaborator
                 try:
+                    
                     # Capture the response from the collaborator.
                     # calling the receive_message( String message ); method 
                     # in order to invoke the collaborator's receive_message( String message ); method
                     collaborator_id = "collaborator"
-                    send_message( collaborator, message, collaborator_id, recipient_name, recipient_url )
+                    send_message( collaborator, f"{recipient_name}: message", collaborator_id, recipient_name, recipient_url )
 
                 except Exception as e:
                     print( f"{ Fore.RED }Failed to send message: { e }" )

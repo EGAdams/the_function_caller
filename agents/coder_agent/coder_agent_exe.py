@@ -19,9 +19,9 @@ GPT_MODEL           = "gpt-4o-mini"
 home_directory = os.path.expanduser( "~" )
 sys.path.append( home_directory + '/the_function_caller' )
 
-from AssistantFactory import AssistantFactory
-from run_spinner.run_spinner import RunSpinner
-from pretty_print.pretty_print import PrettyPrint
+from AssistantFactory             import AssistantFactory
+from run_spinner.run_spinner      import RunSpinner
+from pretty_print.pretty_print    import PrettyPrint
 from agents.base_agent.base_agent import BaseAgent
 from agents.base_agent.base_agent import RPCCommunicationStrategyFactory
 from agents.base_agent.base_agent import ConsoleLogger
