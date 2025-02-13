@@ -22,6 +22,7 @@ class FileSystemMappedFunctions:
             "prompt"        : "http://localhost:8004" }
         
         # Create instances of the tools
+        send_message_tool       = SendMessageTool( self.agents_urls )
         write_file_tool         = WriteFileTool()
         read_file_tool          = ReadFileTool()
         mkdir_tool              = MakeDirectoryTool()
@@ -30,7 +31,6 @@ class FileSystemMappedFunctions:
         linux_command_tool      = LinuxCommandTool()
         add_todo_subtask_tool   = AddTodoSubtaskTool( storage_handler )
         read_todo_tool          = ReadTodoTool()
-        send_message_tool       = SendMessageTool( self.agents_urls )
 
         # Add bound methods to the function map
         self.function_map.add_function( "write_file",            write_file_tool.write_file )

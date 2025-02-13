@@ -8,6 +8,7 @@ import xmlrpc
 
 from commands.command.i_command import ICommand
 from xmlrpc.server import SimpleXMLRPCServer
+from send_message_tool.send_message_tool import SendMessageTool
 
 # Define Interfaces
 class ILogger(ABC):
@@ -183,8 +184,15 @@ class BaseAgent(ABC):
         self.communication_strategy = strategy_factory.create( self )
         self.commands = {}
         self.logger = logger
-
         self.logger.info(f"Initializing BaseAgent with strategy from factory: {type(strategy_factory).__name__}")
+        agents_urls = {
+            "collaborator"  : "http://localhost:8001",
+            "planner"       : "http://localhost:8002",
+            "coder"         : "http://localhost:8003",
+            "prompt"        : "http://localhost:8004" }
+        
+        self.send_message_tool = SendMessageTool( agents_urls )  # Create an instance of the send message tool just like we do
+                                                            # when we initialize the file system mapped functions.
 
     def run(self):
         self.logger.info(f"Agent {self.agent_id} is starting...")
@@ -197,43 +205,37 @@ class BaseAgent(ABC):
         self.commands[key] = command
         self.logger.info(f"Registered command: {key} with {type(command).__name__}")
 
-    def process_message(self, message: dict) -> dict:
+    def process_message( self, message: str ):
         """
         Process a received message by finding and executing the appropriate command.
         If the command is not found, use DefaultCommand().
         """
         print(f"Processing message: {message}")
-        command = self.commands.get(message.get("command"), DefaultCommand())
+        command = self.commands.get( "process_message", DefaultCommand()) # gets the childs command
         print( f"Inheriting class: {self.__class__.__name__}" )
-        self.logger.info(f"Processing message with command: {message.get('command', 'default')}")
+        self.logger.info(f"Processing message with command: process_message for now...")
         print( f"returning command.execute(message)...")
-        return_message = command.execute( message )
-        return return_message
+        command.execute( message )      # executing child's process_message() for now..
 
-    def send_message(self, message: dict, recipient_url: str = None):
+    def send_message( self, message: str, recipient_id: str = "collaborator" ):
         """
         Send a message using the communication strategy.
         """
         print(f"Inheriting class: {self.__class__.__name__}")
-        self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
-        if ( recipient_url ):
-            print(f"calling send_message on Agent with url: {recipient_url}")
-        else:
-            print(f"*** Warning: calling send_message on Agent without url ***")
-        self.communication_strategy.send_message( message, recipient_url )
+        # self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
+        # if ( recipient_url ):
+        #     print(f"calling send_message on Agent with url: {recipient_url}")
+        # else:
+        #     print(f"*** Warning: calling send_message on Agent without url ***")
+        # self.communication_strategy.send_message( message, recipient_url )
+        self.send_message_tool.send_message( message, recipient_id )
 
-    def receive_message(self, message: dict):
+    def receive_message( self, message: str ):
         """
         Receive a message and process it, then send a response.
         """
         print(f"Received message: {message}")
-        # print the name of the class that is inheriting from BaseAgent
-        print(f"Inheriting class: {self.__class__.__name__}")
-        # self.logger.info(f"Received message: {message}")
-        response = self.process_message(message)
-        print(f"Inheriting class: {self.__class__.__name__}")
-        author_url = message.get("author", {}).get("url")
-        next_command = message.get( "command" )
-        print( f"sending message from {self.agent_id} to {author_url} with command: {next_command}" )
-        self.send_message( response, author_url )
+        print(f"Inheriting class: {self.__class__.__name__}") # print the name of the class that is inheriting from BaseAgent
+        self.logger.info(f"Received message: {message}")
+        self.process_message( message )
         # we don't come back here.  we will be tunning in though.

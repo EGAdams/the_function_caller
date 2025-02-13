@@ -43,43 +43,17 @@ class CollaboratorAgent(BaseAgent):
         pretty_json = json.dumps(json_obj, indent=4)
         print(pretty_json)
 
-    def process_message(self, new_message: dict):
+    def process_message( self, new_message ):
         """
         Process incoming messages, interact with OpenAI assistant, and respond.
         """
         try:
-            command = new_message.get( "command" )
-            print ( "got command in collaborator: ", command )
-            if not command:
-                self.logger.error("Invalid message format. Missing 'command'.")
-                return "Invalid message format. Missing 'command'."
-            
-            # 'recipient' = {'name': 'coder', 'url': 'http://localhost:8003'}
-            # get the recipient name
-            recipient_name = new_message.get( "recipient" ).get( "name" )
-            # get the recipient url
-            recipient_url = new_message.get( "recipient" ).get( "url" )
 
-            # Coder Agent
-            if recipient_name == "coder":
-                response = self.send_message( new_message, recipient_url )
-                return response
-            
-            # Planner Agent
-            elif recipient_name == "planner":
-                response = self.send_message("planner", {"message": command[len("planner:"):].strip()})
-                return response
+            # find out who to send the message to if it is not for the collaborator agent
+            # for now, just send it to the coder agent
 
-            # Prompt Agent
-            elif recipient_name == "prompt":
-                response = self.send_message("prompt", {"message": command[len("prompt:"):].strip()})
-                return response
-            
-            # Unknown Agent
-            else:
-                # Handle other commands or respond directly
-                self.logger.info(f"Unknown command: {command}")
-                return "Unknown command"
+            response = self.send_message( "coder", new_message,  )
+            return response
             
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
