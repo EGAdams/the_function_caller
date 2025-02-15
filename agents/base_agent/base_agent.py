@@ -107,7 +107,7 @@ class RPCCommunicationStrategy(ICommunicationStrategy):
         print(f"creating xmlrpc.client.ServerProxy for {recipient_url}")
         recipient_agent = xmlrpc.client.ServerProxy( recipient_url, allow_none=True )
         print(f"calling receive_message on Agent with url: {recipient_url}")
-        recipient_agent.receive_message( message )
+        recipient_agent.receive_message( message ) #TODO catch response!
         self.logger.info(f"done sending RPC message to {recipient_url}: {message}")
 
 class StdioCommunicationStrategy(ICommunicationStrategy):
