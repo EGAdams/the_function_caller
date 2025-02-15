@@ -62,7 +62,6 @@ class PromptAgent( BaseAgent ):
                 print(f"With arguments: {function_args}")
                 function_response = self.function_executor.execute_function( function_name, function_args ) #3: call function
                 print(f"Function response received: {function_response[:100]}...")  # Print first 100 chars
-
                 self.messages.append(        # add the result of each tool call to the Prompt Agent's messages
                     {
                         "tool_call_id": tool_call.id,

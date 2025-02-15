@@ -7,8 +7,8 @@
         "use_expect_library": false
     },
     {
-        "title": "start test coder agent",
-        "action": "python3 ~/the_function_caller/agents/coder_agent/test_coder_agent.py",
+        "title": "enter chat with agents",
+        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
@@ -28,15 +28,15 @@
         "use_expect_library": false
     },
     {
-        "title": "enter chat with agents",
-        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
+        "title": "start coder",
+        "action": "python3 ~/the_function_caller/agents/coder_agent/coder_agent_exe.py",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
     },
     {
-        "title": "start coder",
-        "action": "python3 ~/the_function_caller/agents/coder_agent/coder_agent_exe.py",
+        "title": "start prompt agent",
+        "action": "python3 ~/the_function_caller/agents/prompt_agent/prompt_agent_exe.py",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
@@ -56,23 +56,9 @@
         "use_expect_library": false
     },
     {
-        "title": "view current directory",
-        "action": "echo; pwd; echo;",
-        "working_directory": "",
-        "open_in_subprocess": false,
-        "use_expect_library": false
-    },
-    {
-        "title": "New Item",
-        "action": "echo 'New item executed'",
-        "working_directory": "",
-        "open_in_subprocess": false,
-        "use_expect_library": false
-    },
-    {
-        "title": "New Item",
-        "action": "echo 'New item executed'",
-        "working_directory": "",
+        "title": "start test coder agent",
+        "action": "python3 ~/the_function_caller/agents/coder_agent/test_coder_agent.py",
+        "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
     }

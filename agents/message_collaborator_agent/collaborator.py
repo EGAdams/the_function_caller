@@ -46,7 +46,7 @@ class CollaboratorAgent(BaseAgent):
             
             # find out who to send the message to if it is not for the collaborator agent
             # for now, just send it to the coder agent
-            response = self.send_message( "coder", new_message )
+            response = self.send_message( "prompt", new_message )
             return response
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
