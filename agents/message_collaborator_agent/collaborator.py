@@ -1,22 +1,19 @@
-import sys, os
-import json
-import xmlrpc.client
-from time import sleep
+#
+# https://platform.openai.com/assistants/asst_klrcTdNwmeEXJPRx2LT7CRJY
+#
+import sys, os, json
 from openai import OpenAI
-
-home_directory = os.path.expanduser("~")
-sys.path.append(home_directory + '/the_function_caller')
-
+sys.path.append( os.path.expanduser( "~" ) + '/the_function_caller' )
+from agents.agent_urls import AgentUrlProvider
+from send_message_tool.send_message_tool import SendMessageTool
 from commands.process_message_command.process_message_command import ProcessMessageCommand
 from AssistantFactory import AssistantFactory
 from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
-from agents.base_agent.base_agent import BaseAgent
 from agents.base_agent.base_agent import RPCCommunicationStrategyFactory
+from agents.base_agent.base_agent import BaseAgent
 from agents.base_agent.base_agent import ConsoleLogger
-
 PORT = 8001
-GPT_MODEL = "gpt-4o-mini"
 
 class CollaboratorAgent(BaseAgent):
     def __init__(self, agent_id: str, strategy_factory, agent_url: str, logger=None):
@@ -31,9 +28,10 @@ class CollaboratorAgent(BaseAgent):
         self.message = self.client.beta.threads.messages.create(
             thread_id=self.thread.id,
             role="user",
-            content="How can I assist with collaboration?"
-        )
+            content="How can I assist with collaboration?" )
         self.register_command("process_message", ProcessMessageCommand(self))  # Register the message processing command
+        self.send_message_tool = SendMessageTool( AgentUrlProvider.get_agent_urls ) # Create an instance of the send message tool just like we do
+                                                                # when we initialize the file system mapped functions.
 
     def show_json(self, obj):
         """
@@ -44,37 +42,22 @@ class CollaboratorAgent(BaseAgent):
         print(pretty_json)
 
     def process_message( self, new_message ):
-        """
-        Process incoming messages, interact with OpenAI assistant, and respond.
-        """
         try:
-
+            
             # find out who to send the message to if it is not for the collaborator agent
             # for now, just send it to the coder agent
-
-            response = self.send_message( "coder", new_message,  )
+            response = self.send_message( "coder", new_message )
             return response
-            
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")
             return f"Error: {str(e)}"
 
-
 def main():
-    """
-    Main entry point for the CollaboratorAgent.
-    """
     agent_url = f"http://localhost:{PORT}"
     logger = ConsoleLogger()
     strategy_factory = RPCCommunicationStrategyFactory(port=PORT, logger=logger)
-
-    collaborator_agent = CollaboratorAgent(
-        agent_id="collaborator_agent",
-        strategy_factory=strategy_factory,
-        agent_url=agent_url,
-        logger=logger
-    )
-
+    collaborator_agent = CollaboratorAgent( agent_id="collaborator_agent", strategy_factory=strategy_factory,
+                                            agent_url=agent_url, logger=logger )
     try:
         collaborator_agent.logger.info(f"CollaboratorAgent is starting on port {PORT}...")
         collaborator_agent.run()  # Start the XML-RPC server

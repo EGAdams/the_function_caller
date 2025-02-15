@@ -36,6 +36,9 @@ class ProcessMessageCommand( ICommand ):  # this is the 1st one.  next time make
             # Extract the content from the response ## add "command": "process_message" back so that it is routed to the correct command!
             response_content = response.content[ 0 ].text.value
             print( f"send response content back to collaborator, response content: {response_content}" )
+            # self.coder_agent.send_message_tool.send_message( "collaborator", response_content )
+            print( "finished sending message from coder to collaborator" )
+            return { "status": "success", "message": response_content}
 
         except Exception as e:
             self.coder_agent.logger.error( f"CoderAgent error processing message: {e}" )

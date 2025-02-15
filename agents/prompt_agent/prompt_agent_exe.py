@@ -1,29 +1,18 @@
 # The Prompt Agent
 # first Saturday
 # @retry( wait=wait_random_exponential( multiplier=1, max=40 ), stop=stop_after_attempt( 3 ))
-import sys
-import json
-from time import sleep
-from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
+import sys, os, json
 from openai import OpenAI
-import xmlrpc.client
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+sys.path.append( os.path.expanduser( "~" ) + '/the_function_caller' )
+from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
 from tool_manager.ToolManager import ToolManager
-# from func_map_init.file_system_mapped_functions import FileSystemMappedFunctions
 from function_executor import function_executor
 from message_factory import MessageFactory
-from string_to_function.string_to_function import StringToFunction
-
-collaborator_url = "http://localhost:8001" # URL of the collaborator's RPC server
-PORT = 8003
-GPT_MODEL = "gpt-3.5-turbo-0125"
-sys.path.append( '/home/adamsl/the_function_caller' )
-from AssistantFactory import AssistantFactory
-from run_spinner.run_spinner import RunSpinner
 from pretty_print.pretty_print import PrettyPrint
+from string_to_function.string_to_function import StringToFunction
 from agents.base_agent.base_agent import BaseAgent
+PORT = 8004
+GPT_MODEL = "gpt-4o-mini"
 
 class PromptAgent( BaseAgent ):
     def __init__(self, agent_id: str, server_port: int, collaborator_url: str):
@@ -43,19 +32,12 @@ class PromptAgent( BaseAgent ):
         print("PromptAgent initialization complete")
         print(f"Number of tools loaded: {len(self.tools)}")
 
-
     def show_json(self, obj):
-        """
-        Pretty print a JSON object for debugging purposes.
-        """
         json_obj = json.loads(obj.model_dump_json())
         pretty_json = json.dumps(json_obj, indent=4)
         print(pretty_json)
 
     def process_message(self, new_message: dict):
-        """
-        Process incoming messages, interact with OpenAI assistant, and respond.
-        """
         print(f"\nProcessing new message: {new_message['role']}")
         self.messages.append( new_message )
         print("Sending request to OpenAI...")
@@ -73,14 +55,15 @@ class PromptAgent( BaseAgent ):
         if tool_calls:              # Step 2: check if the model wanted to call one or more functions
             print(f"Model requested {len(tool_calls)} tool calls")
             self.messages.append( response_message )    # extend conversation with assistant's reply
-            for tool_call in tool_calls:
+            for tool_call in tool_calls:                # call all of the tools in tool_calls...
                 function_name = tool_call.function.name
                 function_args = json.loads( tool_call.function.arguments )
                 print(f"Executing function: {function_name}")
                 print(f"With arguments: {function_args}")
-                function_response = self.function_executor.execute_function( function_name, function_args ) #3: call func
+                function_response = self.function_executor.execute_function( function_name, function_args ) #3: call function
                 print(f"Function response received: {function_response[:100]}...")  # Print first 100 chars
-                self.messages.append(
+
+                self.messages.append(        # add the result of each tool call to the Prompt Agent's messages
                     {
                         "tool_call_id": tool_call.id,
                         "role": "tool",
@@ -89,10 +72,11 @@ class PromptAgent( BaseAgent ):
                     }
                 ) # extend conversation with function response
             print("Sending second request to OpenAI...")
-            second_response = self.client.chat.completions.create(   # Step 4: send the info for each 
-                model=GPT_MODEL,                                     # function call and function response
-                messages=self.messages,                              # to the model
-            ) # get a new response from the model where it can see the function response
+            second_response = self.client.chat.completions.create(   # Step 4: send the info for all 
+                model=GPT_MODEL,                                     # function calls and function responses
+                messages=self.messages,                              # to the model.
+            )                                                        # get a new response from the model where 
+                                                                     # since it has seen the function responses
             print("Received second response from OpenAI")
             return second_response.choices[ 0 ].message
         else:
@@ -101,13 +85,8 @@ class PromptAgent( BaseAgent ):
             return response_message
 
 def main():
-    """
-    Main entry point for the PromptAgent.
-    """
-    print("\n=== Starting PromptAgent ===")
     collaborator_url = "http://localhost:8001"
     prompt_agent = PromptAgent(agent_id="prompt_agent", server_port=PORT, collaborator_url=collaborator_url)
-    
     try:
         prompt_agent.logger.info("PromptAgent is starting in port " + str( PORT ) + "...")
         print(f"Starting XML-RPC server on port {PORT}")

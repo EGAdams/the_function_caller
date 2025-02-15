@@ -48,11 +48,11 @@ class ICommunicationStrategy(ABC):
         pass
 
     @abstractmethod
-    def receive_message(self, message: dict) -> dict:
+    def receive_message(self, message: str ) -> str:
         pass
 
     @abstractmethod
-    def send_message(self, message: dict, recipient_url: str = None):
+    def send_message( self, recipient_id, message: str ):
         pass
 
 class ConsoleLogger(ILogger):
@@ -99,7 +99,8 @@ class RPCCommunicationStrategy(ICommunicationStrategy):
         self.logger.info("RPCCommunicationStrategy received a message.")
         return self.agent.receive_message(message)
 
-    def send_message(self, message: dict, recipient_url: str):
+    def send_message(self, recipient_id: str, message: str):
+        recipient_url = self.agent.agent_urls.get( recipient_id )
         # Logic to send RPC message
         # Connect to the CoderAgent's XML-RPC server
         print(f"Inside class: {self.__class__.__name__} send_message method" )
@@ -130,7 +131,7 @@ class StdioCommunicationStrategy(ICommunicationStrategy):
         # Logic to process stdio message
         return {"status": "received"}
 
-    def send_message(self, message: dict, recipient_url: str = None):
+    def send_message(self, recipient_id: str, message: str ):
         # Not applicable for stdio mode
         self.logger.info("Send message not supported in stdio mode.")
 
@@ -191,17 +192,13 @@ class BaseAgent(ABC):
             "coder"         : "http://localhost:8003",
             "prompt"        : "http://localhost:8004" }
         
-        self.send_message_tool = SendMessageTool( agents_urls )  # Create an instance of the send message tool just like we do
-                                                            # when we initialize the file system mapped functions.
-
+        self.send_message_tool = SendMessageTool( agents_urls ) # Create an instance of the send message tool just like we do
+                                                                # when we initialize the file system mapped functions.
     def run(self):
         self.logger.info(f"Agent {self.agent_id} is starting...")
         self.communication_strategy.start()
 
     def register_command(self, key: str, command: ICommand):
-        """
-        Register a command with a specific key.
-        """
         self.commands[key] = command
         self.logger.info(f"Registered command: {key} with {type(command).__name__}")
 
@@ -211,31 +208,27 @@ class BaseAgent(ABC):
         If the command is not found, use DefaultCommand().
         """
         print(f"Processing message: {message}")
-        command = self.commands.get( "process_message", DefaultCommand()) # gets the childs command
-        print( f"Inheriting class: {self.__class__.__name__}" )
+        command = self.commands.get( "process_message", DefaultCommand()) # gets the child's process_message command
+        print( f"command: {command}" )
+        print( f"Base Agent's child: {self.__class__.__name__}" )
         self.logger.info(f"Processing message with command: process_message for now...")
         print( f"returning command.execute(message)...")
-        command.execute( message )      # executing child's process_message() for now..
+        return command.execute( message ) # executing child's process_message() for now..
 
-    def send_message( self, message: str, recipient_id: str = "collaborator" ):
+    def send_message(self, recipient_id: str, message: str):
         """
         Send a message using the communication strategy.
         """
-        print(f"Inheriting class: {self.__class__.__name__}")
-        # self.logger.info(f"Sending message to {recipient_url if recipient_url else 'default recipient'}: {message}")
-        # if ( recipient_url ):
-        #     print(f"calling send_message on Agent with url: {recipient_url}")
-        # else:
-        #     print(f"*** Warning: calling send_message on Agent without url ***")
-        # self.communication_strategy.send_message( message, recipient_url )
-        self.send_message_tool.send_message( message, recipient_id )
+        print(f"Base Agent's child: {self.__class__.__name__}")
+        self.send_message_tool.send_message( recipient_id, message )
 
     def receive_message( self, message: str ):
         """
         Receive a message and process it, then send a response.
         """
         print(f"Received message: {message}")
-        print(f"Inheriting class: {self.__class__.__name__}") # print the name of the class that is inheriting from BaseAgent
-        self.logger.info(f"Received message: {message}")
-        self.process_message( message )
-        # we don't come back here.  we will be tunning in though.
+        print(f"Base Agent's child: {self.__class__.__name__}")   # print the name of the class 
+        self.logger.info(f"Received message: {message}")        # that is inheriting from BaseAgent
+        response = self.process_message( message )
+        print ( "returning from receive_message. " )  # used to hang here because we where not returning a 
+        return response                               # value.  now it is ok. 021425

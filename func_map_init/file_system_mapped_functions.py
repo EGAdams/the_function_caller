@@ -1,3 +1,4 @@
+from agents.agent_urls import AgentUrlProvider
 from read_file_tool.read_file_tool      import ReadFileTool
 from send_message_tool.send_message_tool import SendMessageTool
 from todo_list_tools.add_todo_subtask_tool.add_todo_subtask_tool import AddTodoSubtaskTool
@@ -15,14 +16,9 @@ class FileSystemMappedFunctions:
         self.function_map = FunctionMap()
         print("initializing file system mapped functions...")
         storage_handler = StorageHandler("todo_list.json")
-        self.agents_urls = {
-            "collaborator"  : "http://localhost:8001",
-            "planner"       : "http://localhost:8002",
-            "coder"         : "http://localhost:8003",
-            "prompt"        : "http://localhost:8004" }
-        
+       
         # Create instances of the tools
-        send_message_tool       = SendMessageTool( self.agents_urls )
+        send_message_tool       = SendMessageTool( AgentUrlProvider.get_agent_urls())
         write_file_tool         = WriteFileTool()
         read_file_tool          = ReadFileTool()
         mkdir_tool              = MakeDirectoryTool()

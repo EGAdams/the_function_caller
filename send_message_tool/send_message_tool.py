@@ -68,7 +68,9 @@ class SendMessageTool:
                 print(f"Sending message to {recipient_id} at {recipient_url}: {message}")
                 
                 # Send the message to the recipient
-                receiving_agent.receive_message( message )
+                response = receiving_agent.receive_message( message )
+                print( f"sending message to {recipient_id} from {self.name}.  we seem to be locking up here." )
+                return response
 
         except Exception as e:
             return f"Error: Failed to send message to {recipient_id}: {e}"
