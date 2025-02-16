@@ -29,9 +29,9 @@ class CollaboratorAgent(BaseAgent):
             thread_id=self.thread.id,
             role="user",
             content="How can I assist with collaboration?" )
-        self.register_command("process_message", ProcessMessageCommand(self))  # Register the message processing command
-        self.send_message_tool = SendMessageTool( AgentUrlProvider.get_agent_urls ) # Create an instance of the send message tool just like we do
-                                                                # when we initialize the file system mapped functions.
+        self.register_command("process_message", ProcessMessageCommand(self))       # Register the message processing command
+        self.send_message_tool = SendMessageTool( AgentUrlProvider.get_agent_urls()) # Create an instance of the send message tool just like we do
+                                                                                    # when we initialize the file system mapped functions.
 
     def show_json(self, obj):
         """
@@ -46,7 +46,9 @@ class CollaboratorAgent(BaseAgent):
             
             # find out who to send the message to if it is not for the collaborator agent
             # for now, just send it to the coder agent
+            print ( "sending message to prompt agent for testing." )
             response = self.send_message( "prompt", new_message )
+            print( "returning response: ", response )
             return response
         except Exception as e:
             self.logger.error(f"Error processing message: {e}")

@@ -220,6 +220,7 @@ class BaseAgent(ABC):
         Send a message using the communication strategy.
         """
         print(f"Base Agent's child: {self.__class__.__name__}")
+        print(f"Sending message to {recipient_id} with message: {message}")
         self.send_message_tool.send_message( recipient_id, message )
 
     def receive_message( self, message: str ):

@@ -58,10 +58,11 @@ class SendMessageTool:
             str: Success or error message.
         """
         # Lookup recipient URL
+        print( f"looking up recipient url for {recipient_id} in {self.agents_urls}" )
         recipient_url = self.agents_urls.get( recipient_id )
         if not recipient_url:
             return f"Error: Unknown recipient ID '{recipient_id}'."
-
+        print( f"recipient_url: {recipient_url}" )
         try:
             # Create an XML-RPC connection to the recipient
             with xmlrpc.client.ServerProxy( recipient_url ) as receiving_agent:
