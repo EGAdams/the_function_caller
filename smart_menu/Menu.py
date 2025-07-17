@@ -1,6 +1,5 @@
 from time import sleep
 from MenuItem import MenuItem
-from dialog import Dialog
 import sys
 from CommandExecutor import CommandExecutor  # Ensure this class is correctly imported
 
@@ -13,62 +12,46 @@ class Menu:
         self.items.append(item)
 
     def display_and_select(self, menu_manager):
-        d = Dialog(dialog="dialog")  # Or the path to your `dialog` program
-
         while True:
-            # Build the menu items list
-            menu_items = []
+            # Print the menu options as plain text
+            print( "\n\n--------------------------------------------------------------------" )
+            print("\Please select an option:")
+            print( "--------------------------------------------------------------------" )
             for index, item in enumerate(self.items, start=1):
-                menu_items.append((str(index), item.title))
-            # Add exit and add item options
-            menu_items.append((str(len(self.items) + 1), "Exit this menu"))
-            menu_items.append((str(len(self.items) + 2), "Add a menu item"))
+                print(f"{index}. {item.title}")
+            print(f"{len(self.items) + 2}. Add a menu item")
+            print( "--------------------------------------------------------------------" )
+            print(f"x. Exit this menu")
+            print( "--------------------------------------------------------------------\n" )
 
-            code, tag = d.menu(
-                "Please select an option:",
-                choices=menu_items,
-                title="Menu",
-                cancel_label="Exit",
-                ok_label="Select"
-            )
+            choice = input("Enter your choice number or 'x' to exit: ").strip()
 
-            if code == d.CANCEL or code == d.ESC:
-                # User chose to exit the menu
+            if choice.lower() == 'x':
                 break
-            elif code == d.OK:
-                try:
-                    choice = int(tag)
-                    if 1 <= choice <= len(self.items):
-                        # Execute the selected menu item’s action
-                        menu_item = self.items[choice - 1]
-                        sleep(0.5)  # Slight delay if needed
 
-                        # -- NO VARIABLE CAPTURE --
-                        # Just call the CommandExecutor. 
-                        # If CommandExecutor uses os.system or similar, 
-                        # it will print to stdout as it runs.
-                        CommandExecutor.execute_command(menu_item)
-                        
-                        # If you want to pause after the command finishes
-                        # so the user can see the output, you could do something like:
-                        input("Press Enter to return to the menu...")
+            try:
+                choice_num = int(choice)
+                if 1 <= choice_num <= len(self.items):
+                    menu_item = self.items[choice_num - 1]
+                    sleep(0.5)  # Slight delay if needed
 
-                    elif choice == len(self.items) + 1:
-                        # Exit this menu
-                        break
+                    # Execute the selected menu item’s action
+                    CommandExecutor.execute_command(menu_item)
 
-                    elif choice == len(self.items) + 2:
-                        # Add a new menu item
-                        menu_manager.add_menu_item()
-                        # Then loop again with the updated list
-                    else:
-                        d.msgbox("Invalid selection. Please try again.", title="Error")
-                except ValueError:
-                    d.msgbox("Invalid input. Please select a valid option.", title="Error")
-            else:
-                # Handle any other dialog return codes if necessary
-                d.msgbox("An unexpected error occurred.", title="Error")
-        
+                    # Pause after the command finishes so the user can see the output
+                    input("Press Enter to return to the menu...")
+
+                elif choice_num == len(self.items) + 2:
+                    # Add a new menu item
+                    menu_manager.add_menu_item()
+                    # Then loop again with the updated list
+
+                else:
+                    print("Invalid selection. Please try again.")
+
+            except ValueError:
+                print("Invalid input. Please enter a valid option number or 'x' to exit.")
+
     def add_new_item(self):
         print("Adding a new menu item...")
         title = input("Enter title for new item: ")
@@ -93,6 +76,11 @@ class Menu:
 def main():
     # Import MenuManager here to avoid circular import
     from MenuManager import MenuManager
+
+    # Create an instance of Menu
+    menu = Menu()
+    config_path = "menu_config.json"  # Path to the configuration file
+
 
     # Create an instance of Menu
     menu = Menu()

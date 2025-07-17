@@ -1,5 +1,19 @@
 [
     {
+        "title": "linux bash menu",
+        "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/linux_bash_config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "ssh to jewelry machine",
+        "action": "ssh -o IdentitiesOnly=yes -o IdentityFile=~/.ssh/id_rsa -o PreferredAuthentications=publickey tinman72@americansjewelry.com",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
         "title": "project menu",
         "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/project_menu.json",
         "working_directory": ".",
@@ -7,8 +21,43 @@
         "use_expect_library": false
     },
     {
-        "title": "enter chat with agents",
-        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
+        "title": "open this config",
+        "action": "code /home/adamsl/the_function_caller/smart_menu/config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "create a new .zip plugin",
+        "action": "./var/www/html/wordpress/wp-content/plugins/MCBA-Wordpress/zip_this_directory.sh",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "mcba system dashboard",
+        "action": "python3 ~/linuxBash/python_menus/mcba_system_dashboard.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "run chrome to debug CORS issues",
+        "action": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe  --user-data-dir=\"C:\\ChromeDevSession\" --disable-web-security",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "pinecone dave lancedb embeddings",
+        "action": "code ~/linuxBash",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "first agent system and smart menu",
+        "action": "code ~/the_function_caller",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
@@ -59,6 +108,20 @@
         "title": "start test coder agent",
         "action": "python3 ~/the_function_caller/agents/coder_agent/test_coder_agent.py",
         "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "New Item",
+        "action": "echo 'New item executed'",
+        "working_directory": "",
         "open_in_subprocess": false,
         "use_expect_library": false
     }

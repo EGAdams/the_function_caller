@@ -1,0 +1,58 @@
+[
+    {
+        "title": "open this config file",
+        "action": "code ~/the_function_caller/smart_menu/browser_tests_config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start mysql server",
+        "action": "sudo python3 ~/linuxBash/mcba_testing/build_March_02__09_52_AM/mysql_server_exe.py --start",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start apache server",
+        "action": "sudo python3 ~/linuxBash/mcba_testing/build_March_02__09_52_AM/apache_server_exe.py --start",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start monitored object server",
+        "action": "cd ~/the-factory; npm run start",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "clear monitored object table",
+        "action": "~/linuxBash/menu_shell_scripts/delete_monitors.sh",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "send a test message to admin",
+        "action": "~/linuxBash/menu_shell_scripts/delete_monitors.sh; curl -X POST \"http://localhost/wordpress/wp-admin/admin-ajax.php\"      -d \"date=2025-03-05 18:28:14\"      -d \"mcba_chat_system_id=zelensky@gmail.com\"      -d \"sender_photo_url=null\"      -d \"from_email=\"      -d \"sender_name=zelensky@gmail.com\"      -d \"readstatus=false\"      -d \"type=activity_chat\"      -d \"message=test\"      -d \"mcba_id=56\"      -d \"sender_token=eXf6O62tSq-2ItrxYI6f2w:APA91bHX3K_bH8H88jGWhhgFuoE9mNkGGriCZlK-eVsLcPzZ-1mmDCcJfCt9VjvsMToYaf7Asazht5Y87GyUwzxZp9jXO26NJsNxWqW93h-wREcintVzh8Y\"      -d \"is_admin=false\"      -d \"sender=\"      -d \"conversation_id=\"      -d \"recipient=null\"      -d \"action=chat_message_input\"      -d \"email=zelensky@gmail.com\"",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "zip up the local plugin and put it in the Downloads directory",
+        "action": "/var/www/html/wordpress/wp-content/plugins/MCBA-Wordpress/zip_this_directory.sh",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "zip up the Android code base and put it in the Downloads directory",
+        "action": "/mnt/c/Users/NewUser/Desktop/vision_team_workspace/AndroidBase/zip_this_directory.sh",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]

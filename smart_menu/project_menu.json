@@ -1,7 +1,21 @@
 [
     {
-        "title": "start collaborating",
-        "action": "python3 ~/the_function_caller/agents/start_collaborating.py",
+        "title": "open the mcp-crawl4ai-rag project",
+        "action": "code ~/mcp-crawl4ai-rag/",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "open the archon project",
+        "action": "code ~/pydantic_langgraph",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "chat with v2 archon pydantic expert",
+        "action": "source /home/adamsl/archon/venv/bin/activate; streamlit run /home/adamsl/archon/iterations/v2-agentic-workflow/streamlit_ui.py",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false
@@ -14,8 +28,64 @@
         "use_expect_library": false
     },
     {
-        "title": "lance_tree_sitter_chat",
-        "action": "python3 ~/linuxBash/agents/pinecone_chat_dave_s/lance_tree_sitter_chat.py",
+        "title": "mcba test menu",
+        "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py  ~/linuxBash/python_menus/mcba_test_menu.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "vanilla ai cookbook by dave ebellar",
+        "action": "code ~/ai-cookbook",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "open android base with tree sitter",
+        "action": "code /home/adamsl/AndroidBase",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "open project menu config",
+        "action": "code ~/the_function_caller/smart_menu/project_menu.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "open smolagents workspace",
+        "action": "code ~/smolagents",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "langfuse smolagents j-hayer opentelemetry",
+        "action": "code /mnt/e/first-agent",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "the factory",
+        "action": "code ~/the-factory",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "agent memory menu",
+        "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py  ~/linuxBash/python_menus/agent_memory_menu.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "monitored object expert",
+        "action": "python3 ~/monitored-objects/embedding_tools/conversation_processor.py",
         "working_directory": ".",
         "open_in_subprocess": false,
         "use_expect_library": false

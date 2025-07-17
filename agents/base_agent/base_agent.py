@@ -6,6 +6,7 @@ import subprocess
 import psutil
 import xmlrpc
 
+from agents.agent_urls import AgentUrlProvider
 from commands.command.i_command import ICommand
 from xmlrpc.server import SimpleXMLRPCServer
 from send_message_tool.send_message_tool import SendMessageTool
@@ -186,13 +187,7 @@ class BaseAgent(ABC):
         self.commands = {}
         self.logger = logger
         self.logger.info(f"Initializing BaseAgent with strategy from factory: {type(strategy_factory).__name__}")
-        agents_urls = {
-            "collaborator"  : "http://localhost:8001",
-            "planner"       : "http://localhost:8002",
-            "coder"         : "http://localhost:8003",
-            "prompt"        : "http://localhost:8004" }
-        
-        self.send_message_tool = SendMessageTool( agents_urls ) # Create an instance of the send message tool just like we do
+        self.send_message_tool = SendMessageTool( AgentUrlProvider.get_agent_urls()) # Create an instance of the send message tool just like we do
                                                                 # when we initialize the file system mapped functions.
     def run(self):
         self.logger.info(f"Agent {self.agent_id} is starting...")
@@ -203,10 +198,6 @@ class BaseAgent(ABC):
         self.logger.info(f"Registered command: {key} with {type(command).__name__}")
 
     def process_message( self, message: str ):
-        """
-        Process a received message by finding and executing the appropriate command.
-        If the command is not found, use DefaultCommand().
-        """
         print(f"Processing message: {message}")
         command = self.commands.get( "process_message", DefaultCommand()) # gets the child's process_message command
         print( f"command: {command}" )
@@ -224,11 +215,8 @@ class BaseAgent(ABC):
         self.send_message_tool.send_message( recipient_id, message )
 
     def receive_message( self, message: str ):
-        """
-        Receive a message and process it, then send a response.
-        """
         print(f"Received message: {message}")
-        print(f"Base Agent's child: {self.__class__.__name__}")   # print the name of the class 
+        print(f"Base Agent's child: {self.__class__.__name__}") # print the name of the class 
         self.logger.info(f"Received message: {message}")        # that is inheriting from BaseAgent
         response = self.process_message( message )
         print ( "returning from receive_message. " )  # used to hang here because we where not returning a 

@@ -1,5 +1,6 @@
 #
 # ProcessMessageCommand( ICommand )
+#
 import os, sys
 home_directory = os.path.expanduser( "~" )
 sys.path.append( home_directory + '/the_function_caller' )

@@ -18,7 +18,7 @@ GPT_MODEL = "gpt-4o-mini"
 
 class ProcessWithOaiCompletion( ICommand ):
     def __init__( self, prompt_agent_arg ):    
-        self.prompt_agent = prompt_agent_arg
+        self.prompt_agent       = prompt_agent_arg
         self.client             = OpenAI()  # Create the OpenAI client
         self.pretty_print       = PrettyPrint()
         message_factory         = MessageFactory()
@@ -29,6 +29,7 @@ class ProcessWithOaiCompletion( ICommand ):
         self.function_executor  = function_executor.FunctionExecutor( string_to_function )
         self.messages           = message_factory.create_initial_messages_object() # build the messages object.
         self.tools              = tool_manager.get_tool_schemas()                  # build the tools object array of schemas.
+        # <self.tools> <!-- this is the tools object array of schemas. -->
         self.tools              = [
             {
                 "type": "function",
@@ -52,6 +53,7 @@ class ProcessWithOaiCompletion( ICommand ):
                 },
             }
         ]
+        # </self tools>
         print("PromptAgent initialization complete")
         print(f"Number of tools loaded: {len(self.tools)}")
 

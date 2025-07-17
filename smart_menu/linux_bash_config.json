@@ -1,0 +1,37 @@
+[
+    {
+        "title": "android init download c2p",
+        "action": "python3 ~/developer/android_workspace/initial_download_operations/code2prompt_no_modal.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "o3_mini_chat_w_lance",
+        "action": "python3 ~/developer/android_workspace/initial_download_operations/code2prompt_no_modal.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "monitored object expert",
+        "action": "python3 ~/monitored-objects/embedding_tools/conversation_processor.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "start planner",
+        "action": "python3 ~/the_function_caller/agents/planner_agent/planner_agent_exe.py",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
+        "title": "linuxBash menu",
+        "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/linux_bash_config.json",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    }
+]
