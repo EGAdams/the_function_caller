@@ -14,6 +14,13 @@
         "use_expect_library": false
     },
     {
+        "title": "start monitored object server",
+        "action": "cd ~/the-factory; npm run start",
+        "working_directory": ".",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
         "title": "project menu",
         "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/project_menu.json",
         "working_directory": ".",
