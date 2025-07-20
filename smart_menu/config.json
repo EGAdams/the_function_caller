@@ -1,7 +1,7 @@
 [
     {
         "title": "Run Android Create Account",
-        "action": "bash -c 'clear && cd /home/adamsl/selenium-headless/mcba_tests/android_tests/ && source ~/.nvm/nvm.sh && python3 android_create_account.py'",
+        "action": "bash -c 'clear && source ~/.nvm/nvm.sh && cd /home/adamsl/selenium-headless/mcba_tests/android_tests/ && python3 android_create_account.py'",
         "working_directory": "/home/adamsl/selenium-headless/mcba_tests/android_tests/",
         "open_in_subprocess": false,
         "use_expect_library": false
