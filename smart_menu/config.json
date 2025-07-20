@@ -1,5 +1,12 @@
 [
     {
+        "title": "Run Android Create Account",
+        "action": "clear && cd /home/adamsl/selenium-headless/mcba_tests/android_tests/ && python3 android_create_account.py",
+        "working_directory": "/home/adamsl/selenium-headless/mcba_tests/android_tests/",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
         "title": "linux bash menu",
         "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/linux_bash_config.json",
         "working_directory": ".",
@@ -115,20 +122,6 @@
         "title": "start test coder agent",
         "action": "python3 ~/the_function_caller/agents/coder_agent/test_coder_agent.py",
         "working_directory": ".",
-        "open_in_subprocess": false,
-        "use_expect_library": false
-    },
-    {
-        "title": "New Item",
-        "action": "echo 'New item executed'",
-        "working_directory": "",
-        "open_in_subprocess": false,
-        "use_expect_library": false
-    },
-    {
-        "title": "New Item",
-        "action": "echo 'New item executed'",
-        "working_directory": "",
         "open_in_subprocess": false,
         "use_expect_library": false
     }
