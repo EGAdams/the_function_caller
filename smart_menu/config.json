@@ -2,7 +2,7 @@
     {
         "title": "Run Android Create Account",
         "action": "/mnt/c/Windows/System32/wsl.exe -d Ubuntu-24.04 -- bash -c 'source ~/.nvm/nvm.sh && cd /home/adamsl/selenium-headless/mcba_tests/android_tests/ && python3 android_create_account.py'",
-        "working_directory": ".",
+        "working_directory": "/mnt/c/Users",
         "open_in_subprocess": false,
         "use_expect_library": false
     },
