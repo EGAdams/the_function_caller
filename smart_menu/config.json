@@ -7,6 +7,13 @@
         "use_expect_library": false
     },
     {
+        "title": "Pickle Ball wsl",
+        "action": "wt new-tab -d Ubuntu-24.04 --startingDirectory ~/rpi-rgb-led-matrix/pickle_cpp --tabColor \"#800080\" --title \"Pickle Ball wsl\"",
+        "working_directory": "/mnt/c/Users",
+        "open_in_subprocess": false,
+        "use_expect_library": false
+    },
+    {
         "title": "linux bash menu",
         "action": "python3 ~/the_function_caller/smart_menu/test_smart_menu_system.py ~/the_function_caller/smart_menu/linux_bash_config.json",
         "working_directory": ".",
